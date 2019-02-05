@@ -11,6 +11,9 @@ public class SteeringManager : MonoBehaviour {
  //   public Transform target;
      Steering[] steers;
 
+    [SerializeField]
+    float smooth;
+
    // protected Rigidbody rigid;
 
     private void Start()
@@ -36,6 +39,6 @@ public class SteeringManager : MonoBehaviour {
         velocity = Vector3.ClampMagnitude(velocity + steering, MaxVelocity);
         //transform.position += velocity * Time.deltaTime;
         transform.position += transform.forward * Time.deltaTime * MaxVelocity;
-        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(velocity.normalized), Time.deltaTime);
+        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(velocity.normalized), Time.deltaTime * smooth);
     }
 }

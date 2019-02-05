@@ -12,7 +12,7 @@ public class Leader : Steering {
     Vector3 targetVelocity;
     Vector3 behind;
 
-    float slowingRadius = 3f;
+    float slowingRadius = 5f;
 
     public Transform target;
 

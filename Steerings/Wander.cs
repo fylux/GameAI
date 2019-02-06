@@ -8,7 +8,7 @@ public class Wander : Steering {
     private int wanderCooldown = 90;
     public float MaxRadius = 25f;
 
-    private Vector3 wanderForce;
+    public Vector3 wanderForce;
 
     private Vector3 inicio;
 
@@ -21,6 +21,12 @@ public class Wander : Steering {
     override
     public Vector3 Steer(Vector3 velocity)
     {
+        if (velocity == Vector3.zero)
+        {
+            velocity = new Vector3(1, 0, 0);
+            wanderForce = GetRandomWanderForce(velocity);
+        }
+
         var desiredVelocity = GetWanderForce(velocity);
         desiredVelocity = desiredVelocity.normalized * MaxVelocity;
 
@@ -31,12 +37,12 @@ public class Wander : Steering {
 
     private Vector3 GetWanderForce(Vector3 velocity)
     {
-        if (transform.position.magnitude > MaxRadius)
+       /* if (transform.position.magnitude > MaxRadius)
         {
             var directionToCenter = (inicio - transform.position).normalized;
             wanderForce = velocity.normalized + directionToCenter;
         }
-        else if (Time.frameCount % wanderCooldown == 0)
+        else */if (Time.frameCount % wanderCooldown == 0)
         {
             wanderForce = GetRandomWanderForce(velocity);
         }

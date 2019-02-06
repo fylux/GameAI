@@ -51,7 +51,7 @@ public class Leader : Steering {
 
         force += Arrival(behind, velocity);
         force += Separation(velocity);
-        if (onLeaderSight())
+        if (OnLeaderSight())
             force += Evade(velocity);
         force.y = 0;
         return force;
@@ -91,7 +91,7 @@ public class Leader : Steering {
             if (boid != this && Vector3.Distance(boid.transform.position, transform.position) <= distanciaFollowers)
             {
                 force.x += boid.transform.position.x - this.transform.position.x;
-                force.y += boid.transform.position.y - this.transform.position.y;
+                force.z += boid.transform.position.z - this.transform.position.z;
                 numVecinos++;
             }
 
@@ -111,7 +111,7 @@ public class Leader : Steering {
 
     }
 
-    private bool onLeaderSight()
+    private bool OnLeaderSight()
     {
         RaycastHit hit;
         if (Physics.Raycast(target.transform.position + (target.transform.right * 0.47f), target.transform.TransformDirection(Vector3.forward), out hit, 10f))

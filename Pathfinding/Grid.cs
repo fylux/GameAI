@@ -46,6 +46,22 @@ public class Grid : MonoBehaviour {
 		int y = Mathf.RoundToInt((gridSizeY-1) * percentY);
 		return grid[x,y];
     }
+    /*
+    public void aStar(Node start, Node end)
+    {
+        HashSet<Node> visitedNodes = new HashSet<Node>();
+        HashSet<Node> discoveredNodes = new HashSet<Node>();
+        discoveredNodes.Add(start);
+
+        foreach ()
+
+    }
+
+    public bool search(Node start)
+    {
+        start.visited = true;
+        List<Node> nextNodes
+    }*/
 
     private void OnDrawGizmos() {
         Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, 1, gridWorldSize.y));
@@ -62,7 +78,6 @@ public class Grid : MonoBehaviour {
                 Gizmos.DrawCube(n.worldPosition,Vector3.one * (nodeDiameter-.1f));
             }
         }
-
     }
 
 }

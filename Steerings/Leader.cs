@@ -29,6 +29,8 @@ public class Leader : Steering {
         tv = tv.normalized * leaderDistance;
         behind = target.transform.position + tv;
         seguidores = GameObject.FindGameObjectsWithTag("NPC");
+
+        va = Vector3.zero;
     }
 
     private void Update()
@@ -39,10 +41,10 @@ public class Leader : Steering {
     }
 
     override
-    public Vector3 Steer(Vector3 velocity)
+    public void Steer(Vector3 velocity)
     {
         
-        return FollowLeader(velocity);
+        vl = FollowLeader(velocity);
     }
 
     private Vector3 FollowLeader(Vector3 velocity)

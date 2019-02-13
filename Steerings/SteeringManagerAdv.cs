@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SteeringManager : MonoBehaviour {
+public class SteeringManagerAdv : MonoBehaviour {
 
     public float MaxVelocity = 3;
     public float MaxForce = 15;
@@ -30,23 +30,31 @@ public class SteeringManager : MonoBehaviour {
 
     protected void Move()
     {
-      /*  var steering = Vector3.zero;
-
+        var steeringLineal = Vector3.zero;
+        var steeringAngular = Vector3.zero;
         foreach (Steering steer in steers)
-              steering += steer.Steer(velocity);
+        {
+            steer.Steer(velocity);
+            steeringLineal += steer.vl;
+            steeringAngular += steer.va;
+        }
+        //       steering += steer.Steer(velocity);
 
-        steering = Vector3.ClampMagnitude(steering, MaxForce);
+        steeringLineal = Vector3.ClampMagnitude(steeringLineal, MaxForce);
 
-        velocity = Vector3.ClampMagnitude(velocity + steering, MaxVelocity);
+        velocity = Vector3.ClampMagnitude(velocity + steeringLineal, MaxVelocity);
         //transform.position += velocity * Time.deltaTime * velocity.magnitude;
-        transform.position += transform.forward * Time.deltaTime * velocity.magnitude;
+        transform.position += velocity * Time.deltaTime;
         transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(velocity.normalized), Time.deltaTime * smooth);
+        // Las dos líneas superiores hay que modificarlas
+
+
         //¿NO TRABAJAR CON QUATERNIONS? Probablemente haya que trabajar con ángulos y productos entre vectores
         // Habrá que trabajar con paso de vectores a radianes y de radianes a vectores
 
         // El personaje debería de tener un ángulo en sus atributos, que controlará su orientación. Saldrá algo raro como que
         // en cada frame el personaje vuelva a orientación 0º y gire a lo que le digamos.
 
-        // Trabajar con Rotation Euler*/
+        // Trabajar con Rotation Euler
     }
 }

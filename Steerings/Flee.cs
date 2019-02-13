@@ -6,15 +6,20 @@ public class Flee : Steering {
 
     public Transform target;
 
+    private void Start()
+    {
+        va = Vector3.zero;
+    }
+
     override
-    public Vector3 Steer(Vector3 velocity)
+    public void Steer(Vector3 velocity)
     {
 
         var desiredVelocity = (transform.position - target.transform.position).normalized * MaxVelocity;
 
         if (visibleRays) drawRays(desiredVelocity);
 
-        return (desiredVelocity - velocity);
+        vl = (desiredVelocity - velocity);
 
     }
 

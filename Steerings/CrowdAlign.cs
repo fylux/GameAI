@@ -15,9 +15,9 @@ public class CrowdAlign : Steering {
     }
 
     override
-    public Vector3 Steer(Vector3 velocity)
+    public void Steer(Vector3 velocity)
     {
-        int numVecinos = 0;
+     /*   int numVecinos = 0;
         Vector3 force = new Vector3();
 
         foreach (GameObject boid in seguidores)
@@ -39,7 +39,7 @@ public class CrowdAlign : Steering {
 
         force = force.normalized;
 
-        return force;
+        return force;*/
 
     }
 }

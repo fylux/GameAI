@@ -16,10 +16,11 @@ public class Wander : Steering {
     {
         inicio = transform.position;
         wanderForce = Vector3.zero;
+        va = Vector3.zero;
     }
     
     override
-    public Vector3 Steer(Vector3 velocity)
+    public void Steer(Vector3 velocity)
     {
         if (velocity == Vector3.zero)
         {
@@ -32,7 +33,7 @@ public class Wander : Steering {
 
         if (visibleRays) drawRays(desiredVelocity);
 
-        return (desiredVelocity - velocity);
+        vl = (desiredVelocity - velocity);
     }
 
     private Vector3 GetWanderForce(Vector3 velocity)

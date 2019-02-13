@@ -8,42 +8,43 @@ public class AvoidObstacles : Steering
     private LayerMask layerMask;
 
     [SerializeField]
+    private float boundingSphereRadius = 1;
+
+    [SerializeField]
     private float obstacleMaxDistance = 10;
+
+    [SerializeField]
+    private float maxFloorAngle = 45;
 
     private Vector3 desiredVelocity = Vector3.zero;
 
 
-    public override Vector3 Steer(Vector3 velocity)
+    public override void Steer(Vector3 velocity)
     {
-        float widthCharacter = 1f;// temporal
         Vector3 avoidanceForce = Vector3.zero;
-        Vector3 leftRay = transform.position - (transform.right * widthCharacter / 2) ;
-        Vector3 rightRay = transform.position + (transform.right * widthCharacter / 2);
+        Ray ray = new Ray(transform.position, transform.forward);
         RaycastHit hitInfo;
 
-        if (Physics.Raycast(leftRay,transform.forward, out hitInfo, obstacleMaxDistance, layerMask))
-        {
-            avoidanceForce = hitInfo.normal;//Vector3.Reflect(transform.forward, hitInfo.normal);
-            Debug.DrawLine(leftRay, hitInfo.point, Color.red);
-        }
-        else if (Physics.Raycast(rightRay, transform.forward, out hitInfo, obstacleMaxDistance, layerMask))
-        {
-            avoidanceForce = hitInfo.normal;
-            Debug.DrawLine(rightRay, hitInfo.point, Color.red);
-        }
-        else {
-            Debug.DrawRay(leftRay, transform.forward * obstacleMaxDistance, Color.green);
-            Debug.DrawRay(rightRay, transform.forward * obstacleMaxDistance, Color.green);
+        // Calculate avoidance force
+        if (Physics.SphereCast(ray, boundingSphereRadius, out hitInfo, obstacleMaxDistance, layerMask)) {
+            /*if (Vector3.Angle(hitInfo.normal, transform.up) > maxFloorAngle)
+            {*/
+            avoidanceForce = Vector3.Reflect(transform.forward, hitInfo.normal);
+                /*if (Vector3.Dot(avoidanceForce, transform.forward) < -0.9f)
+                {
+                    avoidanceForce = transform.right;
+                }*/
+            //}
         }
 
         if (avoidanceForce != Vector3.zero) {
-            desiredVelocity = (avoidanceForce).normalized * MaxVelocity;
-
-            if (visibleRays) drawRays(desiredVelocity);
-            return (desiredVelocity - velocity);
+            desiredVelocity = (avoidanceForce).normalized * MaxVelocity ;
+ 
+            if (visibleRays) drawRays(desiredVelocity) ;
+            vl = (desiredVelocity - velocity) * 1f / hitInfo.distance;
         }
         else {
-            return Vector3.zero;
+            vl = Vector3.zero;
         }
     }
 

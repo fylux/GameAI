@@ -29,8 +29,6 @@ public class Leader : Steering {
         tv = tv.normalized * leaderDistance;
         behind = target.transform.position + tv;
         seguidores = GameObject.FindGameObjectsWithTag("NPC");
-
-        va = Vector3.zero;
     }
 
     private void Update()

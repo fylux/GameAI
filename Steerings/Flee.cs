@@ -8,7 +8,7 @@ public class Flee : Steering {
 
     private void Start()
     {
-        va = Vector3.zero;
+
     }
 
     override

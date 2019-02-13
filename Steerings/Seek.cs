@@ -8,7 +8,7 @@ public class Seek : Steering {
 
     private void Start()
     {
-        va = Vector3.zero;
+
     }
 
     override

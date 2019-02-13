@@ -6,8 +6,8 @@ public abstract class Steering : MonoBehaviour {
 
     public float MaxVelocity = 3;
 
-    public Vector3 vl;
-    public Vector3 va;
+    public Vector3 vl = Vector3.zero;
+    public float va = 0f;
 
     [SerializeField]
     protected bool visibleRays;

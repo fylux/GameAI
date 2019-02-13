@@ -13,15 +13,15 @@ public class AvoidObstacles : Steering
     private Vector3 desiredVelocity = Vector3.zero;
 
 
-    public override Vector3 Steer(Vector3 velocity)
+    public override void Steer(Vector3 velocity)
     {
         float widthCharacter = 1f;// temporal
         Vector3 avoidanceForce = Vector3.zero;
-        Vector3 leftRay = transform.position - (transform.right * widthCharacter / 2) ;
+        Vector3 leftRay = transform.position - (transform.right * widthCharacter / 2);
         Vector3 rightRay = transform.position + (transform.right * widthCharacter / 2);
         RaycastHit hitInfo;
 
-        if (Physics.Raycast(leftRay,transform.forward, out hitInfo, obstacleMaxDistance, layerMask))
+        if (Physics.Raycast(leftRay, transform.forward, out hitInfo, obstacleMaxDistance, layerMask))
         {
             avoidanceForce = hitInfo.normal;//Vector3.Reflect(transform.forward, hitInfo.normal);
             Debug.DrawLine(leftRay, hitInfo.point, Color.red);
@@ -31,19 +31,21 @@ public class AvoidObstacles : Steering
             avoidanceForce = hitInfo.normal;
             Debug.DrawLine(rightRay, hitInfo.point, Color.red);
         }
-        else {
+        else
+        {
             Debug.DrawRay(leftRay, transform.forward * obstacleMaxDistance, Color.green);
             Debug.DrawRay(rightRay, transform.forward * obstacleMaxDistance, Color.green);
         }
 
-        if (avoidanceForce != Vector3.zero) {
+        if (avoidanceForce != Vector3.zero)
+        {
             desiredVelocity = (avoidanceForce).normalized * MaxVelocity;
-
             if (visibleRays) drawRays(desiredVelocity);
-            return (desiredVelocity - velocity);
+            vl = (desiredVelocity - velocity);
         }
-        else {
-            return Vector3.zero;
+        else
+        {
+            vl = Vector3.zero;
         }
     }
 

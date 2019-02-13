@@ -16,7 +16,6 @@ public class Wander : Steering {
     {
         inicio = transform.position;
         wanderForce = Vector3.zero;
-        va = Vector3.zero;
     }
     
     override

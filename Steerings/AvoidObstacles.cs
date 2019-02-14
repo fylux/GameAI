@@ -39,7 +39,7 @@ public class AvoidObstacles : SteeringBehaviour
         }
 
         if (avoidanceForce != Vector3.zero) {
-            desiredVelocity = (avoidanceForce).normalized * MaxVelocity;
+            desiredVelocity = (avoidanceForce).normalized * MaxAccel;
             if (visibleRays) drawRays(desiredVelocity);
             steering.lineal =(desiredVelocity - velocity);
         }

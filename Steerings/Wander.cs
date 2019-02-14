@@ -31,7 +31,7 @@ public class Wander : SteeringBehaviour
         }
 
         var desiredVelocity = GetWanderForce(velocity);
-        desiredVelocity = desiredVelocity.normalized * MaxVelocity;
+        desiredVelocity = desiredVelocity.normalized * MaxAccel;
 
         if (visibleRays) drawRays(desiredVelocity);
 

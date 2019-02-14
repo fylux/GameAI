@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class Flee : SteeringBehaviour
 {
-
-    public Transform target;
+    public Body target;
 
     private void Start()
     {
@@ -17,14 +16,13 @@ public class Flee : SteeringBehaviour
     {
         Steering steering = new Steering();
 
-        var desiredVelocity = (transform.position - target.transform.position).normalized * MaxVelocity;
+        var desiredVelocity = (body.position - target.position).normalized * MaxAccel;
 
         if (visibleRays) drawRays(desiredVelocity);
 
         steering.lineal = (desiredVelocity - velocity);
 
         return steering;
-
     }
 
     private void drawRays(Vector3 dv)

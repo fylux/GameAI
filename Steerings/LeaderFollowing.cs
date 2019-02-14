@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Leader : SteeringBehaviour
+public class LeaderFollowing : SteeringBehaviour
 {
 
 
@@ -15,7 +15,7 @@ public class Leader : SteeringBehaviour
 
     float slowingRadius = 10f;
 
-    public Transform target;
+    public Body target;
 
     GameObject[] seguidores;
     [SerializeField]
@@ -28,7 +28,7 @@ public class Leader : SteeringBehaviour
         targetVelocity = target.GetComponent<Rigidbody>().velocity;
         tv = targetVelocity * -1;
         tv = tv.normalized * leaderDistance;
-        behind = target.transform.position + tv;
+        behind = target.position + tv;
         seguidores = GameObject.FindGameObjectsWithTag("NPC");
     }
 
@@ -36,7 +36,7 @@ public class Leader : SteeringBehaviour
     {
         tv = targetVelocity * -1;
         tv = tv.normalized * leaderDistance;
-        behind = target.transform.position + tv;
+        behind = target.position + tv;
     }
 
     override
@@ -117,14 +117,14 @@ public class Leader : SteeringBehaviour
     private bool OnLeaderSight()
     {
         RaycastHit hit;
-        if (Physics.Raycast(target.transform.position + (target.transform.right * 0.47f), target.transform.TransformDirection(Vector3.forward), out hit, 10f))
+        if (Physics.Raycast(target.position + (target.transform.right * 0.47f), target.transform.TransformDirection(Vector3.forward), out hit, 10f))
         {
             if (hit.rigidbody == GetComponent<Rigidbody>())
             {
                 return true;
             }
         }
-        else if (Physics.Raycast(target.transform.position + (target.transform.right * (-0.47f)), target.transform.TransformDirection(Vector3.forward), out hit, 10f))
+        else if (Physics.Raycast(target.position + (target.transform.right * (-0.47f)), target.transform.TransformDirection(Vector3.forward), out hit, 10f))
         {
             if (hit.rigidbody == GetComponent<Rigidbody>())
             {

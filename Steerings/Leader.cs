@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Leader : Steering {
+public class Leader : SteeringBehaviour
+{
 
 
     [SerializeField]
@@ -39,10 +40,12 @@ public class Leader : Steering {
     }
 
     override
-    public void Steer(Vector3 velocity)
+    public Steering Steer(Vector3 velocity)
     {
-        
-        vl = FollowLeader(velocity);
+        Steering steering = new Steering();
+        steering.lineal = FollowLeader(velocity);
+
+        return steering;
     }
 
     private Vector3 FollowLeader(Vector3 velocity)

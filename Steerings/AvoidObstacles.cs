@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AvoidObstacles : Steering
+public class AvoidObstacles : SteeringBehaviour
 {
     [SerializeField]
     private LayerMask layerMask;
@@ -13,8 +13,10 @@ public class AvoidObstacles : Steering
     private Vector3 desiredVelocity = Vector3.zero;
 
 
-    public override void Steer(Vector3 velocity)
+    public override Steering Steer(Vector3 velocity)
     {
+        Steering steering = new Steering();
+
         float widthCharacter = 1f;// temporal
         Vector3 avoidanceForce = Vector3.zero;
         Vector3 leftRay = transform.position - (transform.right * widthCharacter / 2) ;
@@ -39,11 +41,12 @@ public class AvoidObstacles : Steering
         if (avoidanceForce != Vector3.zero) {
             desiredVelocity = (avoidanceForce).normalized * MaxVelocity;
             if (visibleRays) drawRays(desiredVelocity);
-            vl=(desiredVelocity - velocity);
+            steering.lineal =(desiredVelocity - velocity);
         }
         else {
-            vl= Vector3.zero;
+            steering.lineal = Vector3.zero;
         }
+        return steering;
     }
 
     private void drawRays(Vector3 dv)

@@ -2,18 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Steering : MonoBehaviour {
+public class Steering  {
 
-    public float MaxVelocity = 3;
+    public Vector3 lineal;
+    public float angular;
 
-    public Vector3 vl = Vector3.zero;
-    public float va = 0f;
-
-    [SerializeField]
-    protected bool visibleRays;
-
-    public abstract void Steer(Vector3 velocity);
-
-    
-
+    public Steering()
+    {
+        lineal = Vector3.zero;
+        angular = 0.0f;
+    }
 }

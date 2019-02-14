@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CrowdAlign : Steering {
+public class CrowdAlign : SteeringBehaviour
+{
 
     GameObject[] seguidores;
 
@@ -15,31 +16,34 @@ public class CrowdAlign : Steering {
     }
 
     override
-    public void Steer(Vector3 velocity)
+    public Steering Steer(Vector3 velocity)
     {
-     /*   int numVecinos = 0;
-        Vector3 force = new Vector3();
+        Steering steering = new Steering();
 
-        foreach (GameObject boid in seguidores)
-        {
-            if (boid != this && Vector3.Distance(boid.transform.position, transform.position) <= followersRadius)
-            {
-                force.x += boid.transform.position.x;
-                force.z += boid.transform.position.z;
-                numVecinos++;
-            }
+        return steering;
+        /*   int numVecinos = 0;
+           Vector3 force = new Vector3();
 
-        }
+           foreach (GameObject boid in seguidores)
+           {
+               if (boid != this && Vector3.Distance(boid.transform.position, transform.position) <= followersRadius)
+               {
+                   force.x += boid.transform.position.x;
+                   force.z += boid.transform.position.z;
+                   numVecinos++;
+               }
 
-        if (numVecinos == 0)
-            return force;
+           }
 
-        force.x /= numVecinos;
-        force.y /= numVecinos;
+           if (numVecinos == 0)
+               return force;
 
-        force = force.normalized;
+           force.x /= numVecinos;
+           force.y /= numVecinos;
 
-        return force;*/
+           force = force.normalized;
+
+           return force;*/
 
     }
 }

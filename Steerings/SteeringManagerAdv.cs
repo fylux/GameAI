@@ -7,13 +7,15 @@ public class SteeringManagerAdv : MonoBehaviour {
     public float MaxVelocity = 3;
     public float MaxForce = 15;
     public float MaxRotation = 50;
+    public float MaxAngularAccel = 50;
 
     public float angle;
     public Vector3 pos;
 
-    protected Vector3 velocity;
- //   public Transform target;
-     Steering[] steers;
+    public float rotacion;
+    public Vector3 velocity;
+    //   public Transform target;
+    SteeringBehaviour[] steers;
 
     [SerializeField]
     float smooth;
@@ -24,8 +26,9 @@ public class SteeringManagerAdv : MonoBehaviour {
     {
         velocity = Vector3.zero;
         //rigid = GetComponent<Rigidbody>();ç
-        steers = GetComponents<Steering>();
+        steers = GetComponents<SteeringBehaviour>();
 
+        rotacion = 0;
         angle = 70;
         pos = transform.position;
         transform.eulerAngles = new Vector3(0, angle, 0);
@@ -39,12 +42,12 @@ public class SteeringManagerAdv : MonoBehaviour {
     protected void Move()
     {
         Vector3 steeringLineal = Vector3.zero;
-        float steeringAngular = 0f;
-        foreach (Steering steer in steers)
+        float steeringAngular = 0.0f;
+        foreach (SteeringBehaviour steer in steers)
         {
-            steer.Steer(velocity);
-            steeringLineal += steer.vl;
-            steeringAngular += steer.va;
+            Steering steering = steer.Steer(velocity);
+            steeringLineal += steering.lineal;
+            steeringAngular += steering.angular;
         }
 
         steeringLineal = Vector3.ClampMagnitude(steeringLineal, MaxForce);

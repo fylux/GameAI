@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Seek : Steering {
+public class Seek : SteeringBehaviour
+{
 
     public Transform target;
 
@@ -12,14 +13,17 @@ public class Seek : Steering {
     }
 
     override
-    public void Steer(Vector3 velocity)
+    public Steering Steer(Vector3 velocity)
     {
+        Steering steering = new Steering();
 
         var desiredVelocity = (target.transform.position - transform.position).normalized * MaxVelocity;
 
         if (visibleRays) drawRays(desiredVelocity, velocity);
 
-        vl = (desiredVelocity - velocity);
+        steering.lineal = (desiredVelocity - velocity);
+
+        return steering;
 
     }
 

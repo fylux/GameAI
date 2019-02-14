@@ -8,8 +8,8 @@ public class SteeringManager : MonoBehaviour {
     public float MaxForce = 15;
 
     protected Vector3 velocity;
- //   public Transform target;
-     Steering[] steers;
+    //   public Transform target;
+    SteeringBehaviour[] steers;
 
     [SerializeField]
     float smooth;
@@ -20,7 +20,7 @@ public class SteeringManager : MonoBehaviour {
     {
         velocity = Vector3.zero;
         //      rigid = GetComponent<Rigidbody>();ç
-        steers = GetComponents<Steering>();
+        steers = GetComponents<SteeringBehaviour>();
     }
 
     private void Update()

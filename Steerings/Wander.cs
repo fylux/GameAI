@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Wander : Steering {
+public class Wander : SteeringBehaviour
+{
 
     public float CircleRadius = 1f;
     private int wanderCooldown = 90;
@@ -14,13 +15,15 @@ public class Wander : Steering {
 
     private void Start()
     {
-        inicio = transform.position;
         wanderForce = Vector3.zero;
     }
     
     override
-    public void Steer(Vector3 velocity)
+    public Steering Steer(Vector3 velocity)
     {
+
+        Steering steering = new Steering();
+
         if (velocity == Vector3.zero)
         {
             velocity = new Vector3(1, 0, 0);
@@ -32,7 +35,9 @@ public class Wander : Steering {
 
         if (visibleRays) drawRays(desiredVelocity);
 
-        vl = (desiredVelocity - velocity);
+        steering.lineal = (desiredVelocity - velocity);
+
+        return steering;
     }
 
     private Vector3 GetWanderForce(Vector3 velocity)

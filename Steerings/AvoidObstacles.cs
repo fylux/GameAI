@@ -12,36 +12,36 @@ public class AvoidObstacles : SteeringBehaviour
 
     private Vector3 desiredVelocity = Vector3.zero;
 
-
-    public override Steering Steer(Vector3 velocity)
+    override
+    public  Steering Steer()
     {
         Steering steering = new Steering();
 
         float widthCharacter = 1f;// temporal
         Vector3 avoidanceForce = Vector3.zero;
-        Vector3 leftRay = transform.position - (transform.right * widthCharacter / 2) ;
-        Vector3 rightRay = transform.position + (transform.right * widthCharacter / 2);
+        Vector3 leftRay = body.position - (transform.right * widthCharacter / 2) ;
+        Vector3 rightRay = body.position + (transform.right * widthCharacter / 2);
         RaycastHit hitInfo;
 
-        if (Physics.Raycast(leftRay,transform.forward, out hitInfo, obstacleMaxDistance, layerMask))
+        if (Physics.Raycast(leftRay,body.velocity, out hitInfo, obstacleMaxDistance, layerMask))
         {
             avoidanceForce = hitInfo.normal;//Vector3.Reflect(transform.forward, hitInfo.normal);
             Debug.DrawLine(leftRay, hitInfo.point, Color.red);
         }
-        else if (Physics.Raycast(rightRay, transform.forward, out hitInfo, obstacleMaxDistance, layerMask))
+        else if (Physics.Raycast(rightRay, body.velocity, out hitInfo, obstacleMaxDistance, layerMask))
         {
             avoidanceForce = hitInfo.normal;
             Debug.DrawLine(rightRay, hitInfo.point, Color.red);
         }
         else {
-            Debug.DrawRay(leftRay, transform.forward * obstacleMaxDistance, Color.green);
-            Debug.DrawRay(rightRay, transform.forward * obstacleMaxDistance, Color.green);
+            Debug.DrawRay(leftRay, body.velocity * obstacleMaxDistance, Color.green);
+            Debug.DrawRay(rightRay, body.velocity * obstacleMaxDistance, Color.green);
         }
 
         if (avoidanceForce != Vector3.zero) {
             desiredVelocity = (avoidanceForce).normalized * MaxAccel;
             if (visibleRays) drawRays(desiredVelocity);
-            steering.lineal =(desiredVelocity - velocity);
+            steering.lineal =(desiredVelocity - body.velocity);
         }
         else {
             steering.lineal = Vector3.zero;

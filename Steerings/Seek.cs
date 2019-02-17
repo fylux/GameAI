@@ -4,31 +4,33 @@ using UnityEngine;
 
 public enum SeekType
 {
-    SEEK_MILLINGTON, SEEK_REYNOLDS
+    MILLINGTON, REYNOLDS
 };
 
 public class Seek : SteeringBehaviour
 {
     [SerializeField]
-    private SeekType seekType;
-    public Body target;
+    private SeekType seekType = SeekType.REYNOLDS;
 
-    private void Start()
-    {
-        base.Start();
-        Debug.Log(body);
-    }
+    [SerializeField]
+    private Body target;
+
 
     override
-    public Steering Steer(Vector3 velocity)
+    public Steering Steer()
     {
         Steering steering = new Steering();
 
         var desiredVelocity = (target.position -  body.position).normalized * MaxAccel;
 
-        if (visibleRays) drawRays(desiredVelocity, velocity);
+        if (seekType == SeekType.REYNOLDS)
+            steering.lineal = (desiredVelocity - body.velocity);
+        else
+            steering.lineal = desiredVelocity;
 
-        steering.lineal = (desiredVelocity - velocity);
+        if (visibleRays)
+            drawRays(steering.lineal, body.velocity);
+
         return steering;
 
     }

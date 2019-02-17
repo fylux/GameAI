@@ -4,32 +4,34 @@ using UnityEngine;
 
 public class Leader : SteeringBehaviour
 {
-
-
     [SerializeField]
-    float leaderDistance = 2f;
+    private float leaderDistance = 2f;
 
-    Vector3 tv;
-    Vector3 targetVelocity;
-    Vector3 behind;
+    private Vector3 tv;
+    private Vector3 targetVelocity;
+    private Vector3 behind;
 
     float slowingRadius = 10f;
 
-    public Transform target;
+    [SerializeField]
+    private Transform target;
 
-    GameObject[] seguidores;
+    private GameObject[] followers;
+
     [SerializeField]
-    float distanciaFollowers;
+    private float distanceFollowers;
+
     [SerializeField]
-    float separacionMaxima;
+    private float maxSeparation;
 
     private void Start()
     {
+        base.Start();
         targetVelocity = target.GetComponent<Rigidbody>().velocity;
         tv = targetVelocity * -1;
         tv = tv.normalized * leaderDistance;
         behind = target.transform.position + tv;
-        seguidores = GameObject.FindGameObjectsWithTag("NPC");
+        followers = GameObject.FindGameObjectsWithTag("NPC");
     }
 
     private void Update()
@@ -40,10 +42,10 @@ public class Leader : SteeringBehaviour
     }
 
     override
-    public Steering Steer(Vector3 velocity)
+    public Steering Steer()
     {
         Steering steering = new Steering();
-        steering.lineal = FollowLeader(velocity);
+        steering.lineal = FollowLeader(body.velocity);
 
         return steering;
     }
@@ -89,9 +91,9 @@ public class Leader : SteeringBehaviour
         int numVecinos = 0;
         Vector3 force = new Vector3();
 
-        foreach (GameObject boid in seguidores)
+        foreach (GameObject boid in followers)
         {
-            if (boid != this && Vector3.Distance(boid.transform.position, transform.position) <= distanciaFollowers)
+            if (boid != this && Vector3.Distance(boid.transform.position, transform.position) <= distanceFollowers)
             {
                 force.x += boid.transform.position.x - this.transform.position.x;
                 force.z += boid.transform.position.z - this.transform.position.z;
@@ -108,7 +110,7 @@ public class Leader : SteeringBehaviour
         }
 
         force = force.normalized;
-        force = force * separacionMaxima;
+        force = force * maxSeparation;
 
         return force;
 

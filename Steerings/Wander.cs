@@ -5,43 +5,44 @@ using UnityEngine;
 public class Wander : SteeringBehaviour
 {
 
-    public float CircleRadius = 1f;
+    [SerializeField]
+    private float CircleRadius = 1f;
+
+    [SerializeField]
     private int wanderCooldown = 90;
-    public float MaxRadius = 25f;
 
-    public Vector3 wanderForce;
+    [SerializeField]
+    private float MaxRadius = 25f;
 
-    private Vector3 inicio;
+    private Vector3 wanderForce;
+    //private Vector3 inicio;
 
-    private void Start()
-    {
+    private void Start() {
+        base.Start();
         wanderForce = Vector3.zero;
     }
     
     override
-    public Steering Steer(Vector3 velocity)
-    {
-
+    public Steering Steer() {
         Steering steering = new Steering();
 
-        if (velocity == Vector3.zero)
+        if (body.velocity == Vector3.zero)
         {
-            velocity = new Vector3(1, 0, 0);
-            wanderForce = GetRandomWanderForce(velocity);
+            body.velocity = new Vector3(1, 0, 0);
+            wanderForce = GetRandomWanderForce(body.velocity);
         }
 
-        var desiredVelocity = GetWanderForce(velocity);
+        var desiredVelocity = GetWanderForce(body.velocity);
         desiredVelocity = desiredVelocity.normalized * MaxAccel;
 
         if (visibleRays) drawRays(desiredVelocity);
 
-        steering.lineal = (desiredVelocity - velocity);
+        steering.lineal = (desiredVelocity - body.velocity);
 
         return steering;
     }
 
-    private Vector3 GetWanderForce(Vector3 velocity)
-    {
+    private Vector3 GetWanderForce(Vector3 velocity) {
        /* if (transform.position.magnitude > MaxRadius)
         {
             var directionToCenter = (inicio - transform.position).normalized;

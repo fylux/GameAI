@@ -5,18 +5,19 @@ using UnityEngine;
 public class CrowdAlign : SteeringBehaviour
 {
 
-    GameObject[] seguidores;
+    private GameObject[] followers;
 
     [SerializeField]
-    float followersRadius = 3f;
+    private float followersRadius = 3f;
 
     private void Start()
     {
-        seguidores = GameObject.FindGameObjectsWithTag("NPC");
+        base.Start();
+        followers = GameObject.FindGameObjectsWithTag("NPC");
     }
 
     override
-    public Steering Steer(Vector3 velocity)
+    public Steering Steer()
     {
         Steering steering = new Steering();
 

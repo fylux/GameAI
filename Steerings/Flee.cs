@@ -4,32 +4,35 @@ using UnityEngine;
 
 public class Flee : SteeringBehaviour
 {
-    public Body target;
+    [SerializeField]
+    private SeekType seekType = SeekType.REYNOLDS;
 
-    private void Start()
-    {
-
-    }
+    [SerializeField]
+    private Body target;
 
     override
-    public Steering Steer(Vector3 velocity)
+    public Steering Steer()
     {
         Steering steering = new Steering();
 
         var desiredVelocity = (body.position - target.position).normalized * MaxAccel;
 
-        if (visibleRays) drawRays(desiredVelocity);
+        if (seekType == SeekType.REYNOLDS)
+            steering.lineal = (desiredVelocity - body.velocity);
+        else
+            steering.lineal = desiredVelocity;
 
-        steering.lineal = (desiredVelocity - velocity);
+        if (visibleRays)
+            drawRays(steering.lineal, body.velocity);
 
         return steering;
+
     }
 
-    private void drawRays(Vector3 dv)
-    {
+    private void drawRays(Vector3 dv, Vector3 v) {
         var z = dv.normalized * 2 - transform.forward * 2;
-        Debug.DrawRay(transform.position, transform.forward * 2, Color.green);
+        Debug.DrawRay(transform.position, v.normalized * 2, Color.green);
         Debug.DrawRay(transform.position, dv.normalized * 2, Color.blue);
-        Debug.DrawRay(transform.position + transform.forward * 2, z, Color.magenta);
+        Debug.DrawRay(v.normalized * 2, z, Color.magenta);
     }
 }

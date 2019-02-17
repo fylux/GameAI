@@ -25,6 +25,7 @@ public class LeaderFollowing : SteeringBehaviour
 
     private void Start()
     {
+        base.Start();
         targetVelocity = target.GetComponent<Rigidbody>().velocity;
         tv = targetVelocity * -1;
         tv = tv.normalized * leaderDistance;
@@ -40,10 +41,10 @@ public class LeaderFollowing : SteeringBehaviour
     }
 
     override
-    public Steering Steer(Vector3 velocity)
+    public Steering Steer()
     {
         Steering steering = new Steering();
-        steering.lineal = FollowLeader(velocity);
+        steering.lineal = FollowLeader(body.velocity);
 
         return steering;
     }

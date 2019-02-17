@@ -2,7 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum MovementType
+{
+    UNIFORM, ACCELERATED
+};
+
 public class SteeringManager : Body {
+
+    [SerializeField]
+    private MovementType movementType = MovementType.ACCELERATED; //Unused right now
 
     private SteeringBehaviour[] steers;
 
@@ -23,9 +31,9 @@ public class SteeringManager : Body {
         float steeringAngular = 0.0f;
         foreach (SteeringBehaviour steer in steers)
         {
-            Steering steering = steer.Steer(velocity);
-            steeringLineal += steering.lineal;
-            steeringAngular += steering.angular;
+            Steering steering = steer.Steer();
+            steeringLineal += steering.lineal * steer.blendPriority;
+            steeringAngular += steering.angular * steer.blendPriority;
         }
 
         steeringLineal = Vector3.ClampMagnitude(steeringLineal, MaxAccel);

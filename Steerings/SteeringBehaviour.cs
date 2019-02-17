@@ -4,17 +4,22 @@ using UnityEngine;
 
 public abstract class SteeringBehaviour : MonoBehaviour {
 
+    [SerializeField]
     protected Body body;
-    public float MaxAccel = 3;
+
+    [SerializeField]
+    protected float MaxAccel = 3;
+
+    [SerializeField]
     public float blendPriority = 1;
 
     [SerializeField]
     protected bool visibleRays;
 
-    public abstract Steering Steer(Vector3 velocity);
 
-    protected void Start()
-    {
+    public abstract Steering Steer();
+
+    protected void Start() {
         body = GetComponent<Body>();
     }
 

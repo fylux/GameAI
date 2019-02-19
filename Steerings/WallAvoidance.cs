@@ -12,7 +12,6 @@ class AvoidanceRay {
         this.direction = direction;
         length = direction.magnitude;
     }
-
 }
 
 public class WallAvoidance : SteeringBehaviour
@@ -23,7 +22,7 @@ public class WallAvoidance : SteeringBehaviour
     private LayerMask layerMask;
 
     [SerializeField]
-    private float obstacleMaxDistance = 10, avoidDistance = 1f;
+    private float obstacleMaxDistance = 10, avoidDistance = 1f, whiskerSeparation = 0.35f;
 
     private Vector3 desiredVelocity = Vector3.zero;
 
@@ -32,15 +31,14 @@ public class WallAvoidance : SteeringBehaviour
     {
         Steering steering = new Steering();
 
-        float whiskerSeparation = 2f;// temporal
         Vector3 target = Vector3.zero;
 
-        Vector3 leftRay = body.position;// - (body.velocity.normalized * whiskerSeparation / 2);
-        Vector3 rightRay = body.position;// + (body.velocity.normalized * whiskerSeparation / 2);
+        Vector3 leftRay = body.position + body.getRight() * whiskerSeparation/2f;
+        Vector3 rightRay = body.position - body.getRight() * whiskerSeparation/2f;
         Vector3 centerRay = body.position;
 
-        AvoidanceRay[] rays = { new AvoidanceRay(leftRay, Quaternion.Euler(0, 30, 0) * body.velocity.normalized * obstacleMaxDistance/2.2f),
-                                new AvoidanceRay(rightRay, Quaternion.Euler(0, -30, 0) * body.velocity.normalized * obstacleMaxDistance/2.2f),
+        AvoidanceRay[] rays = { new AvoidanceRay(leftRay, Util.rotateVector(body.velocity.normalized,30) * obstacleMaxDistance/2.2f),
+                                new AvoidanceRay(rightRay, Util.rotateVector(body.velocity.normalized,-30) * obstacleMaxDistance/2.2f),
                                 new AvoidanceRay(centerRay, body.velocity.normalized * obstacleMaxDistance) };
 
         RaycastHit hitInfo;

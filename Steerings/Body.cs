@@ -14,11 +14,21 @@ public class Body : MonoBehaviour {
     public float rotation;
     public Vector3 velocity;
 
+
     protected void Start() {
         velocity = Vector3.zero;
         rotation = 0;
         orientation = transform.eulerAngles.y;
         position = transform.position;
     }
+
+    public Vector3 getForward() {
+        return Util.rotateVector(Vector3.forward, orientation).normalized;
+    }
+
+    public Vector3 getRight() {
+        return Util.rotateVector(Vector3.right, orientation).normalized;
+    }
+
 
 }

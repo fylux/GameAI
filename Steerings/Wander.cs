@@ -17,7 +17,7 @@ public class Wander : SteeringBehaviour
     private Vector3 wanderForce;
     //private Vector3 inicio;
 
-    private void Start() {
+    private new void Start() {
         base.Start();
         wanderForce = Vector3.zero;
     }
@@ -26,11 +26,11 @@ public class Wander : SteeringBehaviour
     public Steering Steer() {
         Steering steering = new Steering();
 
-        if (body.velocity == Vector3.zero)
+       /* if (body.velocity == Vector3.zero)
         {
             body.velocity = new Vector3(1, 0, 0);
             wanderForce = GetRandomWanderForce(body.velocity);
-        }
+        }*/
 
         var desiredVelocity = GetWanderForce(body.velocity);
         desiredVelocity = desiredVelocity.normalized * MaxAccel;
@@ -62,11 +62,12 @@ public class Wander : SteeringBehaviour
         var circleCenter = velocity.normalized;
         var randomPoint = Random.insideUnitCircle * 10;
 
-        var displacement = new Vector3(randomPoint.x, randomPoint.y) * CircleRadius;
+        /*var displacement = new Vector3(randomPoint.x, randomPoint.y) * CircleRadius;
         displacement = Quaternion.LookRotation(velocity) * displacement;
 
-        var wanderForce = circleCenter + displacement;
-        return wanderForce;
+        var wanderForce = circleCenter + displacement;*/
+
+        return Seek.Steer(randomPoint, body, SeekType.REYNOLDS, true, MaxAccel).lineal;
     }
 
     private void drawRays(Vector3 dv)

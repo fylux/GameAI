@@ -10,7 +10,7 @@ public class CrowdAlign : SteeringBehaviour
     [SerializeField]
     private float followersRadius = 3f;
 
-    private void Start()
+    private new void Start()
     {
         base.Start();
         followers = GameObject.FindGameObjectsWithTag("NPC");

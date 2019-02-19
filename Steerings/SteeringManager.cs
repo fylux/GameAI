@@ -48,6 +48,6 @@ public class SteeringManager : Body {
         rotation = Mathf.Clamp(rotation,-MaxRotation, MaxRotation);
 
         transform.position = position;
-        transform.eulerAngles = new Vector3(0, orientation, 0);
+        transform.eulerAngles = new Vector3(0, orientation, 0); //esto se dejaba asi?
     }
 }

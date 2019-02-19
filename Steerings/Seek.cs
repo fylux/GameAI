@@ -7,13 +7,10 @@ public enum SeekType
     MILLINGTON, REYNOLDS
 };
 
-public class Seek : SteeringBehaviour
+public class Seek : SteeringBehaviourTarget
 {
     [SerializeField]
     private SeekType seekType = SeekType.REYNOLDS;
-
-    [SerializeField]
-    private Body target;
 
 
     override
@@ -34,6 +31,23 @@ public class Seek : SteeringBehaviour
         return steering;
 
     }
+
+    public static Steering Steer(Vector3 punto, Body body, SeekType st, bool visibleRays, float MaxAccel)
+    {
+        Steering steering = new Steering();
+
+        Debug.Log(punto);
+        var desiredVelocity = (punto - body.position).normalized * MaxAccel;
+
+        if (st == SeekType.REYNOLDS)
+            steering.lineal = (desiredVelocity - body.velocity);
+        else
+            steering.lineal = desiredVelocity;
+
+        return steering;
+
+    }
+
 
     private void drawRays(Vector3 dv, Vector3 v) {
         var z = dv.normalized * 2 - transform.forward * 2;

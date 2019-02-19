@@ -24,7 +24,7 @@ public class Leader : SteeringBehaviour
     [SerializeField]
     private float maxSeparation;
 
-    private void Start()
+    private new void Start()
     {
         base.Start();
         targetVelocity = target.GetComponent<Rigidbody>().velocity;

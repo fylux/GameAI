@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum MovementType
-{
+public enum MovementType {
     UNIFORM, ACCELERATED
 };
 
@@ -14,30 +13,26 @@ public class SteeringManager : Body {
 
     private SteeringBehaviour[] steers;
 
-    private new void Start()
-    {
+    private new void Start() {
         base.Start();
         steers = GetComponents<SteeringBehaviour>();
     }
 
-    private void Update()
-    {
+    private void Update() {
            Move();
     }
 
-    protected void Move()
-    {
+    protected void Move() {
         Vector3 steeringLineal = Vector3.zero;
         float steeringAngular = 0.0f;
-        foreach (SteeringBehaviour steer in steers)
-        {
+        foreach (SteeringBehaviour steer in steers) {
             Steering steering = steer.Steer();
             steeringLineal += steering.lineal * steer.blendPriority;
             steeringAngular += steering.angular * steer.blendPriority;
         }
 
         steeringLineal = Vector3.ClampMagnitude(steeringLineal, MaxAccel);
-        steeringAngular = Mathf.Clamp(steeringAngular,-MaxAngular, MaxAngular);
+        steeringAngular = Mathf.Clamp(steeringAngular, -MaxAngular, MaxAngular);
 
         position += velocity * Time.deltaTime;
         orientation += rotation * Time.deltaTime;
@@ -45,9 +40,9 @@ public class SteeringManager : Body {
         rotation += steeringAngular * Time.deltaTime;
 
         velocity = Vector3.ClampMagnitude(velocity, MaxVelocity);
-        rotation = Mathf.Clamp(rotation,-MaxRotation, MaxRotation);
+        rotation = Mathf.Clamp(rotation, -MaxRotation, MaxRotation);
 
         transform.position = position;
-        transform.eulerAngles = new Vector3(0, orientation, 0); //esto se dejaba asi?
+        transform.eulerAngles = new Vector3(0, orientation, 0);
     }
 }

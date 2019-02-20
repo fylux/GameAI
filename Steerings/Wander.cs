@@ -67,7 +67,7 @@ public class Wander : SteeringBehaviour
 
         var wanderForce = circleCenter + displacement;*/
 
-        return Seek.Steer(randomPoint, body, SeekType.REYNOLDS, true, MaxAccel).lineal;
+        return Seek.Steer(randomPoint, body, MaxAccel, visibleRays).lineal;
     }
 
     private void drawRays(Vector3 dv)

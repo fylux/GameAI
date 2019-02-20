@@ -4,7 +4,6 @@ using UnityEngine;
 
 public abstract class SteeringBehaviour : MonoBehaviour {
 
-    [SerializeField]
     protected Body body;
 
     [SerializeField]

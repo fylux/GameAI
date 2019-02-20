@@ -22,7 +22,7 @@ public class WallAvoidance : SteeringBehaviour
     private LayerMask layerMask;
 
     [SerializeField]
-    private float obstacleMaxDistance = 10, avoidDistance = 1f, whiskerSeparation = 0.35f;
+    private float obstacleMaxDistance = 3, avoidDistance = 3f, whiskerSeparation = 0.3f;
 
     private Vector3 desiredVelocity = Vector3.zero;
 
@@ -52,14 +52,13 @@ public class WallAvoidance : SteeringBehaviour
                 rayHit = true;
             }
             else if (visibleRays) {
-                Debug.DrawRay(ray.startPoint, ray.direction.normalized * ray.length, Color.green);
+                Debug.DrawRay(ray.startPoint, ray.direction.normalized * ray.length, Color.yellow);
             }
         }
 
-       /* if (avoidanceForce != Vector3.zero) {
-            Seek seek = new Seek(target);
-            steering.lineal = seek.Steer();
-        }*/
+        if (rayHit) {
+            steering = Seek.Steer(target, body, MaxAccel, visibleRays);
+        }
         return steering;
     }
 }

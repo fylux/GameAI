@@ -30,5 +30,10 @@ public class Body : MonoBehaviour {
         return Util.rotateVector(Vector3.right, orientation).normalized;
     }
 
+    private void OnDrawGizmos() {
+        /*Debug.DrawLine(position, position + getForward());
+        Debug.DrawLine(position, position + getRight());*/
+    }
+
 
 }

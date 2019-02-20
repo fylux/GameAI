@@ -4,12 +4,12 @@ using UnityEngine;
 
 public abstract class SteeringBehaviourTarget : SteeringBehaviour
 {
-    public Body target;
+    [SerializeField]
+    protected Body target;
 
     public override abstract Steering Steer();
 
-    public Steering Steer (Body body)
-    {
+    public Steering Steer (Body body) {
         target = body;
         return Steer();
     }

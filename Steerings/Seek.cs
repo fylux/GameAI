@@ -14,45 +14,29 @@ public class Seek : SteeringBehaviourTarget
 
 
     override
-    public Steering Steer()
-    {
-        Steering steering = new Steering();
-
-        var desiredVelocity = (target.position -  body.position).normalized * MaxAccel;
-
-        if (seekType == SeekType.REYNOLDS)
-            steering.lineal = (desiredVelocity - body.velocity);
-        else
-            steering.lineal = desiredVelocity;
-
-        if (visibleRays)
-            drawRays(steering.lineal, body.velocity);
-
-        return steering;
-
+    public Steering Steer() {
+        return Steer(target.position, body, MaxAccel, visibleRays, seekType);
     }
 
-    public static Steering Steer(Vector3 punto, Body body, SeekType st, bool visibleRays, float MaxAccel)
+    public static Steering Steer(Vector3 target, Body body, float MaxAccel, bool visibleRays = false, SeekType st = SeekType.REYNOLDS)
     {
         Steering steering = new Steering();
 
-        Debug.Log(punto);
-        var desiredVelocity = (punto - body.position).normalized * MaxAccel;
+        var desiredVelocity = (target - body.position).normalized * MaxAccel;
 
         if (st == SeekType.REYNOLDS)
             steering.lineal = (desiredVelocity - body.velocity);
         else
             steering.lineal = desiredVelocity;
 
-        return steering;
+        if (visibleRays)
+            drawRays(body.position, steering.lineal);
 
+        return steering;
     }
 
 
-    private void drawRays(Vector3 dv, Vector3 v) {
-        var z = dv.normalized * 2 - transform.forward * 2;
-        Debug.DrawRay(transform.position, v.normalized * 2, Color.green);
-        Debug.DrawRay(transform.position, dv.normalized * 2, Color.blue);
-        Debug.DrawRay(v.normalized * 2, z, Color.magenta);
+    private static void drawRays(Vector3 pos,  Vector3 v) {
+        Debug.DrawRay(pos, v.normalized * 2, Color.green);
     }
 }

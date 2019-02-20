@@ -13,7 +13,8 @@ public class Flee : SteeringBehaviour
     override
     public Steering Steer()
     {
-        Steering steering = new Steering();
+        return Flee.Steer(target.position, body, MaxAccel, visibleRays, seekType);
+        /* steering = new Steering();
 
         var desiredVelocity = (body.position - target.position).normalized * MaxAccel;
 
@@ -25,14 +26,23 @@ public class Flee : SteeringBehaviour
         if (visibleRays)
             drawRays(steering.lineal, body.velocity);
 
-        return steering;
+        return steering;*/
 
     }
 
-    private void drawRays(Vector3 dv, Vector3 v) {
-        var z = dv.normalized * 2 - transform.forward * 2;
-        Debug.DrawRay(transform.position, v.normalized * 2, Color.green);
-        Debug.DrawRay(transform.position, dv.normalized * 2, Color.blue);
-        Debug.DrawRay(v.normalized * 2, z, Color.magenta);
+    public static Steering Steer(Vector3 target, Body body, float MaxAccel, bool visibleRays = false, SeekType seekType = SeekType.REYNOLDS)
+    {
+        Steering steering = Seek.Steer(target, body, MaxAccel, false, seekType);
+        steering.lineal *= -1f;
+        steering.angular *= -1f;
+
+        if (visibleRays)
+            drawRays(steering.lineal, body.velocity);
+
+        return steering;
+    }
+
+    private static void drawRays(Vector3 pos, Vector3 v) {
+        Debug.DrawRay(pos, v.normalized * 2, Color.green);
     }
 }

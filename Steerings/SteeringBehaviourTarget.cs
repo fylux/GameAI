@@ -9,7 +9,7 @@ public abstract class SteeringBehaviourTarget : SteeringBehaviour
 
     public override abstract Steering Steer();
 
-    public Steering Steer (Body body) {
+    /*public Steering Steer (Body body) {
         target = body;
         return Steer();
     }
@@ -18,5 +18,5 @@ public abstract class SteeringBehaviourTarget : SteeringBehaviour
     {
         target = body;
         return Steer();
-    }
+    }*/
 }

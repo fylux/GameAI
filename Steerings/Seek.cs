@@ -18,13 +18,13 @@ public class Seek : SteeringBehaviourTarget
         return Steer(target.position, body, MaxAccel, visibleRays, seekType);
     }
 
-    public static Steering Steer(Vector3 target, Body body, float MaxAccel, bool visibleRays = false, SeekType st = SeekType.REYNOLDS)
+    public static Steering Steer(Vector3 target, Body body, float MaxAccel, bool visibleRays = false, SeekType seekType = SeekType.REYNOLDS)
     {
         Steering steering = new Steering();
 
         var desiredVelocity = (target - body.position).normalized * MaxAccel;
 
-        if (st == SeekType.REYNOLDS)
+        if (seekType == SeekType.REYNOLDS)
             steering.lineal = (desiredVelocity - body.velocity);
         else
             steering.lineal = desiredVelocity;

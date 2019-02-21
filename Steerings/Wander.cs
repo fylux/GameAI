@@ -35,9 +35,9 @@ public class Wander : SteeringBehaviour
         var desiredVelocity = GetWanderForce(npc.velocity);
         desiredVelocity = desiredVelocity.normalized * maxAccel;
 
-        if (visibleRays) drawRays(desiredVelocity);
-
         steering.linear = (desiredVelocity - npc.velocity);
+
+        if (visibleRays) drawRays(npc.position, steering.linear);
 
         return steering;
     }
@@ -70,13 +70,6 @@ public class Wander : SteeringBehaviour
         return Seek.getSteering(randomPoint, npc, maxAccel, visibleRays).linear;
     }
 
-    private void drawRays(Vector3 dv)
-    {
-        var z = dv.normalized * 2 - transform.forward * 2;
-        Debug.DrawRay(transform.position, transform.forward * 2, Color.green);
-        Debug.DrawRay(transform.position, dv.normalized * 2, Color.blue);
-        Debug.DrawRay(transform.position + transform.forward * 2, z, Color.magenta);
-    }
 
     /* Version giro bruso
      * 

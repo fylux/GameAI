@@ -22,6 +22,21 @@ public class Body : MonoBehaviour {
         position = transform.position;
     }
 
+    protected void Update() {
+        position += velocity * Time.deltaTime;
+        orientation += rotation * Time.deltaTime;
+
+        UpdateForces();
+
+        velocity = Vector3.ClampMagnitude(velocity, MaxVelocity);
+        rotation = Mathf.Clamp(rotation, -MaxRotation, MaxRotation);
+
+        transform.position = position;
+        transform.eulerAngles = new Vector3(0, orientation, 0);
+    }
+
+    protected virtual void UpdateForces() { }
+
     public Vector3 getForward() {
         return Util.rotateVector(Vector3.forward, orientation).normalized;
     }
@@ -30,22 +45,8 @@ public class Body : MonoBehaviour {
         return Util.rotateVector(Vector3.right, orientation).normalized;
     }
 
-    protected void Movement(Vector3 newVelocity, float newRotation)
-    {
-        position += velocity * Time.deltaTime;
-        orientation += rotation * Time.deltaTime;
-
-        velocity = Vector3.ClampMagnitude(newVelocity, MaxVelocity);
-        rotation = Mathf.Clamp(newRotation, -MaxRotation, MaxRotation);
-
-        transform.position = position;
-        transform.eulerAngles = new Vector3(0, orientation, 0);
-    }
-
     private void OnDrawGizmos() {
         /*Debug.DrawLine(position, position + getForward());
         Debug.DrawLine(position, position + getRight());*/
     }
-
-
 }

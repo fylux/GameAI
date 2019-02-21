@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class Pursue : SteeringBehaviourTarget
+public class Pursue : SteeringBehaviour
 {
     [SerializeField]
     private SeekType seekType = SeekType.REYNOLDS;
+
+    [SerializeField]
+    protected Body target;
 
     [SerializeField]
     private float maxPrediction;

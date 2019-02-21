@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Face : SteeringBehaviourTarget {
+public class Face : SteeringBehaviour {
 
+    [SerializeField]
+    protected Body target;
 
     override
     public Steering Steer()

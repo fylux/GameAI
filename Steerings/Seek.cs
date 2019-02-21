@@ -7,11 +7,13 @@ public enum SeekType
     MILLINGTON, REYNOLDS
 };
 
-public class Seek : SteeringBehaviourTarget
+public class Seek : SteeringBehaviour
 {
     [SerializeField]
     private SeekType seekType = SeekType.REYNOLDS;
 
+    [SerializeField]
+    protected Body target;
 
     override
     public Steering Steer() {

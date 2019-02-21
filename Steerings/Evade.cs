@@ -4,10 +4,13 @@ using UnityEngine;
 
 
 
-public class Evade : SteeringBehaviourTarget
+public class Evade : SteeringBehaviour
 {
     [SerializeField]
     private SeekType seekType = SeekType.REYNOLDS;
+
+    [SerializeField]
+    protected Body target;
 
     [SerializeField]
     private float maxPrediction;

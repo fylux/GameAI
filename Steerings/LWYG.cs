@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LWYG : SteeringBehaviourTarget {
+public class LWYG : SteeringBehaviour {
 
     [SerializeField]
     private float maxPrediction;
+
+    [SerializeField]
+    protected Body target;
 
     public override Steering Steer()
     {

@@ -41,10 +41,10 @@ public class LeaderFollowing : SteeringBehaviour
     }
 
     override
-    public Steering Steer()
+    public Steering getSteering()
     {
         Steering steering = new Steering();
-        steering.lineal = FollowLeader(body.velocity);
+        steering.linear = FollowLeader(npc.velocity);
 
         return steering;
     }
@@ -72,12 +72,12 @@ public class LeaderFollowing : SteeringBehaviour
         if (distance < slowingRadius)
         {
             // Inside the slowing area
-            desired_velocity = desired_velocity.normalized * MaxAccel * (distance / slowingRadius);
+            desired_velocity = desired_velocity.normalized * maxAccel * (distance / slowingRadius);
         }
         else
         {
             // Outside the slowing area.
-            desired_velocity = desired_velocity.normalized * MaxAccel;
+            desired_velocity = desired_velocity.normalized * maxAccel;
       }
 
         // Set the steering based on this
@@ -137,7 +137,7 @@ public class LeaderFollowing : SteeringBehaviour
 
     private Vector3 Evade (Vector3 velocity)
     {
-        float T = Vector3.Distance(target.transform.position, transform.position) * MaxAccel;
+        float T = Vector3.Distance(target.transform.position, transform.position) * maxAccel;
 
         Vector3 posicionFutura = target.transform.position + targetVelocity * T;
 
@@ -146,7 +146,7 @@ public class LeaderFollowing : SteeringBehaviour
 
     private Vector3 Flee (Vector3 velocity)
     {
-        var desiredVelocity = (transform.position - target.transform.position ).normalized * MaxAccel;
+        var desiredVelocity = (transform.position - target.transform.position ).normalized * maxAccel;
 
         return (desiredVelocity - velocity);
     }

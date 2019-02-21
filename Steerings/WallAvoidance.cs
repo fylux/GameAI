@@ -14,50 +14,47 @@ class AvoidanceRay {
     }
 }
 
-public class WallAvoidance : SteeringBehaviour
-{
-    //MaxAccel is usless
+public class WallAvoidance : SteeringBehaviour {
+    //maxAccel is usless
 
     [SerializeField]
     private LayerMask layerMask;
 
     [SerializeField]
-    private float obstacleMaxDistance = 3, avoidDistance = 3f, whiskerSeparation = 0.3f;
-
-    private Vector3 desiredVelocity = Vector3.zero;
+    private float obstacleMaxDist = 3, avoidDist = 3f, whiskerSeparation = 0.3f;
 
     override
-    public Steering Steer()
-    {
+    public Steering getSteering() {
+        return getSteering(npc, maxAccel, layerMask, obstacleMaxDist, avoidDist, whiskerSeparation, visibleRays);
+    }
+
+    public static Steering getSteering(Body npc, float maxAccel, LayerMask layerMask, float obstacleMaxDist, float avoidDist, float whiskerSeparation, bool visibleRays = false) {
         Steering steering = new Steering();
 
         Vector3 target = Vector3.zero;
 
-        Vector3 leftRay = body.position + body.getRight() * whiskerSeparation/2f;
-        Vector3 rightRay = body.position - body.getRight() * whiskerSeparation/2f;
-        Vector3 centerRay = body.position;
+        Vector3 leftRay = npc.position + npc.getRight() * whiskerSeparation/2f;
+        Vector3 rightRay = npc.position - npc.getRight() * whiskerSeparation/2f;
+        Vector3 centerRay = npc.position;
 
-        AvoidanceRay[] rays = { new AvoidanceRay(leftRay, Util.rotateVector(body.velocity.normalized,30) * obstacleMaxDistance/2.2f),
-                                new AvoidanceRay(rightRay, Util.rotateVector(body.velocity.normalized,-30) * obstacleMaxDistance/2.2f),
-                                new AvoidanceRay(centerRay, body.velocity.normalized * obstacleMaxDistance) };
+        AvoidanceRay[] rays = { new AvoidanceRay(leftRay, Util.rotateVector(npc.velocity.normalized,30) * obstacleMaxDist/2.2f),
+                                new AvoidanceRay(rightRay, Util.rotateVector(npc.velocity.normalized,-30) * obstacleMaxDist/2.2f),
+                                new AvoidanceRay(centerRay, npc.velocity.normalized * obstacleMaxDist) };
 
         RaycastHit hitInfo;
 
         bool rayHit = false;
         foreach (AvoidanceRay ray in rays) {
             if (Physics.Raycast(ray.startPoint, ray.direction, out hitInfo, ray.length, layerMask) && !rayHit) {
-                target = hitInfo.normal * avoidDistance + hitInfo.point;
+                target = hitInfo.normal * avoidDist + hitInfo.point;
                 if (visibleRays) Debug.DrawLine(ray.startPoint, hitInfo.point, Color.red);
                 
                 rayHit = true;
+                steering = Seek.getSteering(target, npc, maxAccel, visibleRays);
             }
             else if (visibleRays) {
                 Debug.DrawRay(ray.startPoint, ray.direction.normalized * ray.length, Color.yellow);
             }
-        }
-
-        if (rayHit) {
-            steering = Seek.Steer(target, body, MaxAccel, visibleRays);
         }
         return steering;
     }

@@ -6,13 +6,13 @@ public class Wander : SteeringBehaviour
 {
 
     [SerializeField]
-    private float CircleRadius = 1f;
+    private float circleRadius = 1f;
 
     [SerializeField]
     private int wanderCooldown = 90;
 
     [SerializeField]
-    private float MaxRadius = 25f;
+    private float maxRadius = 25f;
 
     private Vector3 wanderForce;
     //private Vector3 inicio;
@@ -23,27 +23,27 @@ public class Wander : SteeringBehaviour
     }
     
     override
-    public Steering Steer() {
+    public Steering getSteering() {
         Steering steering = new Steering();
 
-       /* if (body.velocity == Vector3.zero)
+       /* if (npc.velocity == Vector3.zero)
         {
-            body.velocity = new Vector3(1, 0, 0);
-            wanderForce = GetRandomWanderForce(body.velocity);
+            npc.velocity = new Vector3(1, 0, 0);
+            wanderForce = GetRandomWanderForce(npc.velocity);
         }*/
 
-        var desiredVelocity = GetWanderForce(body.velocity);
-        desiredVelocity = desiredVelocity.normalized * MaxAccel;
+        var desiredVelocity = GetWanderForce(npc.velocity);
+        desiredVelocity = desiredVelocity.normalized * maxAccel;
 
         if (visibleRays) drawRays(desiredVelocity);
 
-        steering.lineal = (desiredVelocity - body.velocity);
+        steering.linear = (desiredVelocity - npc.velocity);
 
         return steering;
     }
 
     private Vector3 GetWanderForce(Vector3 velocity) {
-       /* if (transform.position.magnitude > MaxRadius)
+       /* if (transform.position.magnitude > maxRadius)
         {
             var directionToCenter = (inicio - transform.position).normalized;
             wanderForce = velocity.normalized + directionToCenter;
@@ -62,12 +62,12 @@ public class Wander : SteeringBehaviour
         var circleCenter = velocity.normalized;
         var randomPoint = Random.insideUnitCircle * 10;
 
-        /*var displacement = new Vector3(randomPoint.x, randomPoint.y) * CircleRadius;
+        /*var displacement = new Vector3(randomPoint.x, randomPoint.y) * circleRadius;
         displacement = Quaternion.LookRotation(velocity) * displacement;
 
         var wanderForce = circleCenter + displacement;*/
 
-        return Seek.Steer(randomPoint, body, MaxAccel, visibleRays).lineal;
+        return Seek.getSteering(randomPoint, npc, maxAccel, visibleRays).linear;
     }
 
     private void drawRays(Vector3 dv)

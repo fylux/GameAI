@@ -3,25 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class Pursue : SteeringBehaviour
-{
-    [SerializeField]
-    private SeekType seekType = SeekType.REYNOLDS;
-
-    [SerializeField]
-    protected Body target;
+public class Pursue : SteeringBehaviourTarget {
 
     [SerializeField]
     private float maxPrediction;
 
     override
-    public Steering Steer()
-    {
-        Steering steering = new Steering();
+    public Steering getSteering() {
+        return getSteering(target, npc, maxAccel, maxPrediction, visibleRays, seekT);
+    }
 
-        Vector3 direction = target.position - body.position;
+    public static Steering getSteering(Body target, Body npc, float maxAccel, float maxPrediction, bool visibleRays = false, SeekT seekT = SeekT.REYNOLDS) {
+        Vector3 direction = target.position - npc.position;
         float distance = direction.magnitude;
-        float speed = body.velocity.magnitude;
+        float speed = npc.velocity.magnitude;
 
         float prediction;
         if (speed <= distance / maxPrediction)
@@ -31,7 +26,6 @@ public class Pursue : SteeringBehaviour
 
         Vector3 pred_target = target.position + (target.velocity * prediction);
 
-        return Seek.Steer(pred_target,body,MaxAccel,visibleRays, seekType);
+        return Seek.getSteering(pred_target, npc, maxAccel, visibleRays, seekT);
     }
-
 }

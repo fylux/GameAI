@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Flee : SteeringBehaviourTarget {
+public class Leave : SteeringBehaviourTarget {
 
     override
     public Steering getSteering() {
@@ -10,10 +10,6 @@ public class Flee : SteeringBehaviourTarget {
     }
 
     public static Steering getSteering(Vector3 target, Body npc, float maxAccel, bool visibleRays = false, SeekT seekT = SeekT.REYNOLDS) {
-        Steering steering = -Seek.getSteering(target, npc, maxAccel, false, seekT);
-
-        if (visibleRays) drawRays(steering.linear, npc.velocity);
-
-        return steering;
+        return Flee.getSteering(target, npc, maxAccel, visibleRays, seekT);
     }
 }

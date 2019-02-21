@@ -2,43 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum SeekType
-{
-    MILLINGTON, REYNOLDS
-};
 
-public class Seek : SteeringBehaviour
-{
-    [SerializeField]
-    private SeekType seekType = SeekType.REYNOLDS;
 
-    [SerializeField]
-    protected Body target;
+public class Seek : SteeringBehaviourTarget {
 
     override
-    public Steering Steer() {
-        return Steer(target.position, body, MaxAccel, visibleRays, seekType);
+    public Steering getSteering() {
+        return getSteering(target.position, npc, maxAccel, visibleRays, seekT);
     }
 
-    public static Steering Steer(Vector3 target, Body body, float MaxAccel, bool visibleRays = false, SeekType seekType = SeekType.REYNOLDS)
-    {
+    public static Steering getSteering(Vector3 target, Body npc, float maxAccel, bool visibleRays = false, SeekT seekT = SeekT.REYNOLDS) {
         Steering steering = new Steering();
 
-        var desiredVelocity = (target - body.position).normalized * MaxAccel;
+        var desiredVelocity = (target - npc.position).normalized * maxAccel;
 
-        if (seekType == SeekType.REYNOLDS)
-            steering.lineal = (desiredVelocity - body.velocity);
+        if (seekT == SeekT.REYNOLDS)
+            steering.linear = (desiredVelocity - npc.velocity);
         else
-            steering.lineal = desiredVelocity;
+            steering.linear = desiredVelocity;
 
         if (visibleRays)
-            drawRays(body.position, steering.lineal);
+            drawRays(npc.position, steering.linear);
 
         return steering;
-    }
-
-
-    private static void drawRays(Vector3 pos,  Vector3 v) {
-        Debug.DrawRay(pos, v.normalized * 2, Color.green);
     }
 }

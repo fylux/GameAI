@@ -17,7 +17,7 @@ public class CrowdAlign : SteeringBehaviour
     }
 
     override
-    public Steering Steer()
+    public Steering getSteering()
     {
         Steering steering = new Steering();
 

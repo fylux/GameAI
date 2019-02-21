@@ -23,26 +23,19 @@ public class SteeringManager : Body {
     }
 
     protected void Move() {
-        Vector3 steeringLineal = Vector3.zero;
+        Vector3 steeringLinear = Vector3.zero;
         float steeringAngular = 0.0f;
         foreach (SteeringBehaviour steer in steers) {
-            Steering steering = steer.Steer();
-            steeringLineal += steering.lineal * steer.blendPriority;
+            Steering steering = steer.getSteering();
+            steeringLinear += steering.linear * steer.blendPriority;
             steeringAngular += steering.angular * steer.blendPriority;
         }
 
-        steeringLineal = Vector3.ClampMagnitude(steeringLineal, MaxAccel);
+        steeringLinear = Vector3.ClampMagnitude(steeringLinear, maxAccel);
         steeringAngular = Mathf.Clamp(steeringAngular, -MaxAngular, MaxAngular);
 
-        position += velocity * Time.deltaTime;
-        orientation += rotation * Time.deltaTime;
-        velocity += steeringLineal * Time.deltaTime;
-        rotation += steeringAngular * Time.deltaTime;
-
-        velocity = Vector3.ClampMagnitude(velocity, MaxVelocity);
-        rotation = Mathf.Clamp(rotation, -MaxRotation, MaxRotation);
-
-        transform.position = position;
-        transform.eulerAngles = new Vector3(0, orientation, 0);
+        Vector3 newVelocity = velocity + steeringLinear * Time.deltaTime;
+        float newRotation = rotation + steeringAngular * Time.deltaTime;
+        Movement(newVelocity, newRotation);
     }
 }

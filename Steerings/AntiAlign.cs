@@ -17,13 +17,13 @@ public class AntiAlign : SteeringBehaviour
     private float timeToTarget = 0.1f;
 
     override
-	public Steering Steer()
+	public Steering getSteering()
     {
         Steering steering = new Steering();
 
         float orienTarget = target.GetComponent<Body>().orientation;
 
-        float rotacion = orienTarget - body.orientation;
+        float rotacion = orienTarget - npc.orientation;
 
         rotacion = MapToRange(rotacion);
         float rotationSize = Mathf.Abs(rotacion);
@@ -33,21 +33,21 @@ public class AntiAlign : SteeringBehaviour
 
         float targetRotation;
         if (rotationSize > slowRadius)
-            targetRotation = body.MaxRotation;
+            targetRotation = npc.MaxRotation;
         else
-            targetRotation = body.MaxRotation * rotationSize / slowRadius;
+            targetRotation = npc.MaxRotation * rotationSize / slowRadius;
 
         targetRotation *= rotacion / rotationSize;
 
-        steering.angular = targetRotation - body.rotation;
+        steering.angular = targetRotation - npc.rotation;
         steering.angular /= timeToTarget;
 
         float angularAccel = Mathf.Abs(steering.angular);
 
-        if (angularAccel > body.MaxAngular)
+        if (angularAccel > npc.MaxAngular)
         {
             steering.angular /= angularAccel;
-            steering.angular *= body.MaxAngular;
+            steering.angular *= npc.MaxAngular;
         }
 
         return steering;

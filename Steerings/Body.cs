@@ -5,7 +5,7 @@ using UnityEngine;
 public class Body : MonoBehaviour {
 
     public float MaxVelocity = 3;
-    public float MaxAccel = 15;
+    public float maxAccel = 15;
     public float MaxRotation = 50;
     public float MaxAngular = 50;
 
@@ -28,6 +28,18 @@ public class Body : MonoBehaviour {
 
     public Vector3 getRight() {
         return Util.rotateVector(Vector3.right, orientation).normalized;
+    }
+
+    protected void Movement(Vector3 newVelocity, float newRotation)
+    {
+        position += velocity * Time.deltaTime;
+        orientation += rotation * Time.deltaTime;
+
+        velocity = Vector3.ClampMagnitude(newVelocity, MaxVelocity);
+        rotation = Mathf.Clamp(newRotation, -MaxRotation, MaxRotation);
+
+        transform.position = position;
+        transform.eulerAngles = new Vector3(0, orientation, 0);
     }
 
     private void OnDrawGizmos() {

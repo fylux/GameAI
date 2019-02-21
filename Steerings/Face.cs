@@ -8,11 +8,11 @@ public class Face : SteeringBehaviour {
     protected Body target;
 
     override
-    public Steering Steer()
+    public Steering getSteering()
     {
         Steering steering = new Steering();
 
-        Vector3 direction = target.position - body.position;
+        Vector3 direction = target.position - npc.position;
 
         if (direction.magnitude <= 0.0f)
             return steering;
@@ -21,7 +21,7 @@ public class Face : SteeringBehaviour {
         targetOrientation *= Mathf.Rad2Deg;
 
         // virtualTarget.GetComponent<Body>.orientation = targetOrientation
-        // return Align.Steer(...), siendo el target con el que nos vamos a alinear el virtualTarget
+        // return Align.getSteering(...), siendo el target con el que nos vamos a alinear el virtualTarget
 
         return steering;
     }

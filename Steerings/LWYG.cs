@@ -10,13 +10,13 @@ public class LWYG : SteeringBehaviour {
     [SerializeField]
     protected Body target;
 
-    public override Steering Steer()
+    public override Steering getSteering()
     {
         Steering steering = new Steering();
 
-        Vector3 direction = target.position - body.position;
+        Vector3 direction = target.position - npc.position;
         float distance = direction.magnitude;
-        float speed = body.velocity.magnitude;
+        float speed = npc.velocity.magnitude;
 
         float prediction;
         if (speed <= distance / maxPrediction)
@@ -26,7 +26,7 @@ public class LWYG : SteeringBehaviour {
 
         Vector3 pred_target = target.position + (target.velocity * prediction);
 
-        // return Face.Steer(...), siendo el target nuestro pred_target
+        // return Face.getSteering(...), siendo el target nuestro pred_target
 
         return steering;
     }

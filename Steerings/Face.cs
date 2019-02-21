@@ -2,17 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Face : SteeringBehaviour {
+public class Face : SteeringBehaviourTarget {
 
     [SerializeField]
-    protected Body target;
+    private float targetRadius;
+
+    [SerializeField]
+    private float slowRadius;
+
+    [SerializeField]
+    private float timeToTarget = 0.1f;
 
     override
     public Steering getSteering()
     {
+        return Face.Steer(target.position, npc, targetRadius, slowRadius, timeToTarget);
+    }
+
+    public static Steering Steer(Vector3 targetPosition, Body npc, float targetRadius, float slowRadius, float timeToTarget)
+    {
         Steering steering = new Steering();
 
-        Vector3 direction = target.position - npc.position;
+        Vector3 direction = targetPosition - npc.position;
 
         if (direction.magnitude <= 0.0f)
             return steering;
@@ -21,9 +32,9 @@ public class Face : SteeringBehaviour {
         targetOrientation *= Mathf.Rad2Deg;
 
         // virtualTarget.GetComponent<Body>.orientation = targetOrientation
-        // return Align.getSteering(...), siendo el target con el que nos vamos a alinear el virtualTarget
+        // return Align.Steer(...), siendo el target con el que nos vamos a alinear el virtualTarget
 
-        return steering;
+        return Align.Steer(targetOrientation, npc, targetRadius, slowRadius, timeToTarget);
     }
 
 

@@ -19,7 +19,7 @@ public class Wander : SteeringBehaviour
 
     private new void Start() {
         base.Start();
-        wanderForce = Vector3.zero;
+        wanderForce = GetRandomWanderForce(npc.velocity);
     }
     
     override

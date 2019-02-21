@@ -2,13 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LWYG : SteeringBehaviour {
+public class LWYG : SteeringBehaviourTarget {
+
+    [SerializeField]
+    private float targetRadius;
+
+    [SerializeField]
+    private float slowRadius;
+
+    [SerializeField]
+    private float timeToTarget = 0.1f;
 
     [SerializeField]
     private float maxPrediction;
-
-    [SerializeField]
-    protected Body target;
 
     public override Steering getSteering()
     {
@@ -25,9 +31,7 @@ public class LWYG : SteeringBehaviour {
             prediction = distance / speed;
 
         Vector3 pred_target = target.position + (target.velocity * prediction);
-
-        // return Face.getSteering(...), siendo el target nuestro pred_target
-
-        return steering;
+        
+        return Face.Steer(pred_target, npc, targetRadius, slowRadius, timeToTarget);
     }
 }

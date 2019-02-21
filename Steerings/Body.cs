@@ -16,8 +16,8 @@ public class Body : MonoBehaviour {
 
 
     protected void Start() {
-        velocity = Vector3.zero;
-        rotation = 0;
+      //  velocity = Vector3.zero;
+      //  rotation = 0;
         orientation = transform.eulerAngles.y;
         position = transform.position;
     }

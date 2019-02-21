@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Leader : SteeringBehaviour
+public class Leader : SteeringBehaviourTarget
 {
     [SerializeField]
     private float leaderDistance = 2f;
@@ -12,9 +12,6 @@ public class Leader : SteeringBehaviour
     private Vector3 behind;
 
     float slowingRadius = 10f;
-
-    [SerializeField]
-    private Transform target;
 
     private GameObject[] followers;
 
@@ -27,10 +24,11 @@ public class Leader : SteeringBehaviour
     private new void Start()
     {
         base.Start();
-        targetVelocity = target.GetComponent<Rigidbody>().velocity;
+        targetVelocity = target.velocity;
+       // targetVelocity = target.GetComponent<Rigidbody>().velocity;
         tv = targetVelocity * -1;
         tv = tv.normalized * leaderDistance;
-        behind = target.transform.position + tv;
+        behind = target.position + tv;
         followers = GameObject.FindGameObjectsWithTag("NPC");
     }
 
@@ -38,7 +36,7 @@ public class Leader : SteeringBehaviour
     {
         tv = targetVelocity * -1;
         tv = tv.normalized * leaderDistance;
-        behind = target.transform.position + tv;
+        behind = target.position + tv;
     }
 
     override
@@ -54,49 +52,50 @@ public class Leader : SteeringBehaviour
     {
         Vector3 force = new Vector3();
 
-        force += Arrival(behind, velocity);
+        force += Arrival.GetSteering(target, npc, slowingRadius, maxAccel).linear;
         force += Separation(velocity);
         if (OnLeaderSight())
-            force += Evade(velocity);
+            force += Evade.getSteering(target,npc,maxAccel, VectorDistance(target.transform.position, transform.position) * maxAccel,true,SeekT.REYNOLDS).linear;
         force.y = 0;
         return force;
     }
-
-    private Vector3 Arrival(Vector3 behind, Vector3 velocity)
+/*
+    private Vector3 Arrive(Vector3 behind, Vector3 velocity)
     {
         // Calculate the desired velocity
-        var desired_velocity = behind - transform.position;
-        var distance = Vector3.Distance(behind, transform.position);
+        var desiredVelocity = behind - npc.position;
+        var distance = VectorDistance(behind, npc.position);
 
         // Check the distance to detect whether the character
         // is inside the slowing area
         if (distance < slowingRadius)
         {
             // Inside the slowing area
-            desired_velocity = desired_velocity.normalized * maxAccel * (distance / slowingRadius);
+            desiredVelocity = desiredVelocity.normalized * maxAccel * (distance / slowingRadius);
         }
         else
         {
             // Outside the slowing area.
-            desired_velocity = desired_velocity.normalized * maxAccel;
+            desiredVelocity = desiredVelocity.normalized * maxAccel;
       }
 
         // Set the steering based on this
-        DrawRays(desired_velocity);
-        return (desired_velocity - velocity);
+        DrawRays(desiredVelocity);
+        return (desiredVelocity - velocity);
     }
-
+*/
     private Vector3 Separation(Vector3 velocity)
     {
         int numVecinos = 0;
         Vector3 force = new Vector3();
 
-        foreach (GameObject boid in followers)
+        foreach (GameObject boid in followers) //Comprobar con un SphereCast, en vez de Tag quiza usar Layers
         {
-            if (boid != this && Vector3.Distance(boid.transform.position, transform.position) <= distanceFollowers)
+            Body bodi = boid.GetComponent<Body>();
+            if (boid != this && VectorDistance(bodi.position, npc.position) <= distanceFollowers)
             {
-                force.x += boid.transform.position.x - this.transform.position.x;
-                force.z += boid.transform.position.z - this.transform.position.z;
+                force.x += bodi.position.x - npc.position.x;
+                force.z += bodi.position.z - npc.position.z;
                 numVecinos++;
             }
 
@@ -136,7 +135,7 @@ public class Leader : SteeringBehaviour
         return false;
     }
 
-    private Vector3 Evade (Vector3 velocity)
+    private Vector3 Evading (Vector3 velocity)
     {
         float T = Vector3.Distance(target.transform.position, transform.position) * maxAccel;
 
@@ -165,5 +164,10 @@ public class Leader : SteeringBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.DrawSphere(behind, 0.5f);
+    }
+
+    private float VectorDistance(Vector3 vector1, Vector3 vector2)
+    {
+        return (vector1 - vector2).magnitude;
     }
 }

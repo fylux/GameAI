@@ -24,11 +24,11 @@ public class WallAvoidance : SteeringBehaviour {
     private float obstacleMaxDist = 3, avoidDist = 3f, whiskerSeparation = 0.3f;
 
     override
-    public Steering getSteering() {
-        return getSteering(npc, maxAccel, layerMask, obstacleMaxDist, avoidDist, whiskerSeparation, visibleRays);
+    public Steering GetSteering() {
+        return GetSteering(npc, maxAccel, layerMask, obstacleMaxDist, avoidDist, whiskerSeparation, visibleRays);
     }
 
-    public static Steering getSteering(Body npc, float maxAccel, LayerMask layerMask, float obstacleMaxDist, float avoidDist, float whiskerSeparation, bool visibleRays = false) {
+    public static Steering GetSteering(Body npc, float maxAccel, LayerMask layerMask, float obstacleMaxDist, float avoidDist, float whiskerSeparation, bool visibleRays = false) {
         Steering steering = new Steering();
 
         Vector3 target = Vector3.zero;
@@ -50,7 +50,7 @@ public class WallAvoidance : SteeringBehaviour {
                 if (visibleRays) Debug.DrawLine(ray.startPoint, hitInfo.point, Color.red);
                 
                 rayHit = true;
-                steering = Seek.getSteering(target, npc, maxAccel, visibleRays);
+                steering = Seek.GetSteering(target, npc, maxAccel, visibleRays);
             }
             else if (visibleRays) {
                 Debug.DrawRay(ray.startPoint, ray.direction.normalized * ray.length, Color.yellow);

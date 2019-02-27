@@ -41,7 +41,7 @@ public class LeaderFollowing : SteeringBehaviour
     }
 
     override
-    public Steering getSteering()
+    public Steering GetSteering()
     {
         Steering steering = new Steering();
         steering.linear = FollowLeader(npc.velocity);

@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Arrival : SteeringBehaviourTarget {
+public class Arrive : SteeringBehaviourTarget {
 
     [SerializeField]
     float slowingRadius = 10f;
 
-    public override Steering getSteering()
+    public override Steering GetSteering()
     { 
-        return Arrival.GetSteering(target, npc, slowingRadius, maxAccel);
+        return Arrive.GetSteering(target, npc, slowingRadius, maxAccel);
     }
 
     public static Steering GetSteering(Body target, Body npc, float slowingRadius, float maxAccel)

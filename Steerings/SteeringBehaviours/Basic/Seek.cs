@@ -5,11 +5,11 @@ using UnityEngine;
 public class Seek : SteeringBehaviourTarget {
 
     override
-    public Steering getSteering() {
-        return getSteering(target.position, npc, maxAccel, visibleRays, seekT);
+    public Steering GetSteering() {
+        return GetSteering(target.position, npc, maxAccel, visibleRays, seekT);
     }
 
-    public static Steering getSteering(Vector3 target, Body npc, float maxAccel, bool visibleRays = false, SeekT seekT = SeekT.REYNOLDS) {
+    public static Steering GetSteering(Vector3 target, Body npc, float maxAccel, bool visibleRays = false, SeekT seekT = SeekT.REYNOLDS) {
         Steering steering = new Steering();
 
         var desiredVelocity = (target - npc.position).normalized * maxAccel;

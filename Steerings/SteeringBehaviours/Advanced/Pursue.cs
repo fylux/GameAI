@@ -9,11 +9,11 @@ public class Pursue : SteeringBehaviourTarget {
     private float maxPrediction;
 
     override
-    public Steering getSteering() {
-        return getSteering(target, npc, maxAccel, maxPrediction, visibleRays, seekT);
+    public Steering GetSteering() {
+        return GetSteering(target, npc, maxAccel, maxPrediction, visibleRays, seekT);
     }
 
-    public static Steering getSteering(Body target, Body npc, float maxAccel, float maxPrediction, bool visibleRays = false, SeekT seekT = SeekT.REYNOLDS) {
+    public static Steering GetSteering(Body target, Body npc, float maxAccel, float maxPrediction, bool visibleRays = false, SeekT seekT = SeekT.REYNOLDS) {
         Vector3 direction = target.position - npc.position;
         float distance = direction.magnitude;
         float speed = npc.velocity.magnitude;
@@ -26,6 +26,6 @@ public class Pursue : SteeringBehaviourTarget {
 
         Vector3 pred_target = target.position + (target.velocity * prediction);
 
-        return Seek.getSteering(pred_target, npc, maxAccel, visibleRays, seekT);
+        return Seek.GetSteering(pred_target, npc, maxAccel, visibleRays, seekT);
     }
 }

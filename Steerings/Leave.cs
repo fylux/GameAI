@@ -9,7 +9,7 @@ public class Leave : SteeringBehaviourTarget {
         return getSteering(target.position, npc, maxAccel, visibleRays, seekT);
     }
 
-    public static Steering getSteering(Vector3 target, Body npc, float maxAccel, bool visibleRays = false, SeekT seekT = SeekT.REYNOLDS) {
+    public static Steering getSteering(Vector3 target, Body npc, float maxAccel, bool visibleRays, SeekT seekT) {
         return Flee.getSteering(target, npc, maxAccel, visibleRays, seekT);
     }
 }

@@ -15,7 +15,9 @@ class AvoidanceRay {
 }
 
 public class WallAvoidance : SteeringBehaviour {
-    //maxAccel is usless
+
+    [SerializeField]
+    protected SeekT seekT = SeekT.REYNOLDS;
 
     [SerializeField]
     private LayerMask layerMask;
@@ -25,10 +27,10 @@ public class WallAvoidance : SteeringBehaviour {
 
     override
     public Steering getSteering() {
-        return getSteering(npc, maxAccel, layerMask, obstacleMaxDist, avoidDist, whiskerSeparation, visibleRays);
+        return getSteering(npc, maxAccel, layerMask, obstacleMaxDist, avoidDist, whiskerSeparation, visibleRays, seekT);
     }
 
-    public static Steering getSteering(Body npc, float maxAccel, LayerMask layerMask, float obstacleMaxDist, float avoidDist, float whiskerSeparation, bool visibleRays = false) {
+    public static Steering getSteering(Body npc, float maxAccel, LayerMask layerMask, float obstacleMaxDist, float avoidDist, float whiskerSeparation, bool visibleRays, SeekT seekT) {
         Steering steering = new Steering();
 
         Vector3 target = Vector3.zero;
@@ -50,7 +52,7 @@ public class WallAvoidance : SteeringBehaviour {
                 if (visibleRays) Debug.DrawLine(ray.startPoint, hitInfo.point, Color.red);
                 
                 rayHit = true;
-                steering = Seek.getSteering(target, npc, maxAccel, visibleRays);
+                steering = Seek.getSteering(target, npc, maxAccel, visibleRays, seekT);
             }
             else if (visibleRays) {
                 Debug.DrawRay(ray.startPoint, ray.direction.normalized * ray.length, Color.yellow);

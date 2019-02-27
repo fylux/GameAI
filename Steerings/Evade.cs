@@ -13,7 +13,7 @@ public class Evade : SteeringBehaviourTarget {
         return getSteering(target, npc, maxAccel, maxPrediction, visibleRays, seekT);
     }
 
-    public static Steering getSteering(Body target, Body npc, float maxAccel, float maxPrediction, bool visibleRays = false, SeekT seekT = SeekT.REYNOLDS) {
+    public static Steering getSteering(Body target, Body npc, float maxAccel, float maxPrediction, bool visibleRays, SeekT seekT) {
         return -Pursue.getSteering(target,npc,maxAccel,maxPrediction,visibleRays,seekT);
     }
 

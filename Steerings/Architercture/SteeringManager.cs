@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class SteeringManager : Body {
+public class SteeringManager : Agent {
 
     private SteeringBehaviour[] steers;
 
@@ -17,7 +17,7 @@ public class SteeringManager : Body {
         Vector3 steeringLinear = Vector3.zero;
         float steeringAngular = 0.0f;
         foreach (SteeringBehaviour steer in steers) {
-            Steering steering = steer.getSteering();
+            Steering steering = steer.GetSteering();
             steeringLinear += steering.linear * steer.blendPriority;
             steeringAngular += steering.angular * steer.blendPriority;
         }

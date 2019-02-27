@@ -16,7 +16,7 @@ public abstract class SteeringBehaviour : MonoBehaviour {
     protected bool visibleRays;
 
 
-    public abstract Steering getSteering();
+    public abstract Steering GetSteering();
 
     protected void Start() {
         npc = GetComponent<Body>();

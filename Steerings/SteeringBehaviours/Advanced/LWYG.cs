@@ -16,7 +16,7 @@ public class LWYG : SteeringBehaviourTarget {
     [SerializeField]
     private float maxPrediction;
 
-    public override Steering getSteering()
+    public override Steering GetSteering()
     {
         Steering steering = new Steering();
 
@@ -32,6 +32,6 @@ public class LWYG : SteeringBehaviourTarget {
 
         Vector3 pred_target = target.position + (target.velocity * prediction);
         
-        return Face.Steer(pred_target, npc, targetRadius, slowRadius, timeToTarget);
+        return Face.GetSteering(pred_target, npc, targetRadius, slowRadius, timeToTarget);
     }
 }

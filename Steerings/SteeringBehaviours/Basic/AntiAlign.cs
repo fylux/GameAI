@@ -17,7 +17,7 @@ public class AntiAlign : SteeringBehaviour
     private float timeToTarget = 0.1f;
 
     override
-	public Steering getSteering()
+	public Steering GetSteering()
     {
         Steering steering = new Steering();
 

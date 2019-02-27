@@ -11,11 +11,11 @@ public class VelocityMatching : SteeringBehaviour
     private float timeToTarget = 0.1f;
 
     override
-    public Steering getSteering() {
-        return getSteering(npc, target, maxAccel, timeToTarget, visibleRays);
+    public Steering GetSteering() {
+        return GetSteering(npc, target, maxAccel, timeToTarget, visibleRays);
     }
 
-    public static Steering getSteering(Body npc, Body target, float maxAccel, float timeToTarget, bool visibleRay) {
+    public static Steering GetSteering(Body npc, Body target, float maxAccel, float timeToTarget, bool visibleRay) {
         Steering steering = new Steering();
         steering.linear = (target.velocity - npc.velocity) / timeToTarget;
 

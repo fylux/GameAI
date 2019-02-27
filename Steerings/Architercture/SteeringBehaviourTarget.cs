@@ -2,13 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum SeekT {
-    MILLINGTON, REYNOLDS
-};
-
 public abstract class SteeringBehaviourTarget : SteeringBehaviour {
 
     [SerializeField]
-    protected Body target;
+    protected Agent target;
 
 }

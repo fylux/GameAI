@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class SteeringBehaviour : MonoBehaviour {
 
-    protected Body npc;
+    protected Agent npc;
 
     [SerializeField]
     protected float maxAccel = 3;
@@ -19,7 +19,7 @@ public abstract class SteeringBehaviour : MonoBehaviour {
     public abstract Steering GetSteering();
 
     protected void Start() {
-        npc = GetComponent<Body>();
+        npc = GetComponent<Agent>();
     }
 
     protected static void drawRays(Vector3 position, Vector3 ray) {

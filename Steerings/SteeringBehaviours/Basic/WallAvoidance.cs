@@ -28,7 +28,7 @@ public class WallAvoidance : SteeringBehaviour {
         return GetSteering(npc, maxAccel, layerMask, obstacleMaxDist, avoidDist, whiskerSeparation, visibleRays);
     }
 
-    public static Steering GetSteering(Body npc, float maxAccel, LayerMask layerMask, float obstacleMaxDist, float avoidDist, float whiskerSeparation, bool visibleRays = false) {
+    public static Steering GetSteering(Agent npc, float maxAccel, LayerMask layerMask, float obstacleMaxDist, float avoidDist, float whiskerSeparation, bool visibleRays = false) {
         Steering steering = new Steering();
 
         Vector3 target = Vector3.zero;

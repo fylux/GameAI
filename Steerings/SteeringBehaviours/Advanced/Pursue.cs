@@ -13,7 +13,7 @@ public class Pursue : SteeringBehaviourTarget {
         return GetSteering(target, npc, maxAccel, maxPrediction, visibleRays);
     }
 
-    public static Steering GetSteering(Body target, Body npc, float maxAccel, float maxPrediction, bool visibleRays = false) {
+    public static Steering GetSteering(Agent target, Agent npc, float maxAccel, float maxPrediction, bool visibleRays = false) {
         Vector3 direction = target.position - npc.position;
         float distance = direction.magnitude;
         float speed = npc.velocity.magnitude;

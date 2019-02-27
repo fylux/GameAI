@@ -5,57 +5,45 @@ using UnityEngine;
 public class Wander : SteeringBehaviour {
 
     [SerializeField]
-    float targetRadius;
+    private float targetRadius, slowRadius, timeToTarget;
 
     [SerializeField]
-    float slowRadius;
+    private float offset;   //Distancia desde el personaje hasta el circulo
 
     [SerializeField]
-    float timeToTarget;
+    private float radius;   //Radio del circulo
 
     [SerializeField]
-    float offset;   //Distancia desde el personaje hasta el circulo
+    private float wanderRate;   //Máxima variación en la trayectoria del errante
 
     [SerializeField]
-    float radius;   //Radio del circulo
+    private int wanderCooldown = 90;
 
-    [SerializeField]
-    float wanderRate;   //Máxima variación en la trayectoria del errante
+    private float wanderOrientation; //Orientacion del personaje
 
-    float wanderOrientation; //Orientacion del personaje
+    private Steering wanderForce;
 
-    [SerializeField]
-    int wanderCooldown = 90;
-
-    Steering wanderForce;
-
-    private new void Start()
-    {
+    private new void Start() {
         base.Start();
         float wanderOrientation = Random.Range(-1.0f, 1.0f) * wanderRate;
         wanderForce = GetRandomWanderForce();
     }
 
-    public override Steering GetSteering()
-    {
-        
-        if (Time.frameCount % wanderCooldown == 0)
-        {
+    public override Steering GetSteering() {
+        if (Time.frameCount % wanderCooldown == 0) {
             wanderForce = GetRandomWanderForce();
         }
-
         return wanderForce;
     }
 
-    private Steering GetRandomWanderForce()
-    {
+    private Steering GetRandomWanderForce() {
         Steering steering = new Steering();
 
         wanderOrientation += Random.Range(-1.0f, 1.0f) * wanderRate;
         float targetOrientation = wanderOrientation + npc.orientation;
 
-        Vector3 centroCirculo = npc.position + offset * Util.OrientationVector(npc.orientation);
-        Vector3 target = centroCirculo + radius * Util.OrientationVector(targetOrientation);
+        Vector3 centroCirculo = npc.position + offset * Util.OrientationToVector(npc.orientation);
+        Vector3 target = centroCirculo + radius * Util.OrientationToVector(targetOrientation);
 
 
         steering = Face.GetSteering(target, npc, targetRadius, slowRadius, timeToTarget);

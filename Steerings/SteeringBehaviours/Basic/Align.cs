@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Align : SteeringBehaviour
-{
+public class Align : SteeringBehaviour {
 
     [SerializeField]
-    private GameObject target;
+    private Agent target;
 
     [SerializeField]
     private float targetRadius;
@@ -19,47 +18,15 @@ public class Align : SteeringBehaviour
 
     override
 	public Steering GetSteering() {
-        Steering steering = new Steering();
-
-        return Align.GetSteering(target.GetComponent<Body>().orientation, npc, targetRadius, slowRadius, timeToTarget);
-
-       /* float rotacion = orienTarget - body.orientation;
-
-        rotacion = MapToRange(rotacion);
-        float rotationSize = Mathf.Abs(rotacion);
-
-        if (rotationSize < targetRadius)
-            return steering;
-
-        float targetRotation;
-        if (rotationSize > slowRadius)
-            targetRotation = body.MaxRotation;
-        else
-            targetRotation = body.MaxRotation * rotationSize / slowRadius;
-
-        targetRotation *= rotacion / rotationSize;
-
-        steering.angular = targetRotation - body.rotation;
-        steering.angular /= timeToTarget;
-
-        float angularAccel = Mathf.Abs(steering.angular);
-
-        if (angularAccel > body.MaxAngular)
-        {
-            steering.angular /= angularAccel;
-            steering.angular *= body.MaxAngular;
-        }
-
-        return steering;*/
-
+        return Align.GetSteering(target.orientation, npc, targetRadius, slowRadius, timeToTarget);
     }
 
-    public static Steering GetSteering(float orienTarget, Body body, float targetRadius, float slowRadius, float timeToTarget) {
+    public static Steering GetSteering(float orienTarget, Agent npc, float targetRadius, float slowRadius, float timeToTarget) {
         Steering steering = new Steering();
 
        // float orienTarget = target.orientation;
 
-        float rotacion = orienTarget - body.orientation;
+        float rotacion = orienTarget - npc.orientation;
 
         rotacion = MapToRange(rotacion);
         float rotationSize = Mathf.Abs(rotacion);
@@ -69,21 +36,20 @@ public class Align : SteeringBehaviour
 
         float targetRotation;
         if (rotationSize > slowRadius)
-            targetRotation = body.MaxRotation;
+            targetRotation = npc.MaxRotation;
         else
-            targetRotation = body.MaxRotation * rotationSize / slowRadius;
+            targetRotation = npc.MaxRotation * rotationSize / slowRadius;
 
         targetRotation *= rotacion / rotationSize;
 
-        steering.angular = targetRotation - body.rotation;
+        steering.angular = targetRotation - npc.rotation;
         steering.angular /= timeToTarget;
 
         float angularAccel = Mathf.Abs(steering.angular);
 
-        if (angularAccel > body.MaxAngular)
-        {
+        if (angularAccel > npc.MaxAngular) {
             steering.angular /= angularAccel;
-            steering.angular *= body.MaxAngular;
+            steering.angular *= npc.MaxAngular;
         }
 
         return steering;

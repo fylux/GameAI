@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Alignment : SteeringBehaviour
-{
+public class Alignment : SteeringBehaviour {
 
     private GameObject[] targets;
 
@@ -19,37 +18,32 @@ public class Alignment : SteeringBehaviour
     [SerializeField]
     private float threshold = 3f;
 
-    private new void Start()
-    {
+    private new void Start() {
         base.Start();
         targets = GameObject.FindGameObjectsWithTag("NPC");
     }
 
-    public override Steering GetSteering()
-    {
+    public override Steering GetSteering() {
         return Alignment.GetSteering(npc, targets, this.gameObject, threshold, targetRadius, slowRadius, timeToTarget);
     }
 
-    public static Steering GetSteering(Body npc, GameObject[] targets, GameObject self, float threshold, float targetRadius, float slowRadius, float timeToTarget)  {
+    public static Steering GetSteering(Agent npc, GameObject[] targets, GameObject self, float threshold, float targetRadius, float slowRadius, float timeToTarget)  {
         int neighbours = 0;
         float targetOrientation = 0;
 
         Vector3 Heading = Vector3.zero;
 
-        foreach (GameObject boid in targets)
-        {
-            Body bodi = boid.GetComponent<Body>();
+        foreach (GameObject boid in targets) {
+            Agent bodi = boid.GetComponent<Agent>();
             Vector3 direction = bodi.position - npc.position;
             float distance = direction.magnitude;
-            if (boid != self && distance < threshold)
-            {
+            if (boid != self && distance < threshold) {
                 targetOrientation += bodi.orientation;
                 neighbours++;
             }
         }
 
-        if (neighbours > 0)
-        {
+        if (neighbours > 0) {
             targetOrientation /= neighbours;
             return Align.GetSteering(targetOrientation, npc, targetRadius, slowRadius, timeToTarget);
         }

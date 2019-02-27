@@ -5,10 +5,7 @@ using UnityEngine;
 public class LWYG : SteeringBehaviourTarget {
 
     [SerializeField]
-    private float targetRadius;
-
-    [SerializeField]
-    private float slowRadius;
+    private float targetRadius, slowRadius;
 
     [SerializeField]
     private float timeToTarget = 0.1f;
@@ -16,8 +13,7 @@ public class LWYG : SteeringBehaviourTarget {
     [SerializeField]
     private float maxPrediction;
 
-    public override Steering GetSteering()
-    {
+    public override Steering GetSteering() {
         Steering steering = new Steering();
 
         Vector3 direction = target.position - npc.position;

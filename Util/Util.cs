@@ -8,7 +8,7 @@ public static class Util {
         return Quaternion.Euler(0, angle, 0) * vector;
     }
 
-    public static Vector3 OrientationVector (float orientation) {
+    public static Vector3 OrientationToVector (float orientation) {
         Vector3 vector = Vector3.zero;
         vector.x = Mathf.Sin(orientation * Mathf.Deg2Rad) * 1.0f;
         vector.z = Mathf.Cos(orientation * Mathf.Deg2Rad) * 1.0f;

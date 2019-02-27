@@ -16,7 +16,7 @@ public class Cohesion : SteeringBehaviour {
         return Cohesion.GetSteering(npc, targets, this.gameObject, threshold, decayCoefficient, maxAccel);
     }
 
-    public static Steering GetSteering(Body npc, GameObject[] targets, GameObject self, float threshold, float decayCoefficient, float maxAccel) {
+    public static Steering GetSteering(Agent npc, GameObject[] targets, GameObject self, float threshold, float decayCoefficient, float maxAccel) {
         Steering steering = new Steering();
 
         int neighbours = 0;

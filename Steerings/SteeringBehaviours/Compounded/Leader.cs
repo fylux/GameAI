@@ -48,7 +48,7 @@ public class Leader : SteeringBehaviourTarget
         force += Arrive.GetSteering(target, npc, slowingRadius, maxAccel).linear;
         force += Separation.GetSteering(npc, GameObject.FindGameObjectsWithTag("NPC"), this.gameObject, threshold, decayCoefficient, maxAccel).linear;
         if (OnLeaderSight())
-            force += Evade.GetSteering(target,npc,maxAccel, VectorDistance(target.transform.position, transform.position) * maxAccel,true).linear;
+            force += Evade.GetSteering(target,npc,maxAccel, Vector3.Distance(target.transform.position, transform.position) * maxAccel,true).linear;
         force.y = 0;
         return force;
     }
@@ -78,7 +78,4 @@ public class Leader : SteeringBehaviourTarget
         Gizmos.DrawSphere(behind, 0.5f);
     }
 
-    private float VectorDistance(Vector3 vector1, Vector3 vector2) {
-        return (vector1 - vector2).magnitude;
-    }
 }

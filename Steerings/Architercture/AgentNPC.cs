@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class SteeringManager : Agent {
+public class AgentNPC : Agent {
 
     private SteeringBehaviour[] steers;
 
@@ -13,7 +13,7 @@ public class SteeringManager : Agent {
     }
 
     override
-    protected void UpdateForces() {
+    protected void ApplySteering() {
         Vector3 steeringLinear = Vector3.zero;
         float steeringAngular = 0.0f;
         foreach (SteeringBehaviour steer in steers) {

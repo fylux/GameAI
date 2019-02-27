@@ -2,29 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LeaderFollowing : SteeringBehaviour
-{
-
+public class LeaderFollowing : SteeringBehaviour {
 
     [SerializeField]
-    float leaderDistance = 2f;
+    private float leaderDistance = 2f;
 
-    Vector3 tv;
-    Vector3 targetVelocity;
-    Vector3 behind;
-
-    float slowingRadius = 10f;
-
-    public Body target;
-
-    GameObject[] seguidores;
     [SerializeField]
-    float distanciaFollowers;
-    [SerializeField]
-    float separacionMaxima;
+    private float distanciaFollowers;
 
-    private new void Start()
-    {
+    [SerializeField]
+    private float separacionMaxima;
+
+    private Vector3 tv, targetVelocity, behind;
+    private float slowingRadius = 10f;
+    public Agent target;
+    private GameObject[] seguidores;
+
+    private new void Start() {
         base.Start();
         targetVelocity = target.GetComponent<Rigidbody>().velocity;
         tv = targetVelocity * -1;

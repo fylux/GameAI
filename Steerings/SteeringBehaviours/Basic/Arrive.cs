@@ -7,13 +7,11 @@ public class Arrive : SteeringBehaviourTarget {
     [SerializeField]
     float slowingRadius = 10f;
 
-    public override Steering GetSteering()
-    { 
+    public override Steering GetSteering() { 
         return Arrive.GetSteering(target, npc, slowingRadius, maxAccel);
     }
 
-    public static Steering GetSteering(Body target, Body npc, float slowingRadius, float maxAccel)
-    {
+    public static Steering GetSteering(Agent target, Agent npc, float slowingRadius, float maxAccel) {
         Steering steering = new Steering();
 
         // Calculate the desired velocity
@@ -22,13 +20,11 @@ public class Arrive : SteeringBehaviourTarget {
 
         // Check the distance to detect whether the character
         // is inside the slowing area
-        if (distance < slowingRadius)
-        {
+        if (distance < slowingRadius) {
             // Inside the slowing area
             desiredVelocity = desiredVelocity.normalized * maxAccel * (distance / slowingRadius);
         }
-        else
-        {
+        else {
             // Outside the slowing area.
             desiredVelocity = desiredVelocity.normalized * maxAccel;
         }
@@ -38,9 +34,4 @@ public class Arrive : SteeringBehaviourTarget {
         steering.linear = desiredVelocity - npc.velocity;
         return steering;
     }
-    /*
-    private float VectorDistance(Vector3 vector1, Vector3 vector2)
-    {
-        return (vector1 - vector2).magnitude;
-    }*/
 }

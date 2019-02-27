@@ -5,14 +5,14 @@ using UnityEngine;
 public class Agent : Body {
 
     [SerializeField]
-    float interiorRadius;
+    private float interiorRadius;
     [SerializeField]
-    float exteriorRadius;
+    private float exteriorRadius;
 
     [SerializeField]
-    float interiorAngle;
+    private float interiorAngle;
     [SerializeField]
-    float exteriorAngle;
+    private float exteriorAngle;
 
     public void DrawGizmoInteriorRadius()
     {

@@ -26,7 +26,7 @@ public class Body : MonoBehaviour {
         position += velocity * Time.deltaTime;
         orientation += rotation * Time.deltaTime;
 
-        UpdateForces();
+        ApplySteering();
 
         velocity = Vector3.ClampMagnitude(velocity, MaxVelocity);
         rotation = Mathf.Clamp(rotation, -MaxRotation, MaxRotation);
@@ -35,7 +35,7 @@ public class Body : MonoBehaviour {
         transform.eulerAngles = new Vector3(0, orientation, 0);
     }
 
-    protected virtual void UpdateForces() { }
+    protected virtual void ApplySteering() { }
 
     public Vector3 getForward() {
         return Util.RotateVector(Vector3.forward, orientation).normalized;

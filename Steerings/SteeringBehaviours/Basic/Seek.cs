@@ -9,7 +9,7 @@ public class Seek : SteeringBehaviourTarget {
         return GetSteering(target.position, npc, maxAccel, visibleRays);
     }
 
-    public static Steering GetSteering(Vector3 target, Body npc, float maxAccel, bool visibleRays = false) {
+    public static Steering GetSteering(Vector3 target, Agent npc, float maxAccel, bool visibleRays = false) {
         Steering steering = new Steering();
 
         var desiredVelocity = (target - npc.position).normalized * maxAccel;

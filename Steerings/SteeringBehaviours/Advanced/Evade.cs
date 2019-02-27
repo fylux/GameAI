@@ -14,7 +14,7 @@ public class Evade : SteeringBehaviourTarget {
     }
 
 
-    public static Steering GetSteering(Body target, Body npc, float maxAccel, float maxPrediction, bool visibleRays = false) {
+    public static Steering GetSteering(Agent target, Agent npc, float maxAccel, float maxPrediction, bool visibleRays = false) {
         return -Pursue.GetSteering(target,npc,maxAccel,maxPrediction,visibleRays);
     }
 

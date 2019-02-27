@@ -19,7 +19,7 @@ public class Face : SteeringBehaviourTarget {
         return Face.GetSteering(target.position, npc, targetRadius, slowRadius, timeToTarget);
     }
 
-    public static Steering GetSteering(Vector3 targetPosition, Body npc, float targetRadius, float slowRadius, float timeToTarget)
+    public static Steering GetSteering(Vector3 targetPosition, Agent npc, float targetRadius, float slowRadius, float timeToTarget)
     {
         Steering steering = new Steering();
 
@@ -31,7 +31,7 @@ public class Face : SteeringBehaviourTarget {
         float targetOrientation = Mathf.Atan2(direction.x, direction.z);
         targetOrientation *= Mathf.Rad2Deg;
 
-        // virtualTarget.GetComponent<Body>.orientation = targetOrientation
+        // virtualTarget.GetComponent<Agent>.orientation = targetOrientation
         // return Align.Steer(...), siendo el target con el que nos vamos a alinear el virtualTarget
 
         return Align.GetSteering(targetOrientation, npc, targetRadius, slowRadius, timeToTarget);

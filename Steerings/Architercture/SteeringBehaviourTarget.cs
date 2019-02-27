@@ -9,9 +9,6 @@ public enum SeekT {
 public abstract class SteeringBehaviourTarget : SteeringBehaviour {
 
     [SerializeField]
-    protected SeekT seekT = SeekT.REYNOLDS;
-
-    [SerializeField]
     protected Body target;
 
 }

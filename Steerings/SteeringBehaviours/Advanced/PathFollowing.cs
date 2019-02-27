@@ -5,8 +5,6 @@ using UnityEngine;
 public class PathFollowing : SteeringBehaviour {
 
     [SerializeField]
-    protected SeekT seekT = SeekT.REYNOLDS;
-    [SerializeField]
     private float arrivalRadius = 2f;
 
     private List<Vector3> path;
@@ -17,16 +15,16 @@ public class PathFollowing : SteeringBehaviour {
     }
 
     override
-    public Steering getSteering() {
-        return getSteering(path, ref currentPoint, arrivalRadius, npc, maxAccel, visibleRays, seekT);
+    public Steering GetSteering() {
+        return getSteering(path, ref currentPoint, arrivalRadius, npc, maxAccel, visibleRays);
     }
 
-    public static Steering getSteering(List<Vector3> path, ref int currentPoint, float arrivalRadius, Body npc, float maxAccel, bool visibleRays, SeekT seekT) {
+    public static Steering getSteering(List<Vector3> path, ref int currentPoint, float arrivalRadius, Body npc, float maxAccel, bool visibleRays) {
         float distance = Vector3.Distance(path[currentPoint], npc.position);
         if (distance < arrivalRadius)
             currentPoint = Mathf.Min(currentPoint + 1, path.Count - 1);
 
-        return Seek.getSteering(path[currentPoint], npc, maxAccel, visibleRays, seekT);
+        return Seek.GetSteering(path[currentPoint], npc, maxAccel, visibleRays);
     }
 
 }

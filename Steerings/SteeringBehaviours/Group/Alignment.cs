@@ -30,8 +30,7 @@ public class Alignment : SteeringBehaviour
         return Alignment.GetSteering(npc, targets, this.gameObject, threshold, targetRadius, slowRadius, timeToTarget);
     }
 
-    public static Steering GetSteering(Body npc, GameObject[] targets, GameObject self, float threshold, float targetRadius, float slowRadius, float timeToTarget)
-    {
+    public static Steering GetSteering(Body npc, GameObject[] targets, GameObject self, float threshold, float targetRadius, float slowRadius, float timeToTarget)  {
         int neighbours = 0;
         float targetOrientation = 0;
 

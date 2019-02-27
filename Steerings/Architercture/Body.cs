@@ -38,11 +38,11 @@ public class Body : MonoBehaviour {
     protected virtual void UpdateForces() { }
 
     public Vector3 getForward() {
-        return Util.rotateVector(Vector3.forward, orientation).normalized;
+        return Util.RotateVector(Vector3.forward, orientation).normalized;
     }
 
     public Vector3 getRight() {
-        return Util.rotateVector(Vector3.right, orientation).normalized;
+        return Util.RotateVector(Vector3.right, orientation).normalized;
     }
 
     private void OnDrawGizmos() {

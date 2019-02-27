@@ -18,8 +18,7 @@ public class Align : SteeringBehaviour
     private float timeToTarget = 0.1f;
 
     override
-	public Steering GetSteering()
-    {
+	public Steering GetSteering() {
         Steering steering = new Steering();
 
         return Align.GetSteering(target.GetComponent<Body>().orientation, npc, targetRadius, slowRadius, timeToTarget);
@@ -55,8 +54,7 @@ public class Align : SteeringBehaviour
 
     }
 
-    public static Steering GetSteering(float orienTarget, Body body, float targetRadius, float slowRadius, float timeToTarget)
-    {
+    public static Steering GetSteering(float orienTarget, Body body, float targetRadius, float slowRadius, float timeToTarget) {
         Steering steering = new Steering();
 
        // float orienTarget = target.orientation;
@@ -91,8 +89,7 @@ public class Align : SteeringBehaviour
         return steering;
     }
 
-    private static float MapToRange (float rotation)
-    {
+    private static float MapToRange (float rotation) {
         rotation %= 360.0f;
 
         if (Mathf.Abs(rotation) > 180.0f)

@@ -12,36 +12,31 @@ public class Cohesion : SteeringBehaviour {
     [SerializeField]
     float decayCoefficient;
 
-    public override Steering GetSteering()
-    {
+    public override Steering GetSteering() {
         return Cohesion.GetSteering(npc, targets, this.gameObject, threshold, decayCoefficient, maxAccel);
     }
 
-    public static Steering GetSteering(Body npc, GameObject[] targets, GameObject self, float threshold, float decayCoefficient, float maxAccel)
-    {
+    public static Steering GetSteering(Body npc, GameObject[] targets, GameObject self, float threshold, float decayCoefficient, float maxAccel) {
         Steering steering = new Steering();
 
         int neighbours = 0;
         Vector3 centerOfMass = Vector3.zero;
 
-        foreach (GameObject boid in targets) //Comprobar con un SphereCast, en vez de Tag quiza usar Layers
-        {
+        foreach (GameObject boid in targets) { //Comprobar con un SphereCast, en vez de Tag quiza usar Layers
             Body bodi = boid.GetComponent<Body>();
             Vector3 direction = bodi.position - npc.position;
             float distance = direction.magnitude;
             
 
-            if (boid != self && distance < threshold)
-            {
+            if (boid != self && distance < threshold) {
                 centerOfMass += bodi.position;
                 neighbours++;
             }
         }
 
-        if (neighbours > 0)
-        {
+        if (neighbours > 0) {
             centerOfMass /= neighbours;
-            return Seek.GetSteering(centerOfMass, npc, maxAccel,false, SeekT.REYNOLDS);
+            return Seek.GetSteering(centerOfMass, npc, maxAccel,false);
         }
 
         return steering;

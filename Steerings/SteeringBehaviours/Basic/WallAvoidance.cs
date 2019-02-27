@@ -16,8 +16,6 @@ class AvoidanceRay {
 
 public class WallAvoidance : SteeringBehaviour {
 
-    [SerializeField]
-    protected SeekT seekT = SeekT.REYNOLDS;
 
     [SerializeField]
     private LayerMask layerMask;
@@ -39,8 +37,8 @@ public class WallAvoidance : SteeringBehaviour {
         Vector3 rightRay = npc.position - npc.getRight() * whiskerSeparation/2f;
         Vector3 centerRay = npc.position;
 
-        AvoidanceRay[] rays = { new AvoidanceRay(leftRay, Util.rotateVector(npc.velocity.normalized,30) * obstacleMaxDist/2.2f),
-                                new AvoidanceRay(rightRay, Util.rotateVector(npc.velocity.normalized,-30) * obstacleMaxDist/2.2f),
+        AvoidanceRay[] rays = { new AvoidanceRay(leftRay, Util.RotateVector(npc.velocity.normalized,30) * obstacleMaxDist/2.2f),
+                                new AvoidanceRay(rightRay, Util.RotateVector(npc.velocity.normalized,-30) * obstacleMaxDist/2.2f),
                                 new AvoidanceRay(centerRay, npc.velocity.normalized * obstacleMaxDist) };
 
         RaycastHit hitInfo;

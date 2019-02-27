@@ -10,12 +10,12 @@ public class Evade : SteeringBehaviourTarget {
 
     override
     public Steering GetSteering() {
-        return GetSteering(target, npc, maxAccel, maxPrediction, visibleRays, seekT);
+        return GetSteering(target, npc, maxAccel, maxPrediction, visibleRays);
     }
 
 
-    public static Steering GetSteering(Body target, Body npc, float maxAccel, float maxPrediction, bool visibleRays = false, SeekT seekT = SeekT.REYNOLDS) {
-        return -Pursue.GetSteering(target,npc,maxAccel,maxPrediction,visibleRays,seekT);
+    public static Steering GetSteering(Body target, Body npc, float maxAccel, float maxPrediction, bool visibleRays = false) {
+        return -Pursue.GetSteering(target,npc,maxAccel,maxPrediction,visibleRays);
     }
 
 }

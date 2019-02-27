@@ -6,18 +6,16 @@ public class Seek : SteeringBehaviourTarget {
 
     override
     public Steering GetSteering() {
-        return GetSteering(target.position, npc, maxAccel, visibleRays, seekT);
+        return GetSteering(target.position, npc, maxAccel, visibleRays);
     }
 
-    public static Steering GetSteering(Vector3 target, Body npc, float maxAccel, bool visibleRays = false, SeekT seekT = SeekT.REYNOLDS) {
+    public static Steering GetSteering(Vector3 target, Body npc, float maxAccel, bool visibleRays = false) {
         Steering steering = new Steering();
 
         var desiredVelocity = (target - npc.position).normalized * maxAccel;
 
-        if (seekT == SeekT.REYNOLDS)
-            steering.linear = (desiredVelocity - npc.velocity);
-        else
-            steering.linear = desiredVelocity;
+        steering.linear = (desiredVelocity - npc.velocity); //Reynolds
+        //steering.linear = desiredVelocity; //Millington
 
         if (visibleRays)
             drawRays(npc.position, steering.linear);

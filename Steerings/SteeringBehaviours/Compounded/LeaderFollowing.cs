@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Leader : SteeringBehaviourTarget
+public class LeaderFollowing : SteeringBehaviourTarget
 {
     [SerializeField]
     private float leaderDistance = 2f;
@@ -47,7 +47,7 @@ public class Leader : SteeringBehaviourTarget
         steering.linear += Arrive.GetSteering(behind, npc, slowingRadius, maxAccel).linear * arrivePriority;
         steering.linear += Separation.GetSteering(npc, threshold, decayCoefficient, maxAccel).linear * separationPriority;
         if (OnLeaderSight())
-            steering.linear += Evade.GetSteering(target, npc, maxAccel, Vector3.Distance(target.transform.position, transform.position) * maxAccel, true).linear * evadePriority;
+            steering.linear += Evade.GetSteering(target.position, target.velocity, npc, maxAccel, Vector3.Distance(target.position, npc.position) * maxAccel, true).linear * evadePriority;
 
         return steering;
     }
@@ -58,7 +58,7 @@ public class Leader : SteeringBehaviourTarget
         force += Arrive.GetSteering(behind, npc, slowingRadius, maxAccel).linear * arrivePriority; 
         force += Separation.GetSteering(npc, threshold, decayCoefficient, maxAccel).linear * separationPriority;
         if (OnLeaderSight())
-            force += Evade.GetSteering(target,npc,maxAccel, Vector3.Distance(target.transform.position, transform.position) * maxAccel,true).linear * evadePriority;
+            force += Evade.GetSteering(target.position,target.velocity, npc,maxAccel, Vector3.Distance(target.position, npc.position) * maxAccel,true).linear * evadePriority;
         force.y = 0;
         return force;
     }

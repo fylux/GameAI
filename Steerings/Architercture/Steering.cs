@@ -16,4 +16,12 @@ public class Steering {
         steering.angular = -steering.angular;
         return steering;
     }
+
+    public static Steering operator +(Steering steering1, Steering steering2)
+    {
+        Steering steering = new Steering();
+        steering.linear = steering1.linear + steering2.linear;
+        steering.angular = steering1.angular + steering2.angular;
+        return steering;
+    }
 }

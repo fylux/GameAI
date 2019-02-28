@@ -4,11 +4,8 @@ using UnityEngine;
 
 public class Arrive : SteeringBehaviourTarget {
 
-    [SerializeField]
-    float slowingRadius = 10f;
-
     public override Steering GetSteering() { 
-        return Arrive.GetSteering(target.position, npc, slowingRadius, maxAccel);
+        return Arrive.GetSteering(target.position, npc, npc.exteriorRadius, maxAccel);
     }
 
     public static Steering GetSteering(Vector3 targetPosition, Agent npc, float slowingRadius, float maxAccel) {

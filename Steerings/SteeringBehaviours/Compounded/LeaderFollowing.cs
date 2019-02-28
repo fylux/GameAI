@@ -47,21 +47,21 @@ public class LeaderFollowing : SteeringBehaviourTarget
         steering.linear += Arrive.GetSteering(behind, npc, slowingRadius, maxAccel).linear * arrivePriority;
         steering.linear += Separation.GetSteering(npc, threshold, decayCoefficient, maxAccel).linear * separationPriority;
         if (OnLeaderSight())
-            steering.linear += Evade.GetSteering(target.position, target.velocity, npc, maxAccel, Vector3.Distance(target.position, npc.position) * maxAccel, true).linear * evadePriority;
+            steering.linear += Evade.GetSteering(target, npc, maxAccel, Vector3.Distance(target.position, npc.position) * maxAccel, true).linear * evadePriority;
 
         return steering;
     }
 
-    private Vector3 FollowLeader(Vector3 velocity) {
+     /*Vector3 FollowLeader(Vector3 velocity) {
         Vector3 force = new Vector3();
 
         force += Arrive.GetSteering(behind, npc, slowingRadius, maxAccel).linear * arrivePriority; 
         force += Separation.GetSteering(npc, threshold, decayCoefficient, maxAccel).linear * separationPriority;
         if (OnLeaderSight())
-            force += Evade.GetSteering(target.position,target.velocity, npc,maxAccel, Vector3.Distance(target.position, npc.position) * maxAccel,true).linear * evadePriority;
+            force += Evade.GetSteering(target, npc,maxAccel, Vector3.Distance(target.position, npc.position) * maxAccel,true).linear * evadePriority;
         force.y = 0;
         return force;
-    }
+    }*/
 
     private bool OnLeaderSight() {
         RaycastHit hit;

@@ -30,10 +30,10 @@ public class Hide : SteeringBehaviourTarget {
 
     public override Steering GetSteering()
     {
-        return Hide.GetSteering(target.position, target.velocity, npc, maxDist, distanceBoundary, maxAccel, evadePrediction, faceTimeToTarget);
+        return Hide.GetSteering(target, npc, maxDist, distanceBoundary, maxAccel, evadePrediction, faceTimeToTarget);
     }
 
-    public static Steering GetSteering(Vector3 targetPosition, Vector3 targetVelocity, Agent npc, float maxDist, float distanceBoundary, float maxAccel, float evadePrediction, float faceTimeToTarget )
+    public static Steering GetSteering(Agent target, Agent npc, float maxDist, float distanceBoundary, float maxAccel, float evadePrediction, float faceTimeToTarget )
     {
         float minDist = maxDist;
         Vector3 bestHidingSpot = Vector3.zero;
@@ -43,7 +43,7 @@ public class Hide : SteeringBehaviourTarget {
         Collider[] hits = Physics.OverlapSphere(npc.position, minDist + distanceBoundary + 0.5f, layerMask);
         foreach (Collider coll in hits)
         {
-            Vector3 hidingSpot = Hide.GetHidingPosition(coll.GetComponent<Agent>(), targetPosition, distanceBoundary);
+            Vector3 hidingSpot = Hide.GetHidingPosition(coll.GetComponent<Agent>(), target.position, distanceBoundary);
             float distance = Vector3.Distance(hidingSpot, npc.position);
             if (distance < minDist)
             {
@@ -57,7 +57,7 @@ public class Hide : SteeringBehaviourTarget {
         if (changed == false)
         {
             Debug.Log("HUIR");
-            return Evade.GetSteering(targetPosition, targetVelocity, npc, maxAccel, evadePrediction, true);
+            return Evade.GetSteering(target, npc, maxAccel, evadePrediction, true);
         }
         else
         {

@@ -29,12 +29,14 @@ public class CollisionAvoidance : SteeringBehaviour {
 
         foreach (GameObject t in targets) {
             Agent target = t.GetComponent<Agent>();
-
+            if (Vector3.Distance(target.position, npc.position) > 3f) //Addition
+                continue;
             Vector3 relativePos = target.position - npc.position;
             Vector3 relativeVel = target.velocity - npc.velocity;
             float relativeSpeed = relativeVel.magnitude;
 
-            float timeToCollision = (Vector3.Dot(relativePos, relativeVel)) / -(relativeSpeed * relativeSpeed);
+            float timeToCollision = (Vector3.Dot(relativePos, relativeVel))
+                                    / (relativeSpeed * relativeSpeed);
             float distance = relativePos.magnitude;
             float minSeparation = distance - (relativeSpeed * timeToCollision);
             if (minSeparation > 2 * collisionRadius)
@@ -44,20 +46,23 @@ public class CollisionAvoidance : SteeringBehaviour {
                 shortestTime = timeToCollision;
                 firstTarget = target;
                 firstMinSeparation = minSeparation;
+                firstDistance = distance;
                 firstRelativePos = relativePos;
                 firstRelativeVel = relativeVel;
             }
         }
-
         if (firstTarget == null)
             return steering;
         if (firstMinSeparation <= 0.0f || firstDistance < 2 * collisionRadius)
-            firstRelativePos = firstTarget.position;
+            firstRelativePos = npc.position - firstTarget.position;
         else
             firstRelativePos += firstRelativeVel * shortestTime;
 
         firstRelativePos.Normalize();
-        steering.linear = -firstRelativePos * npc.maxAccel;
+        steering.linear = firstRelativePos * npc.maxAccel;
+        steering.linear.y = 0;
+        if (visibleRays)
+            drawRays(npc.position,steering.linear,Color.red);
         return steering;
     }
 }

@@ -7,24 +7,22 @@ public class Align : SteeringBehaviour {
     [SerializeField]
     private Agent target;
 
-    [SerializeField]
+ /* [SerializeField]
     private float targetRadius;
 
     [SerializeField]
-    private float slowRadius;
+    private float slowRadius;*/
 
     [SerializeField]
     private float timeToTarget = 0.1f;
 
     override
 	public Steering GetSteering() {
-        return Align.GetSteering(target.orientation, npc, targetRadius, slowRadius, timeToTarget);
+        return Align.GetSteering(target.orientation, npc, target.interiorAngle, target.exteriorAngle, timeToTarget);
     }
 
     public static Steering GetSteering(float orienTarget, Agent npc, float targetRadius, float slowRadius, float timeToTarget) {
         Steering steering = new Steering();
-
-       // float orienTarget = target.orientation;
 
         float rotacion = orienTarget - npc.orientation;
 

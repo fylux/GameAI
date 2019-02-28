@@ -8,15 +8,15 @@ public class Arrive : SteeringBehaviourTarget {
     float slowingRadius = 10f;
 
     public override Steering GetSteering() { 
-        return Arrive.GetSteering(target, npc, slowingRadius, maxAccel);
+        return Arrive.GetSteering(target.position, npc, slowingRadius, maxAccel);
     }
 
-    public static Steering GetSteering(Agent target, Agent npc, float slowingRadius, float maxAccel) {
+    public static Steering GetSteering(Vector3 targetPosition, Agent npc, float slowingRadius, float maxAccel) {
         Steering steering = new Steering();
 
         // Calculate the desired velocity
-        var desiredVelocity = target.position - npc.position;
-        var distance = (target.position - npc.position).magnitude;
+        var desiredVelocity = targetPosition - npc.position;
+        var distance = (targetPosition - npc.position).magnitude;
 
         // Check the distance to detect whether the character
         // is inside the slowing area

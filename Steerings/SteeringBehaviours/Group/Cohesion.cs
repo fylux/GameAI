@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class Cohesion : SteeringBehaviour {
 
-    GameObject[] targets;
-
     [SerializeField]
     float threshold;
 
@@ -13,23 +11,26 @@ public class Cohesion : SteeringBehaviour {
     float decayCoefficient;
 
     public override Steering GetSteering() {
-        return Cohesion.GetSteering(npc, targets, this.gameObject, threshold, decayCoefficient, maxAccel);
+        return Cohesion.GetSteering(npc, threshold, decayCoefficient, maxAccel);
     }
 
-    public static Steering GetSteering(Agent npc, GameObject[] targets, GameObject self, float threshold, float decayCoefficient, float maxAccel) {
+    public static Steering GetSteering(Agent npc, float threshold, float decayCoefficient, float maxAccel) {
         Steering steering = new Steering();
 
         int neighbours = 0;
         Vector3 centerOfMass = Vector3.zero;
 
-        foreach (GameObject boid in targets) { //Comprobar con un SphereCast, en vez de Tag quiza usar Layers
-            Body bodi = boid.GetComponent<Body>();
-            Vector3 direction = bodi.position - npc.position;
+        int layerMask = 1 << 9;
+        Collider[] hits = Physics.OverlapSphere(npc.position, threshold, layerMask);
+        foreach (Collider coll in hits)
+        { //Comprobar con un SphereCast, en vez de Tag quiza usar Layers
+            Agent agent = coll.GetComponent<Agent>();
+            Vector3 direction = agent.position - npc.position;
             float distance = direction.magnitude;
             
 
-            if (boid != self && distance < threshold) {
-                centerOfMass += bodi.position;
+            if (agent != npc && distance < threshold) {
+                centerOfMass += agent.position;
                 neighbours++;
             }
         }
@@ -41,10 +42,4 @@ public class Cohesion : SteeringBehaviour {
 
         return steering;
     }
-
-	// Use this for initialization
-	public new void Start () {
-        base.Start();
-        targets = GameObject.FindGameObjectsWithTag("NPC");
-	}
 }

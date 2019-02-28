@@ -4,8 +4,14 @@ using UnityEngine;
 
 public class Wander : SteeringBehaviour {
 
+    /*[SerializeField]
+    private float targetRadius;
+
     [SerializeField]
-    private float targetRadius, slowRadius, timeToTarget;
+    private float slowRadius;*/
+
+    [SerializeField]
+    private float timeToTarget;
 
     [SerializeField]
     private float offset;   //Distancia desde el personaje hasta el circulo
@@ -25,7 +31,7 @@ public class Wander : SteeringBehaviour {
 
     private new void Start() {
         base.Start();
-        float wanderOrientation = Random.Range(-1.0f, 1.0f) * wanderRate;
+        wanderOrientation = Random.Range(-1.0f, 1.0f) * wanderRate;
         wanderForce = GetRandomWanderForce();
     }
 
@@ -46,7 +52,7 @@ public class Wander : SteeringBehaviour {
         Vector3 target = centroCirculo + radius * Util.OrientationToVector(targetOrientation);
 
 
-        steering = Face.GetSteering(target, npc, targetRadius, slowRadius, timeToTarget);
+        steering = Face.GetSteering(target, npc, npc.interiorAngle, npc.exteriorAngle, timeToTarget);
 
         steering.linear = maxAccel * npc.getForward();
 

@@ -4,13 +4,11 @@ using UnityEngine;
 
 public class Alignment : SteeringBehaviour {
 
-    private GameObject[] targets;
-
-    [SerializeField]
+   /* [SerializeField]
     private float targetRadius;
 
     [SerializeField]
-    private float slowRadius;
+    private float slowRadius;*/
 
     [SerializeField]
     private float timeToTarget = 0.1f;
@@ -18,27 +16,25 @@ public class Alignment : SteeringBehaviour {
     [SerializeField]
     private float threshold = 3f;
 
-    private new void Start() {
-        base.Start();
-        targets = GameObject.FindGameObjectsWithTag("NPC");
-    }
-
     public override Steering GetSteering() {
-        return Alignment.GetSteering(npc, targets, this.gameObject, threshold, targetRadius, slowRadius, timeToTarget);
+        return Alignment.GetSteering(npc, threshold, npc.interiorAngle, npc.exteriorAngle, timeToTarget);
     }
 
-    public static Steering GetSteering(Agent npc, GameObject[] targets, GameObject self, float threshold, float targetRadius, float slowRadius, float timeToTarget)  {
+    public static Steering GetSteering(Agent npc, float threshold, float targetRadius, float slowRadius, float timeToTarget)  {
         int neighbours = 0;
         float targetOrientation = 0;
 
         Vector3 Heading = Vector3.zero;
 
-        foreach (GameObject boid in targets) {
-            Agent bodi = boid.GetComponent<Agent>();
-            Vector3 direction = bodi.position - npc.position;
+        int layerMask = 1 << 9;
+        Collider[] hits = Physics.OverlapSphere(npc.position, threshold, layerMask);
+        foreach (Collider coll in hits)
+        {
+            Agent agent = coll.GetComponent<Agent>();
+            Vector3 direction = agent.position - npc.position;
             float distance = direction.magnitude;
-            if (boid != self && distance < threshold) {
-                targetOrientation += bodi.orientation;
+            if (agent != npc && distance < threshold) {
+                targetOrientation += agent.orientation;
                 neighbours++;
             }
         }

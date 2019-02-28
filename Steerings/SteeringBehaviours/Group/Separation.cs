@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class Separation : SteeringBehaviour {
 
-    GameObject[] targets;
-
     [SerializeField]
     float threshold;
 
@@ -14,19 +12,20 @@ public class Separation : SteeringBehaviour {
 
     public override Steering GetSteering()
     {
-        return Separation.GetSteering(npc, targets, this.gameObject, threshold, decayCoefficient, maxAccel);
+        return Separation.GetSteering(npc, threshold, decayCoefficient, maxAccel);
     }
 
-    public static Steering GetSteering(Agent npc, GameObject[] targets, GameObject self, float threshold, float decayCoefficient, float maxAccel)
+    public static Steering GetSteering(Agent npc, float threshold, float decayCoefficient, float maxAccel)
     {
         Steering steering = new Steering();
-
-        foreach (GameObject boid in targets) //Comprobar con un SphereCast, en vez de Tag quiza usar Layers
+        int layerMask = 1 << 9;
+        Collider[] hits = Physics.OverlapSphere(npc.position, threshold, layerMask);
+        foreach (Collider coll in hits)
         {
-            Body bodi = boid.GetComponent<Body>();
-            Vector3 direction = bodi.position - npc.position;
+            Agent agent = coll.GetComponent<Agent>();
+            Vector3 direction = agent.position - npc.position;
             float distance = direction.magnitude;
-            if (boid != self && distance < threshold)
+            if (agent != npc && distance < threshold)
             {
                 // Debug.Log("La distancia es de " + distance + ", el threshold es de " + threshold + ", por lo tanto MOVEMOS");
                 float strength = Mathf.Min(decayCoefficient / (distance * distance), maxAccel);
@@ -40,12 +39,6 @@ public class Separation : SteeringBehaviour {
 
         return steering;
     }
-
-	// Use this for initialization
-	public new void Start () {
-        base.Start();
-        targets = GameObject.FindGameObjectsWithTag("NPC");
-	}
 
     /*
      * 
@@ -73,4 +66,20 @@ public class Separation : SteeringBehaviour {
 
         return steering;
      * */
+
+/*
+ * foreach (GameObject boid in targets) //Comprobar con un SphereCast, en vez de Tag quiza usar Layers
+    {
+        Agent agent = boid.GetComponent<Agent>();
+        Vector3 direction = agent.position - npc.position;
+        float distance = direction.magnitude;
+        if (agent != npc && distance < threshold)
+        {
+            // Debug.Log("La distancia es de " + distance + ", el threshold es de " + threshold + ", por lo tanto MOVEMOS");
+            float strength = Mathf.Min(decayCoefficient / (distance * distance), maxAccel);
+
+            direction = direction.normalized;
+            steering.linear += strength * direction;
+        }
+    }*/
 }

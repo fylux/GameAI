@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class Face : SteeringBehaviourTarget {
 
-    [SerializeField]
+  /*  [SerializeField]
     private float targetRadius;
 
     [SerializeField]
-    private float slowRadius;
+    private float slowRadius;*/
 
     [SerializeField]
     private float timeToTarget = 0.1f;
@@ -16,7 +16,7 @@ public class Face : SteeringBehaviourTarget {
     override
     public Steering GetSteering()
     {
-        return Face.GetSteering(target.position, npc, targetRadius, slowRadius, timeToTarget);
+        return Face.GetSteering(target.position, npc, target.interiorAngle, target.exteriorAngle, timeToTarget);
     }
 
     public static Steering GetSteering(Vector3 targetPosition, Agent npc, float targetRadius, float slowRadius, float timeToTarget)

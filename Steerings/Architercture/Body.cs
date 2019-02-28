@@ -27,6 +27,7 @@ public class Body : MonoBehaviour {
         orientation += rotation * Time.deltaTime;
 
         ApplySteering();
+        velocity.y = 0;
 
         velocity = Vector3.ClampMagnitude(velocity, MaxVelocity);
         rotation = Mathf.Clamp(rotation, -MaxRotation, MaxRotation);

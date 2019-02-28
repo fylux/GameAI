@@ -29,4 +29,19 @@ public class AgentNPC : Agent {
         rotation += steeringAngular * Time.deltaTime;
     }
 
+    /*
+    private void OnMouseEnter() {
+        Renderer rend = GetComponent<Renderer>();
+        rend.material.color = new Color(1, 0, 0);
+    }
+
+    private void OnMouseOver() {
+        Renderer rend = GetComponent<Renderer>();
+        rend.material.color += new Color(-.5f, 0, -.5f) * Time.deltaTime;
+    }
+
+    private void OnMouseExit() {
+        Renderer rend = GetComponent<Renderer>();
+        rend.material.color = Color.white;
+    }*/
 }

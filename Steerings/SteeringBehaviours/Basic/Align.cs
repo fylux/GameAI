@@ -18,7 +18,7 @@ public class Align : SteeringBehaviour {
 
     override
 	public Steering GetSteering() {
-        return Align.GetSteering(target.orientation, npc, target.interiorAngle, target.exteriorAngle, timeToTarget);
+        return Align.GetSteering(target.orientation, npc, npc.interiorAngle, npc.exteriorAngle, timeToTarget);
     }
 
     public static Steering GetSteering(float orienTarget, Agent npc, float targetRadius, float slowRadius, float timeToTarget) {

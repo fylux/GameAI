@@ -17,7 +17,7 @@ public class LWYG : SteeringBehaviourTarget {
     private float maxPrediction;
 
     public override Steering GetSteering() {
-        return LWYG.GetSteering(target, npc, maxPrediction, target.interiorAngle, target.exteriorAngle, timeToTarget);
+        return LWYG.GetSteering(target, npc, maxPrediction, npc.interiorAngle, npc.exteriorAngle, timeToTarget);
     }
 
     public static Steering GetSteering(Agent target, Agent npc, float maxPrediction, float targetRadius, float slowRadius, float timeToTarget)

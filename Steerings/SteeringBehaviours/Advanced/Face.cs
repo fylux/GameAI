@@ -16,7 +16,7 @@ public class Face : SteeringBehaviourTarget {
     override
     public Steering GetSteering()
     {
-        return Face.GetSteering(target.position, npc, target.interiorAngle, target.exteriorAngle, timeToTarget);
+        return Face.GetSteering(target.position, npc, npc.interiorAngle, npc.exteriorAngle, timeToTarget);
     }
 
     public static Steering GetSteering(Vector3 targetPosition, Agent npc, float targetRadius, float slowRadius, float timeToTarget)

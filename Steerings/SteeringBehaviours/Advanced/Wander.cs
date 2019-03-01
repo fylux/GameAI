@@ -39,6 +39,10 @@ public class Wander : SteeringBehaviour {
         if (Time.frameCount % wanderCooldown == 0) {
             wanderForce = GetRandomWanderForce();
         }
+
+        if (visibleRays)
+            drawRays(npc.position, Util.OrientationToVector(wanderForce.angular), Color.magenta);
+        Debug.Log(wanderForce.angular);
         return wanderForce;
     }
 
@@ -52,7 +56,7 @@ public class Wander : SteeringBehaviour {
         Vector3 target = centroCirculo + radius * Util.OrientationToVector(targetOrientation);
 
 
-        steering = Face.GetSteering(target, npc, npc.interiorAngle, npc.exteriorAngle, timeToTarget);
+        steering = Face.GetSteering(target, npc, npc.interiorAngle, npc.exteriorAngle, timeToTarget, false);
 
         steering.linear = maxAccel * npc.getForward();
 

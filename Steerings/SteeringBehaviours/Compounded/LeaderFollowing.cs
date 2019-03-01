@@ -8,7 +8,6 @@ public class LeaderFollowing : SteeringBehaviourTarget
     private float leaderDistance = 2f;
 
     private Vector3 tv;
-    private Vector3 targetVelocity;
     private Vector3 behind;
 
     float slowingRadius = 10f;
@@ -28,14 +27,13 @@ public class LeaderFollowing : SteeringBehaviourTarget
 
     private new void Start() {
         base.Start();
-        targetVelocity = target.velocity;
-        tv = targetVelocity * -1;
+        tv = target.velocity * -1;
         tv = tv.normalized * leaderDistance;
         behind = target.position + tv;
     }
 
     private void Update() {
-        tv = targetVelocity * -1;
+        tv = target.velocity * -1;
         tv = tv.normalized * leaderDistance;
         behind = target.position + tv;
         DrawRays();
@@ -45,7 +43,7 @@ public class LeaderFollowing : SteeringBehaviourTarget
     public Steering GetSteering() {
         Steering steering = new Steering();
         steering.linear += Arrive.GetSteering(behind, npc, slowingRadius, maxAccel).linear * arrivePriority;
-        steering.linear += Separation.GetSteering(npc, threshold, decayCoefficient, maxAccel).linear * separationPriority;
+        steering.linear += Separation.GetSteering(npc, threshold, decayCoefficient, maxAccel, visibleRays).linear * separationPriority;
         if (OnLeaderSight())
             steering.linear += Evade.GetSteering(target, npc, maxAccel, Vector3.Distance(target.position, npc.position) * maxAccel, true).linear * evadePriority;
 

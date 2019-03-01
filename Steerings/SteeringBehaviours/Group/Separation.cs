@@ -12,10 +12,10 @@ public class Separation : SteeringBehaviour {
 
     public override Steering GetSteering()
     {
-        return Separation.GetSteering(npc, threshold, decayCoefficient, maxAccel);
+        return Separation.GetSteering(npc, threshold, decayCoefficient, maxAccel, visibleRays);
     }
 
-    public static Steering GetSteering(Agent npc, float threshold, float decayCoefficient, float maxAccel)
+    public static Steering GetSteering(Agent npc, float threshold, float decayCoefficient, float maxAccel, bool visibleRays)
     {
         Steering steering = new Steering();
         int layerMask = 1 << 9;
@@ -35,7 +35,10 @@ public class Separation : SteeringBehaviour {
             }
         }
 
-        steering.linear = (-1) * steering.linear;
+        steering.linear *= (-1);
+
+        if (visibleRays)
+            drawRays(npc.position, steering.linear, Color.magenta);
 
         return steering;
     }

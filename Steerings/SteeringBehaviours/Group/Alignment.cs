@@ -17,10 +17,10 @@ public class Alignment : SteeringBehaviour {
     private float threshold = 3f;
 
     public override Steering GetSteering() {
-        return Alignment.GetSteering(npc, threshold, npc.interiorAngle, npc.exteriorAngle, timeToTarget);
+        return Alignment.GetSteering(npc, threshold, npc.interiorAngle, npc.exteriorAngle, timeToTarget, visibleRays);
     }
 
-    public static Steering GetSteering(Agent npc, float threshold, float targetRadius, float slowRadius, float timeToTarget)  {
+    public static Steering GetSteering(Agent npc, float threshold, float targetRadius, float slowRadius, float timeToTarget, bool visibleRays)  {
         int neighbours = 0;
         float targetOrientation = 0;
 
@@ -41,7 +41,7 @@ public class Alignment : SteeringBehaviour {
 
         if (neighbours > 0) {
             targetOrientation /= neighbours;
-            return Align.GetSteering(targetOrientation, npc, targetRadius, slowRadius, timeToTarget);
+            return Align.GetSteering(targetOrientation, npc, targetRadius, slowRadius, timeToTarget, visibleRays);
         }
 
         return new Steering();

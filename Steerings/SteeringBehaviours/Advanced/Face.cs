@@ -16,10 +16,10 @@ public class Face : SteeringBehaviourTarget {
     override
     public Steering GetSteering()
     {
-        return Face.GetSteering(target.position, npc, npc.interiorAngle, npc.exteriorAngle, timeToTarget);
+        return Face.GetSteering(target.position, npc, npc.interiorAngle, npc.exteriorAngle, timeToTarget, visibleRays);
     }
 
-    public static Steering GetSteering(Vector3 targetPosition, Agent npc, float targetRadius, float slowRadius, float timeToTarget)
+    public static Steering GetSteering(Vector3 targetPosition, Agent npc, float targetRadius, float slowRadius, float timeToTarget, bool visibleRays)
     {
         Steering steering = new Steering();
 
@@ -34,7 +34,7 @@ public class Face : SteeringBehaviourTarget {
         // virtualTarget.GetComponent<Agent>.orientation = targetOrientation
         // return Align.Steer(...), siendo el target con el que nos vamos a alinear el virtualTarget
 
-        return Align.GetSteering(targetOrientation, npc, targetRadius, slowRadius, timeToTarget);
+        return Align.GetSteering(targetOrientation, npc, targetRadius, slowRadius, timeToTarget, visibleRays);
     }
 
 

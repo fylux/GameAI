@@ -50,13 +50,11 @@ public class Hide : SteeringBehaviourTarget {
                 minDist = distance;
                 bestHidingSpot = hidingSpot;
                 changed = true;
-                Debug.Log("Escondite encontrado!");
             }
         }
 
         if (changed == false)
         {
-            Debug.Log("HUIR");
             return Evade.GetSteering(target, npc, maxAccel, evadePrediction, true);
         }
         else

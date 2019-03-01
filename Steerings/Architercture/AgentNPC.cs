@@ -5,7 +5,10 @@ using UnityEngine;
 
 public class AgentNPC : Agent {
 
-    private SteeringBehaviour[] steers;
+    SteeringBehaviour[] steers;
+
+    [SerializeField]
+    bool visibleRays;
 
     private new void Start() {
         base.Start();
@@ -24,6 +27,8 @@ public class AgentNPC : Agent {
 
         velocity += totalSteering.linear * Time.deltaTime;
         rotation += totalSteering.angular * Time.deltaTime;
+
+        Debug.DrawRay(position, velocity.normalized * 2, Color.green);
     }
 
     /*

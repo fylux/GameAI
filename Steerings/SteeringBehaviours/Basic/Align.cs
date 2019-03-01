@@ -51,7 +51,6 @@ public class Align : SteeringBehaviour {
         }
 
         drawRays(npc.position, Util.OrientationToVector(orienTarget), Color.magenta);
-        drawRays(npc.position, Util.OrientationToVector(npc.orientation));
 
         return steering;
     }

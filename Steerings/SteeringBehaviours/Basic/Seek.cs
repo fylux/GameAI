@@ -18,7 +18,10 @@ public class Seek : SteeringBehaviourTarget {
         //steering.linear = desiredVelocity; //Millington
 
         if (visibleRays)
-            drawRays(npc.position, steering.linear);
+        {
+            drawRays(npc.position, steering.linear, Color.magenta);
+        }
+            
 
         return steering;
     }

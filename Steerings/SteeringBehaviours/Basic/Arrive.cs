@@ -28,7 +28,7 @@ public class Arrive : SteeringBehaviourTarget {
 
         // Set the steering based on this
         drawRays(npc.position, desiredVelocity, Color.magenta);
-        drawRays(npc.position, npc.velocity);
+
         steering.linear = desiredVelocity - npc.velocity;
         return steering;
     }

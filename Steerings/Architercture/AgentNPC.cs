@@ -14,19 +14,16 @@ public class AgentNPC : Agent {
 
     override
     protected void ApplySteering() {
-        Vector3 steeringLinear = Vector3.zero;
-        float steeringAngular = 0.0f;
+        Steering totalSteering = new Steering();
         foreach (SteeringBehaviour steer in steers) {
-            Steering steering = steer.GetSteering();
-            steeringLinear += steering.linear * steer.blendPriority;
-            steeringAngular += steering.angular * steer.blendPriority;
+            totalSteering += Steering.ApplyPriority(steer.GetSteering(), steer.blendPriority);
         }
 
-        steeringLinear = Vector3.ClampMagnitude(steeringLinear, maxAccel);
-        steeringAngular = Mathf.Clamp(steeringAngular, -MaxAngular, MaxAngular);
+        totalSteering.linear = Vector3.ClampMagnitude(totalSteering.linear, maxAccel);
+        totalSteering.angular = Mathf.Clamp(totalSteering.angular, -MaxAngular, MaxAngular);
 
-        velocity += steeringLinear * Time.deltaTime;
-        rotation += steeringAngular * Time.deltaTime;
+        velocity += totalSteering.linear * Time.deltaTime;
+        rotation += totalSteering.angular * Time.deltaTime;
     }
 
     /*

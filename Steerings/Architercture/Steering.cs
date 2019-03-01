@@ -19,9 +19,22 @@ public class Steering {
 
     public static Steering operator +(Steering steering1, Steering steering2)
     {
-        Steering steering = new Steering();
-        steering.linear = steering1.linear + steering2.linear;
-        steering.angular = steering1.angular + steering2.angular;
+        steering1.linear +=  steering2.linear;
+        steering1.angular +=  steering2.angular;
+        return steering1;
+    }
+
+    public static Steering ApplyPriority(Steering steering, float linearPriority, float angularPriority)
+    {
+        steering.linear *= linearPriority;
+        steering.angular *= angularPriority;
+        return steering;
+    }
+
+    public static Steering ApplyPriority(Steering steering, float priority)
+    {
+        steering.linear *= priority;
+        steering.angular *= priority;
         return steering;
     }
 }

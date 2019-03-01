@@ -32,24 +32,35 @@ public class Wander : SteeringBehaviour {
     private new void Start() {
         base.Start();
         wanderOrientation = Random.Range(-1.0f, 1.0f) * wanderRate;
-        wanderForce = GetRandomWanderForce();
+        wanderForce = GetRandomWanderForce(npc, wanderForce, wanderRate, wanderOrientation, offset, radius, maxAccel, timeToTarget);
     }
 
     public override Steering GetSteering() {
-        if (Time.frameCount % wanderCooldown == 0) {
-            wanderForce = GetRandomWanderForce();
-        }
-
-        if (visibleRays)
-            drawRays(npc.position, Util.OrientationToVector(wanderForce.angular), Color.magenta);
-        Debug.Log(wanderForce.angular);
+        wanderOrientation += Random.Range(-1.0f, 1.0f) * wanderRate;
+        wanderForce = GetSteering(npc, wanderForce, wanderCooldown, wanderRate, wanderOrientation, offset, radius, maxAccel, timeToTarget, visibleRays);
         return wanderForce;
     }
 
-    private Steering GetRandomWanderForce() {
+    public static Steering GetSteering(Agent npc, Steering wanderForce, float wanderCooldown, float wanderRate, float wanderOrientation, float offset, float radius, float maxAccel, float timeToTarget, bool visibleRays)
+    {
+
+        if (Time.frameCount % wanderCooldown == 0)
+        {
+            wanderForce = GetRandomWanderForce(npc, wanderForce, wanderRate, wanderOrientation, offset, radius, maxAccel, timeToTarget);
+        }
+
+        if (visibleRays)
+        {
+            Debug.Log(wanderForce.linear);
+            drawRays(npc.position, wanderForce.linear, Color.magenta);
+        }
+            
+        return wanderForce;
+    }
+
+    static Steering GetRandomWanderForce(Agent npc, Steering wanderForce, float wanderRate, float wanderOrientation, float offset, float radius, float maxAccel, float timeToTarget) {
         Steering steering = new Steering();
 
-        wanderOrientation += Random.Range(-1.0f, 1.0f) * wanderRate;
         float targetOrientation = wanderOrientation + npc.orientation;
 
         Vector3 centroCirculo = npc.position + offset * Util.OrientationToVector(npc.orientation);

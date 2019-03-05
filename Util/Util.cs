@@ -15,4 +15,8 @@ public static class Util {
         return vector.normalized;
     }
 
+    public static float HorizontalDistance(Vector3 v1, Vector3 v2) {
+        return new Vector3(v1.x - v2.x, 0, v1.z - v2.z).magnitude;
+    }
+
 }

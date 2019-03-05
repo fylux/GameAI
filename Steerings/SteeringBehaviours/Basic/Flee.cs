@@ -13,10 +13,7 @@ public class Flee : SteeringBehaviourTarget {
         Steering steering = -Seek.GetSteering(target, npc, maxAccel, false);
 
         if (visibleRays)
-        {
             drawRays(npc.position, steering.linear, Color.magenta);
-            drawRays(npc.position, npc.velocity);
-        }
             
 
         return steering;

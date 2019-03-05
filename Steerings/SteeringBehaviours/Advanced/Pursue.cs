@@ -24,8 +24,8 @@ public class Pursue : SteeringBehaviourTarget {
         else
             prediction = distance / speed;
 
-        Vector3 pred_target = target.position + (target.velocity * prediction);
+        Vector3 predTarget = target.position + (target.velocity * prediction);
 
-        return Seek.GetSteering(pred_target, npc, maxAccel, visibleRays);
+        return Seek.GetSteering(predTarget, npc, maxAccel, visibleRays);
     }
 }

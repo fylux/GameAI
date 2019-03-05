@@ -11,10 +11,10 @@ public class Cohesion : SteeringBehaviour {
     float decayCoefficient;
 
     public override Steering GetSteering() {
-        return Cohesion.GetSteering(npc, threshold, decayCoefficient, maxAccel);
+        return Cohesion.GetSteering(npc, threshold, decayCoefficient, maxAccel, visibleRays);
     }
 
-    public static Steering GetSteering(Agent npc, float threshold, float decayCoefficient, float maxAccel) {
+    public static Steering GetSteering(Agent npc, float threshold, float decayCoefficient, float maxAccel, bool visibleRays) {
         Steering steering = new Steering();
 
         int neighbours = 0;
@@ -37,7 +37,7 @@ public class Cohesion : SteeringBehaviour {
 
         if (neighbours > 0) {
             centerOfMass /= neighbours;
-            return Seek.GetSteering(centerOfMass, npc, maxAccel,false);
+            return Seek.GetSteering(centerOfMass, npc, maxAccel,visibleRays);
         }
 
         return steering;

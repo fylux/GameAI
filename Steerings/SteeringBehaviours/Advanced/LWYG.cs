@@ -17,10 +17,10 @@ public class LWYG : SteeringBehaviourTarget {
     private float maxPrediction;
 
     public override Steering GetSteering() {
-        return LWYG.GetSteering(target, npc, maxPrediction, npc.interiorAngle, npc.exteriorAngle, timeToTarget);
+        return LWYG.GetSteering(target, npc, maxPrediction, npc.interiorAngle, npc.exteriorAngle, timeToTarget, visibleRays);
     }
 
-    public static Steering GetSteering(Agent target, Agent npc, float maxPrediction, float targetRadius, float slowRadius, float timeToTarget)
+    public static Steering GetSteering(Agent target, Agent npc, float maxPrediction, float targetRadius, float slowRadius, float timeToTarget, bool visibleRays)
     {
         Vector3 direction = target.position - npc.position;
         float distance = direction.magnitude;
@@ -34,6 +34,6 @@ public class LWYG : SteeringBehaviourTarget {
 
         Vector3 predTarget = target.position + (target.velocity * prediction);
 
-        return Face.GetSteering(predTarget, npc, targetRadius, slowRadius, timeToTarget);
+        return Face.GetSteering(predTarget, npc, targetRadius, slowRadius, timeToTarget, visibleRays);
     }
 }

@@ -18,10 +18,10 @@ public class Align : SteeringBehaviour {
 
     override
 	public Steering GetSteering() {
-        return Align.GetSteering(target.orientation, npc, npc.interiorAngle, npc.exteriorAngle, timeToTarget);
+        return Align.GetSteering(target.orientation, npc, npc.interiorAngle, npc.exteriorAngle, timeToTarget, visibleRays);
     }
 
-    public static Steering GetSteering(float orienTarget, Agent npc, float targetRadius, float slowRadius, float timeToTarget) {
+    public static Steering GetSteering(float orienTarget, Agent npc, float targetRadius, float slowRadius, float timeToTarget, bool visibleRays) {
         Steering steering = new Steering();
 
         float rotacion = orienTarget - npc.orientation;
@@ -50,7 +50,8 @@ public class Align : SteeringBehaviour {
             steering.angular *= npc.MaxAngular;
         }
 
-        drawRays(npc.position, Util.OrientationToVector(orienTarget), Color.magenta);
+        if (visibleRays)
+             drawRays(npc.position, Util.OrientationToVector(orienTarget), Color.magenta);
 
         return steering;
     }

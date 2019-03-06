@@ -11,7 +11,6 @@ public class AgentNPC : Agent {
     bool visibleRays;
 
     Vector3 target;
-    bool goTo = false;
 
     private new void Start() {
         base.Start();
@@ -58,7 +57,7 @@ public class AgentNPC : Agent {
                 PathFollowing pf = gameObject.AddComponent<PathFollowing>();
                 pf.path = newPath;
                 steers.Add(pf);
-                goTo = true;
+
             }
         }
         else {

@@ -6,9 +6,9 @@ using UnityEngine;
 public class CollisionAvoidance : SteeringBehaviour {
 
     [SerializeField]
-    private float collisionRadius = 0.4f;
+    float collisionRadius = 0.4f;
 
-    private GameObject[] targets;
+    GameObject[] targets;
 
     new
     protected void Start() {

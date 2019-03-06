@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AntiAlign : SteeringBehaviour
+public class AntiAlign : SteeringBehaviourTarget
 {
-    [SerializeField]
-    private Agent target;
-
   /*  [SerializeField]
     private float targetRadius;
 
@@ -14,7 +11,7 @@ public class AntiAlign : SteeringBehaviour
     private float slowRadius;*/
 
     [SerializeField]
-    private float timeToTarget = 0.1f;
+    float timeToTarget = 0.1f;
 
     override
 	public Steering GetSteering()

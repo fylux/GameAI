@@ -6,7 +6,7 @@ using UnityEngine;
 public class Pursue : SteeringBehaviourTarget {
 
     [SerializeField]
-    private float maxPrediction;
+    float maxPrediction;
 
     override
     public Steering GetSteering() {

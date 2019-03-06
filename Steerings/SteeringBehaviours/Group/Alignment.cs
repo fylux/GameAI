@@ -11,10 +11,10 @@ public class Alignment : SteeringBehaviour {
     private float slowRadius;*/
 
     [SerializeField]
-    private float timeToTarget = 0.1f;
+    float timeToTarget = 0.1f;
 
     [SerializeField]
-    private float threshold = 3f;
+    float threshold = 3f;
 
     public override Steering GetSteering() {
         return Alignment.GetSteering(npc, threshold, npc.interiorAngle, npc.exteriorAngle, timeToTarget, visibleRays);

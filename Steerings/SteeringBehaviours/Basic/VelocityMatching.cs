@@ -5,10 +5,10 @@ using UnityEngine;
 public class VelocityMatching : SteeringBehaviour
 {
     [SerializeField]
-    private Agent target;
+    Agent target;
 
     [SerializeField]
-    private float timeToTarget = 0.1f;
+    float timeToTarget = 0.1f;
 
     override
     public Steering GetSteering() {

@@ -11,10 +11,10 @@ public class LWYG : SteeringBehaviourTarget {
     private float slowRadius;*/
 
     [SerializeField]
-    private float timeToTarget = 0.1f;
+    float timeToTarget = 0.1f;
 
     [SerializeField]
-    private float maxPrediction;
+    float maxPrediction;
 
     public override Steering GetSteering() {
         return LWYG.GetSteering(target, npc, maxPrediction, npc.interiorAngle, npc.exteriorAngle, timeToTarget, visibleRays);

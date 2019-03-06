@@ -11,7 +11,7 @@ public class Face : SteeringBehaviourTarget {
     private float slowRadius;*/
 
     [SerializeField]
-    private float timeToTarget = 0.1f;
+    float timeToTarget = 0.1f;
 
     override
     public Steering GetSteering()

@@ -18,7 +18,7 @@ public class Hide : SteeringBehaviourTarget {
     [SerializeField]
     float evadePrediction;
 
-    private static Vector3 GetHidingPosition(Agent obstacle, Vector3 targetPosition, float distanceBoundary)
+    static Vector3 GetHidingPosition(Agent obstacle, Vector3 targetPosition, float distanceBoundary)
     {
         float distAway = obstacle.interiorRadius + distanceBoundary;
 

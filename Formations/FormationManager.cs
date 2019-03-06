@@ -4,11 +4,23 @@ using System.Collections.Generic;
 
 public class FormationManager : MonoBehaviour {
     public FormationPattern pattern;
-    private List<SlotAssignment> slotAssignments;
-    private Location driftOffset;
+    List<SlotAssignment> slotAssignments;
+    Location driftOffset;
 
     void Awake() {
         slotAssignments = new List<SlotAssignment>();
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            Debug.Log("A ver si esto funciona");
+            foreach (GameObject go in GameObject.FindGameObjectsWithTag("NPC")){
+                Debug.Log("Checking...");
+                AddCharacter(go.GetComponent<AgentNPC>());
+            }
+        }
     }
 
     public void UpdateSlotAssignments() {
@@ -20,9 +32,14 @@ public class FormationManager : MonoBehaviour {
 
     public bool AddCharacter(Agent character)
     {
+        Debug.Log("Añadiendo personaje " + character);
         int occupiedSlots = slotAssignments.Count;
         if (!pattern.SupportsSlots(occupiedSlots + 1))
+        {
+            Debug.Log("Accion no soportada");
             return false;
+        }
+            
         SlotAssignment sa = new SlotAssignment();
         sa.character = character;
         slotAssignments.Add(sa);
@@ -39,16 +56,17 @@ public class FormationManager : MonoBehaviour {
 
     public void UpdateSlots()
     {
+        Debug.Log("Updating");
         Agent leader = pattern.leader;
         Vector3 anchor = leader.position;
         float orientation = leader.orientation;
         foreach (SlotAssignment sa in slotAssignments)
         {
-            Vector3 slotPos = pattern.GetSlotLocation(sa.slotIndex);
+            Vector3 slotPos = pattern.GetSlotLocation(sa.slotIndex).position;
             Vector3 relPos = anchor + leader.transform.TransformDirection(slotPos);
             Location charDrift = new Location(relPos, orientation);
             charDrift.position += driftOffset.position;
-            charDrift.orientation *= driftOffset.orientation;
+            charDrift.orientation += driftOffset.orientation; //Podria ser *
             Character character = sa.character.GetComponent<Character>();
             character.SetTarget(charDrift);
         }

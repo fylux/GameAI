@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Align : SteeringBehaviour {
-
-    [SerializeField]
-    private Agent target;
+public class Align : SteeringBehaviourTarget {
 
  /* [SerializeField]
     private float targetRadius;
@@ -14,7 +11,7 @@ public class Align : SteeringBehaviour {
     private float slowRadius;*/
 
     [SerializeField]
-    private float timeToTarget = 0.1f;
+    float timeToTarget = 0.1f;
 
     override
 	public Steering GetSteering() {
@@ -56,7 +53,7 @@ public class Align : SteeringBehaviour {
         return steering;
     }
 
-    private static float MapToRange (float rotation) {
+    static float MapToRange (float rotation) {
         rotation %= 360.0f;
 
         if (Mathf.Abs(rotation) > 180.0f)

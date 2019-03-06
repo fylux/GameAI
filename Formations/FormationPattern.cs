@@ -7,8 +7,8 @@ public class FormationPattern: MonoBehaviour {
     public Agent leader;
 
 
-    public virtual Vector3 GetSlotLocation(int slotIndex) {
-        return Vector3.zero;
+    public virtual Location GetSlotLocation(int slotIndex) {
+        return new Location();
     }
 
     public bool SupportsSlots(int slotCount) {

@@ -18,10 +18,10 @@ public class WallAvoidance : SteeringBehaviour {
 
 
     [SerializeField]
-    private LayerMask layerMask;
+    LayerMask layerMask;
 
     [SerializeField]
-    private float obstacleMaxDist = 3, avoidDist = 3f, whiskerSeparation = 0.3f;
+    float obstacleMaxDist = 3, avoidDist = 3f, whiskerSeparation = 0.3f;
 
     override
     public Steering GetSteering() {

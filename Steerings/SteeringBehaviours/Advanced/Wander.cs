@@ -11,25 +11,25 @@ public class Wander : SteeringBehaviour {
     private float slowRadius;*/
 
     [SerializeField]
-    private float timeToTarget;
+    float timeToTarget;
 
     [SerializeField]
-    private float offset;   //Distancia desde el personaje hasta el circulo
+    float offset;   //Distancia desde el personaje hasta el circulo
 
     [SerializeField]
-    private float radius;   //Radio del circulo
+    float radius;   //Radio del circulo
 
     [SerializeField]
-    private float wanderRate;   //Máxima variación en la trayectoria del errante
+    float wanderRate;   //Máxima variación en la trayectoria del errante
 
     [SerializeField]
-    private int wanderCooldown = 90;
+    int wanderCooldown = 90;
 
-    private float wanderOrientation; //Orientacion del personaje
+    float wanderOrientation; //Orientacion del personaje
 
-    private Steering wanderForce;
+    Steering wanderForce;
 
-    private new void Start() {
+    new void Start() {
         base.Start();
         wanderOrientation = Random.Range(-1.0f, 1.0f) * wanderRate;
         wanderForce = GetRandomWanderForce(npc, wanderForce, wanderRate, wanderOrientation, offset, radius, maxAccel, timeToTarget);

@@ -38,9 +38,9 @@ public class AgentNPC : Agent {
     }
 
 
-    public void SetTarget(Vector3 position) {
-        PathfindingManager.RequestPath(transform.position, position, GoToTarget);
-        target = position;
+    public void SetTarget(Vector3 targetPosition) {
+        PathfindingManager.RequestPath(position, targetPosition, GoToTarget);
+        target = targetPosition;
     }
 
     void GoToTarget(Vector3[] newPath, bool pathSuccessful) {

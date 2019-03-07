@@ -21,6 +21,9 @@ public class FormationManager : MonoBehaviour {
                 AddCharacter(go.GetComponent<AgentNPC>());
             }
         }
+
+        if (slotAssignments.Count != 0)
+            UpdateSlots();
     }
 
     public void UpdateSlotAssignments() {
@@ -34,12 +37,12 @@ public class FormationManager : MonoBehaviour {
     {
         Debug.Log("Añadiendo personaje " + character);
         int occupiedSlots = slotAssignments.Count;
-        if (!pattern.SupportsSlots(occupiedSlots + 1))
+        if (!pattern.SupportsSlots(occupiedSlots + 1) || character == pattern.leader)
         {
             Debug.Log("Accion no soportada");
             return false;
         }
-            
+        
         SlotAssignment sa = new SlotAssignment();
         sa.character = character;
         slotAssignments.Add(sa);
@@ -56,19 +59,25 @@ public class FormationManager : MonoBehaviour {
 
     public void UpdateSlots()
     {
-        Debug.Log("Updating");
         Agent leader = pattern.leader;
         Vector3 anchor = leader.position;
         float orientation = leader.orientation;
         foreach (SlotAssignment sa in slotAssignments)
         {
-            Vector3 slotPos = pattern.GetSlotLocation(sa.slotIndex).position;
-            Vector3 relPos = anchor + leader.transform.TransformDirection(slotPos);
-            Location charDrift = new Location(relPos, orientation);
-            charDrift.position += driftOffset.position;
-            charDrift.orientation += driftOffset.orientation; //Podria ser *
-            Character character = sa.character.GetComponent<Character>();
-            character.SetTarget(charDrift);
+            AgentNPC character = sa.character.GetComponent<AgentNPC>();
+
+            if (character != leader) // Tiene sentido que el lider no se mueva
+            {
+                Vector3 slotPos = pattern.GetSlotLocation(sa.slotIndex).position;
+                Vector3 relPos = anchor + leader.transform.TransformDirection(slotPos);
+                //    Debug.Log(sa.slotIndex + ". SlotPos: " + slotPos + ", relPos: " + relPos);
+                   Location charDrift = new Location(relPos, orientation);
+                //   charDrift.position += driftOffset.position;
+                Debug.Log("driftOffset.position = " + driftOffset.position);
+                //   charDrift.orientation += driftOffset.orientation; //Podria ser *
+
+                   character.SetTarget(charDrift.position);
+            }
         }
     }
 }

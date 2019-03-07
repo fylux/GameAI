@@ -2,18 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class FormationPattern: MonoBehaviour {
+public abstract class FormationPattern: MonoBehaviour {
     public int numOfSlots;
     public Agent leader;
 
 
-    public virtual Location GetSlotLocation(int slotIndex) {
-        return new Location();
-    }
+    public abstract Location GetSlotLocation(int slotIndex);
 
-    public bool SupportsSlots(int slotCount) {
-        return slotCount <= numOfSlots;
-    }
+    public abstract bool SupportsSlots(int slotCount);
 
     public virtual Location GetDriftOffset(List<SlotAssignment> slotAssignments) {
         Location location = new Location();

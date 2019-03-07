@@ -39,19 +39,29 @@ public class CirclePattern : FormationPattern {
 
     public override Location GetSlotLocation(int slotIndex)
     {
-        float angleAroundCircle = slotIndex / numOfSlots * 360;
+        float angleAroundCircle = (float)slotIndex / numOfSlots * Mathf.PI * 2;
+    //    Debug.Log("angleAroundCircle -> " + slotIndex + "/" + numOfSlots + " * 2 * PI = " + angleAroundCircle);
 
-        float radius = characterRadius / Mathf.Sin(180 / numOfSlots);
-
+        float radius = 3f * (float)characterRadius / (Mathf.Sin((float)Mathf.PI / numOfSlots));
+     //   Debug.Log("radius -> " + characterRadius + "/" + "Sin(PI / " + numOfSlots + ") = " + radius);
+       // radius = 3.0f;
         Location location = new Location();
+        
         location.position.x = radius * Mathf.Cos(angleAroundCircle);
+     //   Debug.Log("location.position.x = " + radius + " * " + Mathf.Cos(angleAroundCircle) + " = " + location.position.x);
         location.position.z = radius * Mathf.Sin(angleAroundCircle);
 
         location.orientation = angleAroundCircle;
 
+       // Debug.Log(slotIndex + " -> " + location.position); // Devuelve siempre el (1.0, 0.0, 0.0)
+
         return location;
     }
 
+    public override bool SupportsSlots(int slotCount)
+    {
+        return true;
+    }
 
     /* Esto seria para el cuadrado
     public Location GetSlotLocation(int slotIndex)

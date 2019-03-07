@@ -5,7 +5,7 @@ using UnityEngine;
 public class PathFollowing : SteeringBehaviour {
 
     [SerializeField]
-    private float arrivalRadius = 0.7f;
+    private float arrivalRadius = 0.4f;
 
     public Vector3[] path;
     private int currentPoint;

@@ -37,20 +37,21 @@ public class AgentNPC : Agent {
         Debug.DrawRay(position, velocity.normalized * 2, Color.green);
     }
 
-    public void SetFormation(Vector3 position)
+    public void SetFormation(Vector3 position, float orientation)
     {
         GoTo go = gameObject.GetComponent<GoTo>();
         if (go == null)
         {
             go = gameObject.AddComponent<GoTo>();
-            go.Init(position);
+            go.Init(position, orientation);
             steers.Add(go);
         }
         else
         {
             go.target = position;
+            go.orientation = orientation;
             go.active = true;
-        } 
+        }
     }
 
     public void SetTarget(Vector3 targetPosition) {

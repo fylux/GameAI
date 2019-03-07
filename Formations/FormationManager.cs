@@ -72,9 +72,9 @@ public class FormationManager : MonoBehaviour {
                    Location charDrift = new Location(relPos, orientation);
                 //   charDrift.position += driftOffset.position;
                 Debug.Log("driftOffset.position = " + driftOffset.position);
-                //   charDrift.orientation += driftOffset.orientation; //Podria ser *
+                  // charDrift.orientation += driftOffset.orientation; //Podria ser *
 
-                   character.SetFormation(charDrift.position);
+                   character.SetFormation(charDrift.position, orientation); //Queremos que miren a donde mire el lider
             }
         }
     }

@@ -14,4 +14,10 @@ public class Location {
         this.position = position;
         this.orientation = orientation;
     }
+
+   /* void OnDrawGizmos()
+    {
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawSphere(position, 0.7f);
+    }*/
 }

@@ -7,17 +7,18 @@ public class FormationManager : MonoBehaviour {
     List<SlotAssignment> slotAssignments;
     Location driftOffset;
 
+//    Vector3 lastLeaderPosition;
+
     void Awake() {
         slotAssignments = new List<SlotAssignment>();
+     //   lastLeaderPosition = Vector3.zero;
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.G))
         {
-            Debug.Log("A ver si esto funciona");
             foreach (GameObject go in GameObject.FindGameObjectsWithTag("NPC")){
-                Debug.Log("Checking...");
                 AddCharacter(go.GetComponent<AgentNPC>());
             }
         }
@@ -35,14 +36,11 @@ public class FormationManager : MonoBehaviour {
 
     public bool AddCharacter(Agent character)
     {
-        Debug.Log("Añadiendo personaje " + character);
         int occupiedSlots = slotAssignments.Count;
         if (!pattern.SupportsSlots(occupiedSlots + 1) || character == pattern.leader)
         {
-            Debug.Log("Accion no soportada");
             return false;
         }
-        
         SlotAssignment sa = new SlotAssignment();
         sa.character = character;
         slotAssignments.Add(sa);
@@ -76,7 +74,7 @@ public class FormationManager : MonoBehaviour {
                 Debug.Log("driftOffset.position = " + driftOffset.position);
                 //   charDrift.orientation += driftOffset.orientation; //Podria ser *
 
-                   character.SetTarget(charDrift.position);
+                   character.SetFormation(charDrift.position);
             }
         }
     }

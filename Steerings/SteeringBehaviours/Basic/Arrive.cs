@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Arrive : SteeringBehaviourTarget {
 
+
+
     public override Steering GetSteering() { 
         return Arrive.GetSteering(target.position, npc, npc.exteriorRadius, maxAccel);
     }
@@ -13,7 +15,7 @@ public class Arrive : SteeringBehaviourTarget {
 
         // Calculate the desired velocity
         var desiredVelocity = targetPosition - npc.position;
-        var distance = (targetPosition - npc.position).magnitude;
+        var distance = Util.HorizontalDistance(targetPosition, npc.position); //(targetPosition - npc.position).magnitude;
 
         // Check the distance to detect whether the character
         // is inside the slowing area

@@ -34,6 +34,7 @@ public class CirclePattern : FormationPattern {
         int numberOfAssignments = assignments.Count;
         centerOfMass.position /= numberOfAssignments;
         centerOfMass.orientation /= numberOfAssignments;
+        Debug.Log("Centro de masas: " + centerOfMass.position);
         return centerOfMass;
     }
 

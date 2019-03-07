@@ -12,6 +12,8 @@ public class AgentNPC : Agent {
 
     Vector3 target;
 
+    Vector3 virtualTarget;
+
     private new void Start() {
         base.Start();
         steers = new List<SteeringBehaviour>(GetComponents<SteeringBehaviour>());
@@ -23,10 +25,8 @@ public class AgentNPC : Agent {
         Steering totalSteering = new Steering();
         foreach (SteeringBehaviour steer in steers) {
             totalSteering += Steering.ApplyPriority(steer.GetSteering(), steer.blendPriority);
+            Debug.Log(steer);
         }
-        /*if (goTo) {
-            totalSteering += Seek.GetSteering(target, this, 5, true);
-        }*/
 
         totalSteering.linear = Vector3.ClampMagnitude(totalSteering.linear, maxAccel);
         totalSteering.angular = Mathf.Clamp(totalSteering.angular, -MaxAngular, MaxAngular);
@@ -37,6 +37,21 @@ public class AgentNPC : Agent {
         Debug.DrawRay(position, velocity.normalized * 2, Color.green);
     }
 
+    public void SetFormation(Vector3 position)
+    {
+        GoTo go = gameObject.GetComponent<GoTo>();
+        if (go == null)
+        {
+            go = gameObject.AddComponent<GoTo>();
+            go.Init(position);
+            steers.Add(go);
+        }
+        else
+        {
+            go.target = position;
+            go.active = true;
+        } 
+    }
 
     public void SetTarget(Vector3 targetPosition) {
         PathfindingManager.RequestPath(position, targetPosition, GoToTarget);
@@ -63,6 +78,12 @@ public class AgentNPC : Agent {
         else {
             Debug.Log("Not reachable");
         }
+    }
+
+    public void RemoveSteer (SteeringBehaviour steer)
+    {
+        if (steers.Contains(steer))
+            steers.Remove(steer);
     }
     /*
     private void OnMouseEnter() {

@@ -14,7 +14,7 @@ public class AgentNPC : Agent {
 
     Vector3 virtualTarget;
 
-    private new void Start() {
+     new void Start() {
         base.Start();
         steers = new List<SteeringBehaviour>(GetComponents<SteeringBehaviour>());
     }
@@ -25,8 +25,9 @@ public class AgentNPC : Agent {
         Steering totalSteering = new Steering();
         foreach (SteeringBehaviour steer in steers) {
             totalSteering += Steering.ApplyPriority(steer.GetSteering(), steer.blendPriority);
-            Debug.Log(steer);
         }
+
+        totalSteering.linear.y = 0;
 
         totalSteering.linear = Vector3.ClampMagnitude(totalSteering.linear, maxAccel);
         totalSteering.angular = Mathf.Clamp(totalSteering.angular, -MaxAngular, MaxAngular);

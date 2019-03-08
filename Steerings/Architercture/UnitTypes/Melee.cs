@@ -11,4 +11,13 @@ public class Melee : AgentNPC {
             { NodeT.WATER, Mathf.Infinity},
             { NodeT.MOUNTAIN, Mathf.Infinity}
     };
+
+    protected new void Start()
+    {
+        base.Start();
+        MaxVelocity = 4;
+        maxAccel = 20;
+        MaxRotation = 60;
+        MaxAngular = 60;
+    }
 }

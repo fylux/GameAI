@@ -11,4 +11,13 @@ public class Artillery : AgentNPC {
             { NodeT.WATER, Mathf.Infinity},
             { NodeT.MOUNTAIN, Mathf.Infinity}
     };
+
+    protected new void Start()
+    {
+        base.Start();
+        MaxVelocity = 3;
+        maxAccel = 10;
+        MaxRotation = 30;
+        MaxAngular = 30;
+    }
 }

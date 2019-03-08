@@ -14,8 +14,7 @@ public class Pursue : SteeringBehaviourTarget {
     }
 
     public static Steering GetSteering(Agent target, Agent npc, float maxAccel, float maxPrediction, bool visibleRays = false) {
-        Vector3 direction = target.position - npc.position;
-        float distance = direction.magnitude;
+        float distance =  Util.HorizontalDistance(target.position, npc.position);
         float speed = npc.velocity.magnitude;
 
         float prediction;
@@ -28,4 +27,22 @@ public class Pursue : SteeringBehaviourTarget {
 
         return Seek.GetSteering(predTarget, npc, maxAccel, visibleRays);
     }
+
+    private void OnDrawGizmos()
+    {
+        float distance = Util.HorizontalDistance(target.position, npc.position);
+        float speed = npc.velocity.magnitude;
+
+        float prediction;
+        if (speed <= distance / maxPrediction)
+            prediction = maxPrediction;
+        else
+            prediction = distance / speed;
+
+        Vector3 predTarget = target.position + (target.velocity * prediction);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawSphere(predTarget, 0.3f);
+    }
+
 }

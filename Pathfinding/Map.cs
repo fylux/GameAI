@@ -14,7 +14,7 @@ public class Map : MonoBehaviour {
 
     public GameObject A, B, C, D, E;
 
-    private int[,] tiles;
+    int[,] tiles;
 
     public Node[,] grid;
     Vector2 gridSize;
@@ -72,7 +72,7 @@ public class Map : MonoBehaviour {
         }
     }
 
-    private int[,] Load(string filePath) {
+    int[,] Load(string filePath) {
         try {
             using (StreamReader sr = new StreamReader(filePath)) {
                 string[] lines = sr.ReadToEnd().Split(new[] {'\r', '\n'}, System.StringSplitOptions.RemoveEmptyEntries);

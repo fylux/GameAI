@@ -60,7 +60,6 @@ public class Flocking : SteeringBehaviour
         steering.linear += Cohesion.GetSteering(npc, groupArea, decayCoefficient, maxAccel, visibleRays).linear * cohesionPriority;
         steering.angular = Alignment.GetSteering(npc, groupArea, npc.interiorAngle, npc.exteriorAngle, timeToTarget, false).angular * alignmentPriority;
         steering += Steering.ApplyPriority(wanderForce, wanderPriority);
-
         return steering;
     }
 

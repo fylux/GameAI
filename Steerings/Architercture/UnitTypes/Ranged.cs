@@ -11,4 +11,6 @@ public class Ranged : AgentNPC {
             { NodeT.WATER, Mathf.Infinity},
             { NodeT.MOUNTAIN, Mathf.Infinity}
     };
+
+    // Los atributos de los Ranged son con los que hemos estado trabajando, los default
 }

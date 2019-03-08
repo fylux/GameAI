@@ -46,7 +46,7 @@ public class Body : MonoBehaviour {
         return Util.RotateVector(Vector3.right, orientation).normalized;
     }
 
-    private void OnDrawGizmos() {
+    void OnDrawGizmos() {
         /*Debug.DrawLine(position, position + getForward());
         Debug.DrawLine(position, position + getRight());*/
     }

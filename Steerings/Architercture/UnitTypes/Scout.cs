@@ -11,4 +11,13 @@ public class Scout : AgentNPC {
             { NodeT.WATER, Mathf.Infinity},
             { NodeT.MOUNTAIN, Mathf.Infinity}
     };
+
+    protected new void Start()
+    {
+        base.Start();
+        MaxVelocity = 5;
+        maxAccel = 30;
+        MaxRotation = 70;
+        MaxAngular = 70;
+    }
 }

@@ -14,7 +14,7 @@ public class FormationManager : MonoBehaviour {
      //   lastLeaderPosition = Vector3.zero;
     }
 
-    private void Update()
+    void Update()
     {
         if (Input.GetKeyDown(KeyCode.G))
         {

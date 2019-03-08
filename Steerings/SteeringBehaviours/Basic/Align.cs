@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class Align : SteeringBehaviourTarget {
 
- /* [SerializeField]
-    private float targetRadius;
+    /* [SerializeField]
+       private float targetRadius;
 
-    [SerializeField]
-    private float slowRadius;*/
+       [SerializeField]
+       private float slowRadius;*/
 
     [SerializeField]
     float timeToTarget = 0.1f;

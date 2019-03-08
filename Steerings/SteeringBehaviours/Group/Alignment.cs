@@ -31,8 +31,7 @@ public class Alignment : SteeringBehaviour {
         foreach (Collider coll in hits)
         {
             Agent agent = coll.GetComponent<Agent>();
-            Vector3 direction = agent.position - npc.position;
-            float distance = direction.magnitude;
+            float distance = Util.HorizontalDistance(agent.position, npc.position);
             if (agent != npc && distance < threshold) {
                 targetOrientation += agent.orientation;
                 neighbours++;

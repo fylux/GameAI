@@ -5,13 +5,13 @@ using UnityEngine;
 public class PathFollowing : SteeringBehaviour {
 
     [SerializeField]
-    private float arrivalRadius = 0.4f;
+    float arrivalRadius = 0.4f;
 
     public Vector3[] path;
-    private int currentPoint;
+    int currentPoint;
 
     new
-    private void Start() {
+    void Start() {
         base.Start();
         currentPoint = 0;
     }

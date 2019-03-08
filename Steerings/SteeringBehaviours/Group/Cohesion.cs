@@ -25,9 +25,8 @@ public class Cohesion : SteeringBehaviour {
         foreach (Collider coll in hits)
         { //Comprobar con un SphereCast, en vez de Tag quiza usar Layers
             Agent agent = coll.GetComponent<Agent>();
-            Vector3 direction = agent.position - npc.position;
-            float distance = direction.magnitude;
-            
+            float distance = Util.HorizontalDistance(agent.position, npc.position);
+
 
             if (agent != npc && distance < threshold) {
                 centerOfMass += agent.position;

@@ -49,22 +49,26 @@ public class LeaderFollowing : SteeringBehaviourTarget
         Steering steering = new Steering();
         steering.linear += Arrive.GetSteering(behind, npc, slowingRadius, maxAccel).linear * arrivePriority;
         steering.linear += Separation.GetSteering(npc, threshold, decayCoefficient, maxAccel, visibleRays).linear * separationPriority;
-        if (OnLeaderSight(target))
+        if (OnLeaderSight(target, npc))
             steering.linear += Evade.GetSteering(target, npc, maxAccel, Vector3.Distance(target.position, npc.position) * maxAccel, true).linear * evadePriority;
 
         return steering;
     }
 
-    static bool OnLeaderSight(Agent target) {
+    static bool OnLeaderSight(Agent target, Agent npc) {
         RaycastHit hit;
         int layerMask = 1 << 9;
         if (Physics.Raycast(target.position + (target.getRight() * 0.47f), target.getForward(), out hit, 10f, layerMask)) {
-            Debug.Log("HIT");
-            return true;
+            if (hit.collider.gameObject == npc.gameObject)
+                return true;
+            else
+                return false;
         }
         else if (Physics.Raycast(target.position + (target.getRight() * (-0.47f)), target.getForward(), out hit, 10f, layerMask)) {
-            Debug.Log("HIT");
-            return true;
+            if (hit.collider.gameObject == npc.gameObject)
+                return true;
+            else
+                return false;
         }
         return false;
     }

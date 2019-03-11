@@ -46,7 +46,7 @@ public class WallAvoidance : SteeringBehaviour {
         bool rayHit = false;
         foreach (AvoidanceRay ray in rays) {
             if (Physics.Raycast(ray.startPoint, ray.direction, out hitInfo, ray.length, layerMask) && !rayHit) {
-                target = hitInfo.normal * avoidDist + hitInfo.point;
+                target = hitInfo.normal * avoidDist + npc.position; //Errata, book proposes hitInfo.point instead of npc.position
                 if (visibleRays) Debug.DrawLine(ray.startPoint, hitInfo.point, Color.red);
                 
                 rayHit = true;

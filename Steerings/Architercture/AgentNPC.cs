@@ -14,10 +14,15 @@ public class AgentNPC : Agent {
 
     Vector3 virtualTarget;
 
-    protected Dictionary<NodeT, float> cost;
+    protected Dictionary<NodeT, float> cost = new Dictionary<NodeT, float>() { //Coste por defecto, para casos de prueba
+            { NodeT.ROAD, 1 },
+            { NodeT.GRASS, 1.5f },
+            { NodeT.FOREST, 2 },
+            { NodeT.WATER, Mathf.Infinity},
+            { NodeT.MOUNTAIN, Mathf.Infinity}
+        };
 
-
-     new void Start() {
+    new void Start() {
         base.Start();
         steers = new List<SteeringBehaviour>(GetComponents<SteeringBehaviour>());
     }

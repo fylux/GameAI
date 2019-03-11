@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class CirclePattern : FormationPattern {
 
-    [SerializeField]
-    float characterRadius;
+
 
     public int CalculateNumberOfSlots(SlotAssignment[] assignments)
     {

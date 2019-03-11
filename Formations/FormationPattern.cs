@@ -5,7 +5,8 @@ using System.Collections.Generic;
 public abstract class FormationPattern: MonoBehaviour {
     public int numOfSlots;
     public Agent leader;
-
+    
+    public float characterRadius = 0.6f;
 
     public abstract Location GetSlotLocation(int slotIndex);
 

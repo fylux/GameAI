@@ -30,22 +30,13 @@ public class AgentNPC : Agent {
         steers = new List<SteeringBehaviour>(GetComponents<SteeringBehaviour>());
     }
 
-    protected new void Update()
+    override
+    protected float ApplyActuator()
     {
         NodeT node = map.NodeFromPosition(position).type;
         float tCost = cost[node];
 
-        position += velocity * Time.deltaTime;
-        orientation += rotation * Time.deltaTime;
-
-        ApplySteering();
-        velocity.y = 0;
-
-        velocity = Vector3.ClampMagnitude(velocity, MaxVelocity/tCost);
-        rotation = Mathf.Clamp(rotation, -MaxRotation, MaxRotation);
-
-        transform.position = position;
-        transform.eulerAngles = new Vector3(0, orientation, 0);
+        return ((float)MaxVelocity / tCost);
     }
 
     override

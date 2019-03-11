@@ -26,9 +26,10 @@ public class Body : MonoBehaviour {
         orientation += rotation * Time.deltaTime;
 
         ApplySteering();
+        float restrictedMaxVelocity = ApplyActuator();
         velocity.y = 0;
 
-        velocity = Vector3.ClampMagnitude(velocity, MaxVelocity);
+        velocity = Vector3.ClampMagnitude(velocity, restrictedMaxVelocity);
         rotation = Mathf.Clamp(rotation, -MaxRotation, MaxRotation);
 
         transform.position = position;
@@ -36,6 +37,7 @@ public class Body : MonoBehaviour {
     }
 
     protected virtual void ApplySteering() { }
+    protected virtual float ApplyActuator() { return MaxVelocity; }
 
     public Vector3 getForward() {
         return Util.RotateVector(Vector3.forward, orientation).normalized;

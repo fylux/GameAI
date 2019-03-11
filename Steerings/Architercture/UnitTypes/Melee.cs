@@ -4,13 +4,6 @@ using UnityEngine;
 
 public class Melee : AgentNPC {
 
-   Dictionary<NodeT, float> cost = new Dictionary<NodeT, float>() {
-            { NodeT.ROAD, 1 },
-            { NodeT.GRASS, 1.5f },
-            { NodeT.FOREST, 2 },
-            { NodeT.WATER, Mathf.Infinity},
-            { NodeT.MOUNTAIN, Mathf.Infinity}
-    };
 
     protected new void Start()
     {
@@ -19,5 +12,13 @@ public class Melee : AgentNPC {
         maxAccel = 20;
         MaxRotation = 60;
         MaxAngular = 60;
+
+        cost = new Dictionary<NodeT, float>() {
+            { NodeT.ROAD, 1 },
+            { NodeT.GRASS, 1.5f },
+            { NodeT.FOREST, 2 },
+            { NodeT.WATER, Mathf.Infinity},
+            { NodeT.MOUNTAIN, Mathf.Infinity}
+        };
     }
 }

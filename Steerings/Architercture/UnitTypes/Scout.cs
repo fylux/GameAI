@@ -4,13 +4,6 @@ using UnityEngine;
 
 public class Scout : AgentNPC {
 
-   Dictionary<NodeT, float> cost = new Dictionary<NodeT, float>() {
-            { NodeT.ROAD, 1 },
-            { NodeT.GRASS, 1.25f },
-            { NodeT.FOREST, 1.35f },
-            { NodeT.WATER, Mathf.Infinity},
-            { NodeT.MOUNTAIN, Mathf.Infinity}
-    };
 
     protected new void Start()
     {
@@ -19,5 +12,13 @@ public class Scout : AgentNPC {
         maxAccel = 30;
         MaxRotation = 70;
         MaxAngular = 70;
+
+        cost = new Dictionary<NodeT, float>() {
+            { NodeT.ROAD, 1 },
+            { NodeT.GRASS, 1.25f },
+            { NodeT.FOREST, 1.35f },
+            { NodeT.WATER, Mathf.Infinity},
+            { NodeT.MOUNTAIN, Mathf.Infinity}
+        };
     }
 }

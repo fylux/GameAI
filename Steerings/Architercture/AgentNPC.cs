@@ -14,6 +14,9 @@ public class AgentNPC : Agent {
 
     Vector3 virtualTarget;
 
+    protected Dictionary<NodeT, float> cost;
+
+
      new void Start() {
         base.Start();
         steers = new List<SteeringBehaviour>(GetComponents<SteeringBehaviour>());

@@ -42,6 +42,8 @@ public class Select : MonoBehaviour {
                 selectBox.GetComponent<SelectBox>().select = this;
             }
         }
+
+        //Resize selectBox
         if (Input.GetButton("Fire1") && selectBox != null) {
             Physics.Raycast(ray, out hit, Mathf.Infinity, terrainLayer);
             lower_right = hit.point + new Vector3(0, 1f, 0);
@@ -49,17 +51,31 @@ public class Select : MonoBehaviour {
             selectBox.transform.localScale = new Vector3(Mathf.Abs(z.x), 1, Mathf.Abs(z.z)) / 10f;
             selectBox.transform.position = (upper_left + lower_right) / 2f;
         }
+
+        //Finish SelectBox
         if (Input.GetButtonUp("Fire1") && selectBox != null) {
-            FinishSelection();
             Destroy(selectBox);
         }
 
-        if (Input.GetButtonUp("Fire2") && selectedUnits.Count == 1) {
+        /*if (Input.GetButtonUp("Fire2") && selectedUnits.Count == 1) {
             if (Physics.Raycast(ray, out hit, Mathf.Infinity, terrainLayer)) {
                 selectedUnit.GetComponent<AgentNPC>().SetTarget(hit.point);
-                GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
                 cube.transform.position = hit.point;
-                cube.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
+                cube.transform.localScale = new Vector3(0.4f, 0.1f, 0.4f);
+            }
+        }*/
+
+        if (Input.GetButtonUp("Fire2") && selectedUnits.Count > 0) {
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, terrainLayer)) {
+                GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                cube.transform.position = hit.point;
+                cube.transform.localScale = new Vector3(0.4f, 0.1f, 0.4f);
+
+                foreach (GameObject unit in selectedUnits) {
+                    unit.GetComponent<AgentNPC>().SetTarget(hit.point);
+                }
+                
             }
         }
     }

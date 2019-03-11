@@ -6,7 +6,7 @@ using UnityEngine;
 public class CollisionAvoidance : SteeringBehaviour {
 
     [SerializeField]
-    float collisionRadius = 0.4f;
+    float collisionRadius = 0.6f;
 
     GameObject[] targets;
 
@@ -35,7 +35,7 @@ public class CollisionAvoidance : SteeringBehaviour {
             Vector3 relativeVel = target.velocity - npc.velocity;
             float relativeSpeed = relativeVel.magnitude;
 
-            float timeToCollision = (Vector3.Dot(relativePos, relativeVel))
+            float timeToCollision = -(Vector3.Dot(relativePos, relativeVel))
                                     / (relativeSpeed * relativeSpeed);
             float distance = relativePos.magnitude;
             float minSeparation = distance - (relativeSpeed * timeToCollision);
@@ -51,18 +51,22 @@ public class CollisionAvoidance : SteeringBehaviour {
                 firstRelativeVel = relativeVel;
             }
         }
+        npc.GetComponent<Renderer>().material.color = Color.red;
         if (firstTarget == null)
             return steering;
-        if (firstMinSeparation <= 0.0f || firstDistance < 2 * collisionRadius)
-            firstRelativePos = npc.position - firstTarget.position;
-        else
+        if (firstMinSeparation <= 0.0f || firstDistance < 2 * collisionRadius) {
+            firstRelativePos = firstTarget.position - npc.position; //This should be already assigned, so it is useless
+            npc.GetComponent<Renderer>().material.color = Color.blue;
+        } else {
             firstRelativePos += firstRelativeVel * shortestTime;
+            npc.GetComponent<Renderer>().material.color = Color.green;
+        }
 
         firstRelativePos.Normalize();
-        steering.linear = firstRelativePos * npc.MaxAccel;
-        steering.linear.y = 0;
+        steering.linear = -firstRelativePos * npc.MaxAccel;
         if (visibleRays)
             drawRays(npc.position,steering.linear,Color.red);
         return steering;
     }
+
 }

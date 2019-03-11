@@ -14,7 +14,6 @@ public class Body : MonoBehaviour {
     public float rotation;
     public Vector3 velocity;
 
-
     protected void Start() {
       //  velocity = Vector3.zero;
       //  rotation = 0;

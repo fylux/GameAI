@@ -14,6 +14,8 @@ public class AgentNPC : Agent {
 
     Vector3 virtualTarget;
 
+    public Map map;
+
     protected Dictionary<NodeT, float> cost = new Dictionary<NodeT, float>() { //Coste por defecto, para casos de prueba
             { NodeT.ROAD, 1 },
             { NodeT.GRASS, 1.5f },
@@ -26,6 +28,24 @@ public class AgentNPC : Agent {
     protected void Start() {
         base.Start();
         steers = new List<SteeringBehaviour>(GetComponents<SteeringBehaviour>());
+    }
+
+    protected new void Update()
+    {
+        NodeT node = map.NodeFromPosition(position).type;
+        float tCost = cost[node];
+
+        position += velocity * Time.deltaTime;
+        orientation += rotation * Time.deltaTime;
+
+        ApplySteering();
+        velocity.y = 0;
+
+        velocity = Vector3.ClampMagnitude(velocity, MaxVelocity/tCost);
+        rotation = Mathf.Clamp(rotation, -MaxRotation, MaxRotation);
+
+        transform.position = position;
+        transform.eulerAngles = new Vector3(0, orientation, 0);
     }
 
     override

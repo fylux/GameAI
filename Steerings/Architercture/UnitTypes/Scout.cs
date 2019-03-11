@@ -9,7 +9,7 @@ public class Scout : AgentNPC {
     {
         base.Start();
         MaxVelocity = 5;
-        maxAccel = 30;
+        MaxAccel = 30;
         MaxRotation = 70;
         MaxAngular = 70;
 

@@ -4,12 +4,10 @@ using UnityEngine;
 
 public class Melee : AgentNPC {
 
-
-    protected new void Start()
-    {
+    protected new void Start() {
         base.Start();
-        MaxVelocity = 4;
-        maxAccel = 20;
+        MaxVelocity = 2;
+        MaxAccel = 20;
         MaxRotation = 60;
         MaxAngular = 60;
 

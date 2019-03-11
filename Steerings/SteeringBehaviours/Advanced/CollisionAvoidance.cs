@@ -59,7 +59,7 @@ public class CollisionAvoidance : SteeringBehaviour {
             firstRelativePos += firstRelativeVel * shortestTime;
 
         firstRelativePos.Normalize();
-        steering.linear = firstRelativePos * npc.maxAccel;
+        steering.linear = firstRelativePos * npc.MaxAccel;
         steering.linear.y = 0;
         if (visibleRays)
             drawRays(npc.position,steering.linear,Color.red);

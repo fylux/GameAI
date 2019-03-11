@@ -7,13 +7,13 @@ public abstract class SteeringBehaviour : MonoBehaviour {
     protected Agent npc;
 
     [SerializeField]
-    protected float maxAccel = 3;
+    public float maxAccel = 3;
 
     [SerializeField]
     public float blendPriority = 1;
 
     [SerializeField]
-    protected bool visibleRays;
+    public bool visibleRays;
 
 
     public abstract Steering GetSteering();

@@ -16,15 +16,14 @@ public class AgentNPC : Agent {
 
     protected Dictionary<NodeT, float> cost;
 
-
-     new void Start() {
+    new
+    protected void Start() {
         base.Start();
         steers = new List<SteeringBehaviour>(GetComponents<SteeringBehaviour>());
     }
 
     override
     protected void ApplySteering() {
-       
         Steering totalSteering = new Steering();
         foreach (SteeringBehaviour steer in steers) {
             totalSteering += Steering.ApplyPriority(steer.GetSteering(), steer.blendPriority);
@@ -32,7 +31,7 @@ public class AgentNPC : Agent {
 
         totalSteering.linear.y = 0;
 
-        totalSteering.linear = Vector3.ClampMagnitude(totalSteering.linear, maxAccel);
+        totalSteering.linear = Vector3.ClampMagnitude(totalSteering.linear, MaxAccel);
         totalSteering.angular = Mathf.Clamp(totalSteering.angular, -MaxAngular, MaxAngular);
 
         velocity += totalSteering.linear * Time.deltaTime;
@@ -41,8 +40,7 @@ public class AgentNPC : Agent {
         Debug.DrawRay(position, velocity.normalized * 2, Color.green);
     }
 
-    public void SetFormation(Vector3 position, float orientation)
-    {
+    public void SetFormation(Vector3 position, float orientation) {
         GoTo go = gameObject.GetComponent<GoTo>();
         if (go == null)
         {
@@ -59,7 +57,7 @@ public class AgentNPC : Agent {
     }
 
     public void SetTarget(Vector3 targetPosition) {
-        PathfindingManager.RequestPath(position, targetPosition, GoToTarget);
+        PathfindingManager.RequestPath(position, targetPosition, cost, GoToTarget);
         target = targetPosition;
     }
 
@@ -67,17 +65,20 @@ public class AgentNPC : Agent {
         PathFollowing previous = null;
         if (pathSuccessful) {
             foreach (SteeringBehaviour steer in steers) {
-                if (steer is PathFollowing)
+                if (steer is PathFollowing) {
                     previous = (PathFollowing)steer;
+                    steers.Remove(previous);
+                    Destroy(previous);
+                    break;
+                }
             }
             
-            steers.Remove(previous);
-            Destroy(previous);
             if (newPath.Length > 0) {
                 PathFollowing pf = gameObject.AddComponent<PathFollowing>();
                 pf.path = newPath;
+                pf.visibleRays = visibleRays;
+                pf.maxAccel = 50f;
                 steers.Add(pf);
-
             }
         }
         else {
@@ -85,7 +86,7 @@ public class AgentNPC : Agent {
         }
     }
 
-    public void RemoveSteer (SteeringBehaviour steer)
+    public void RemoveSteer(SteeringBehaviour steer)
     {
         if (steers.Contains(steer))
             steers.Remove(steer);

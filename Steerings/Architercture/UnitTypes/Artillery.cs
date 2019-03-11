@@ -8,7 +8,7 @@ public class Artillery : AgentNPC {
     {
         base.Start();
         MaxVelocity = 3;
-        maxAccel = 10;
+        MaxAccel = 10;
         MaxRotation = 30;
         MaxAngular = 30;
 

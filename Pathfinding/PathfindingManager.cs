@@ -20,7 +20,7 @@ struct PathRequest {
 public class PathfindingManager : MonoBehaviour {
 
     static PathfindingManager instance;
-    Pathfinding pathfinding;
+    AStar pathfinding;
 
     Queue<PathRequest> requestQueue = new Queue<PathRequest>();
     PathRequest currentRequest;
@@ -29,11 +29,11 @@ public class PathfindingManager : MonoBehaviour {
 
     void Awake() {
         instance = this;
-        pathfinding = GetComponent<Pathfinding>();
+        pathfinding = GetComponent<AStar>();
     }
 
     public static void RequestPath(Vector3 pathStart, Vector3 pathEnd, Dictionary<NodeT, float> cost, Action<Vector3[], bool> callback) {
-        PathRequest newRequest = new PathRequest(pathStart, pathEnd, callback);
+        PathRequest newRequest = new PathRequest(pathStart, pathEnd, cost, callback);
         instance.requestQueue.Enqueue(newRequest);
         instance.ProcessNext();
     }

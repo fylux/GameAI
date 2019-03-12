@@ -31,12 +31,15 @@ public class AgentNPC : Agent {
     }
 
     override
-    protected float ApplyActuator()
+    protected void ApplyActuator()
     {
+        velocity.y = 0;
+
         NodeT node = map.NodeFromPosition(position).type;
         float tCost = cost[node];
 
-        return ((float)MaxVelocity / tCost);
+        velocity = Vector3.ClampMagnitude(velocity, (float)MaxVelocity / tCost);
+        rotation = Mathf.Clamp(rotation, -MaxRotation, MaxRotation);
     }
 
     override

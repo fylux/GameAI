@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Artillery : AgentNPC {
+public class Artillery : AgentUnit
+{
 
     protected new void Start()
     {

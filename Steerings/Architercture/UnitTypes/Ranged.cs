@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Ranged : AgentNPC {
+public class Ranged : AgentUnit {
 
     protected new void Start()
     {

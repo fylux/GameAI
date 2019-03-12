@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Scout : AgentNPC {
+public class Scout : AgentUnit
+{
 
 
     protected new void Start()

@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Melee : AgentNPC {
+public class Melee : AgentUnit
+{
 
     protected new void Start() {
         base.Start();

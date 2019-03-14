@@ -12,8 +12,6 @@ public class AgentNPC : Agent {
 
     Vector3 target;
 
-    Vector3 virtualTarget;
-
     protected Dictionary<NodeT, float> cost = new Dictionary<NodeT, float>() { //Coste por defecto, para casos de prueba
             { NodeT.ROAD, 1 },
             { NodeT.GRASS, 1.5f },

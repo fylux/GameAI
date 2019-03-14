@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public abstract class AgentUnit : AgentNPC {
-    Map map;
+public class AgentUnit : AgentNPC {
 
-    protected Dictionary<NodeT, float> cost;
+
+    Map map;
 
     new
     protected void Start() {

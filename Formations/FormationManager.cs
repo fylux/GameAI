@@ -19,7 +19,7 @@ public class FormationManager : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.G))
         {
             foreach (GameObject go in GameObject.FindGameObjectsWithTag("NPC")){
-                AddCharacter(go.GetComponent<AgentNPC>());
+                AddCharacter(go.GetComponent<AgentUnit>());
             }
         }
 
@@ -34,7 +34,7 @@ public class FormationManager : MonoBehaviour {
         driftOffset = pattern.GetDriftOffset(slotAssignments);
     }
 
-    public bool AddCharacter(Agent character)
+    public bool AddCharacter(AgentUnit character)
     {
         int occupiedSlots = slotAssignments.Count;
         if (!pattern.SupportsSlots(occupiedSlots + 1) || character == pattern.leader)
@@ -62,7 +62,7 @@ public class FormationManager : MonoBehaviour {
         float orientation = leader.orientation;
         foreach (SlotAssignment sa in slotAssignments)
         {
-            AgentNPC character = sa.character.GetComponent<AgentNPC>();
+            AgentUnit character = sa.character.GetComponent<AgentUnit>();
 
             if (character != leader) // Tiene sentido que el lider no se mueva
             {

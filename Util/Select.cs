@@ -73,7 +73,7 @@ public class Select : MonoBehaviour {
                 cube.transform.localScale = new Vector3(0.4f, 0.1f, 0.4f);
 
                 foreach (GameObject unit in selectedUnits) {
-                    unit.GetComponent<AgentNPC>().SetTarget(hit.point);
+                    unit.GetComponent<AgentUnit>().SetTarget(hit.point);
                 }
                 
             }

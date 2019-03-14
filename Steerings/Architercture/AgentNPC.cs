@@ -5,22 +5,12 @@ using UnityEngine;
 
 public class AgentNPC : Agent {
 
-    List<SteeringBehaviour> steers;
+    protected List<SteeringBehaviour> steers;
 
     [SerializeField]
-    bool visibleRays;
-
-    Vector3 target;
+    protected bool visibleRays;
 
     Vector3 virtualTarget;
-
-    protected Dictionary<NodeT, float> cost = new Dictionary<NodeT, float>() { //Coste por defecto, para casos de prueba
-            { NodeT.ROAD, 1 },
-            { NodeT.GRASS, 1.5f },
-            { NodeT.FOREST, 2 },
-            { NodeT.WATER, Mathf.Infinity},
-            { NodeT.MOUNTAIN, Mathf.Infinity}
-        };
 
     new
     protected void Start() {
@@ -35,7 +25,7 @@ public class AgentNPC : Agent {
         foreach (SteeringBehaviour steer in steers) {
             totalSteering += Steering.ApplyPriority(steer.GetSteering(), steer.blendPriority);
         }
-
+        totalSteering += PathSteering();
         totalSteering.linear.y = 0;
 
         totalSteering.linear = Vector3.ClampMagnitude(totalSteering.linear, MaxAccel);
@@ -47,57 +37,16 @@ public class AgentNPC : Agent {
         Debug.DrawRay(position, velocity.normalized * 2, Color.green);
     }
 
-    public void SetFormation(Vector3 position, float orientation) {
-        GoTo go = gameObject.GetComponent<GoTo>();
-        if (go == null)
-        {
-            go = gameObject.AddComponent<GoTo>();
-            go.Init(position, orientation);
-            steers.Add(go);
-        }
-        else
-        {
-            go.target = position;
-            go.orientation = orientation;
-            go.active = true;
-        }
-    }
 
-    public void SetTarget(Vector3 targetPosition) {
-        PathfindingManager.RequestPath(position, targetPosition, cost, GoToTarget);
-        target = targetPosition;
-    }
 
-    void GoToTarget(Vector3[] newPath, bool pathSuccessful) {
-        PathFollowing previous = null;
-        if (pathSuccessful) {
-            foreach (SteeringBehaviour steer in steers) {
-                if (steer is PathFollowing) {
-                    previous = (PathFollowing)steer;
-                    steers.Remove(previous);
-                    Destroy(previous);
-                    break;
-                }
-            }
-            
-            if (newPath.Length > 0) {
-                PathFollowing pf = gameObject.AddComponent<PathFollowing>();
-                pf.path = newPath;
-                pf.visibleRays = visibleRays;
-                pf.maxAccel = 50f;
-                steers.Add(pf);
-            }
-        }
-        else {
-            Debug.Log("Not reachable");
-        }
-    }
-
-    public void RemoveSteer(SteeringBehaviour steer)
-    {
+    public void RemoveSteer(SteeringBehaviour steer) {
         if (steers.Contains(steer))
             steers.Remove(steer);
     }
+
+    virtual
+    public Steering PathSteering() { return new Steering(); }
+
     /*
     private void OnMouseEnter() {
         Renderer rend = GetComponent<Renderer>();

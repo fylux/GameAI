@@ -9,7 +9,9 @@ public class AgentNPC : Agent {
 
     [SerializeField]
     protected bool visibleRays;
-    
+
+    Vector3 virtualTarget;
+
     new
     protected void Start() {
         base.Start();
@@ -37,9 +39,11 @@ public class AgentNPC : Agent {
 
 
 
-    public void RemoveSteer(SteeringBehaviour steer) {
-        if (steers.Contains(steer))
+    public void RemoveSteering(SteeringBehaviour steer) {
+        if (steers.Contains(steer)) {
             steers.Remove(steer);
+            Destroy(steer);
+        }
     }
 
     virtual

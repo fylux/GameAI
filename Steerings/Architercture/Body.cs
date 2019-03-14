@@ -27,7 +27,12 @@ public class Body : MonoBehaviour {
 
         ApplySteering();
         ApplyActuator();
-        
+
+        velocity.y = 0;
+
+        velocity = Vector3.ClampMagnitude(velocity, MaxVelocity);
+        rotation = Mathf.Clamp(rotation, -MaxRotation, MaxRotation);
+
         transform.position = position;
         transform.eulerAngles = new Vector3(0, orientation, 0);
     }

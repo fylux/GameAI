@@ -1,12 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 
-public class AgentUnit : AgentNPC {
-
+public abstract class AgentUnit : AgentNPC {
     Map map;
-    Location path_target;
+
     protected Dictionary<NodeT, float> cost = new Dictionary<NodeT, float>() { //Coste por defecto, para casos de prueba
             { NodeT.ROAD, 1 },
             { NodeT.GRASS, 1.5f },
@@ -14,6 +14,8 @@ public class AgentUnit : AgentNPC {
             { NodeT.WATER, Mathf.Infinity},
             { NodeT.MOUNTAIN, Mathf.Infinity}
         };
+
+    Location path_target;
 
     new
     protected void Start() {
@@ -25,8 +27,6 @@ public class AgentUnit : AgentNPC {
 
     override
     protected void ApplyActuator() {
-        velocity.y = 0;
-
         NodeT node = map.NodeFromPosition(position).type;
         float tCost = cost[node];
 
@@ -39,7 +39,6 @@ public class AgentUnit : AgentNPC {
         if (path_target == null)
             return new Steering();
 
-        Debug.Log(path_target);
         return Seek.GetSteering(path_target.position, this, 5, visibleRays);   
     }
 
@@ -64,26 +63,20 @@ public class AgentUnit : AgentNPC {
     }
 
     void GoToTarget(Vector3[] newPath, bool pathSuccessful) {
-        PathFollowing previous = null;
-        if (pathSuccessful) {
-            foreach (SteeringBehaviour steer in steers) {
-                if (steer is PathFollowing) {
-                    previous = (PathFollowing)steer;
-                    steers.Remove(previous);
-                    Destroy(previous);
-                    break;
-                }
-            }
-
-            if (newPath.Length > 0) {
-                PathFollowing pf = gameObject.AddComponent<PathFollowing>();
-                pf.path = newPath;
-                pf.visibleRays = visibleRays;
-                pf.maxAccel = 50f;
-                steers.Add(pf);
-            }
-        } else {
+        if (!pathSuccessful) {
             Debug.Log("Not reachable");
+            return;
+        }
+
+        //Remove previous PathFollowing
+        RemoveSteering(steers.Find(steer => steer is PathFollowing));
+
+        if (newPath.Length > 0) {
+            PathFollowing pf = gameObject.AddComponent<PathFollowing>();
+            pf.path = newPath;
+            pf.visibleRays = visibleRays;
+            pf.maxAccel = 50f;
+            steers.Add(pf);
         }
     }
 }

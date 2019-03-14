@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public abstract class AgentUnit : AgentNPC {
-    Map map;
+public class AgentUnit : AgentNPC {
 
+    Map map;
+    Location path_target;
     protected Dictionary<NodeT, float> cost = new Dictionary<NodeT, float>() { //Coste por defecto, para casos de prueba
             { NodeT.ROAD, 1 },
             { NodeT.GRASS, 1.5f },
@@ -13,8 +14,6 @@ public abstract class AgentUnit : AgentNPC {
             { NodeT.WATER, Mathf.Infinity},
             { NodeT.MOUNTAIN, Mathf.Infinity}
         };
-
-    Location path_target;
 
     new
     protected void Start() {

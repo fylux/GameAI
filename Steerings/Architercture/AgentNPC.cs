@@ -9,9 +9,7 @@ public class AgentNPC : Agent {
 
     [SerializeField]
     protected bool visibleRays;
-
-    Vector3 virtualTarget;
-
+    
     new
     protected void Start() {
         base.Start();

@@ -1,11 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class VelocityMatching : SteeringBehaviour
+ 
+public class VelocityMatching : SteeringBehaviourTarget
 {
-    [SerializeField]
-    Agent target;
 
     [SerializeField]
     float timeToTarget = 0.1f;

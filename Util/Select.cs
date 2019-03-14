@@ -18,7 +18,6 @@ public class Select : MonoBehaviour {
     Vector3 upper_left, lower_right;
 
     public HashSet<GameObject> selectedUnits = new HashSet<GameObject>();
-    GameObject selectedUnit;
 
     [SerializeField]
     Text selectionText;

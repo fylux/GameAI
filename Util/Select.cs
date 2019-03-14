@@ -31,7 +31,6 @@ public class Select : MonoBehaviour {
             if (Physics.Raycast(ray, out hit, Mathf.Infinity, unitLayer)) {
                 FinishSelection();
                 AddUnit(hit.transform.gameObject);
-                selectedUnit = hit.transform.gameObject;
             }
             else if (Physics.Raycast(ray, out hit, Mathf.Infinity, terrainLayer)) {
                 FinishSelection();
@@ -55,15 +54,6 @@ public class Select : MonoBehaviour {
         if (Input.GetButtonUp("Fire1") && selectBox != null) {
             Destroy(selectBox);
         }
-
-        /*if (Input.GetButtonUp("Fire2") && selectedUnits.Count == 1) {
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity, terrainLayer)) {
-                selectedUnit.GetComponent<AgentNPC>().SetTarget(hit.point);
-                GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-                cube.transform.position = hit.point;
-                cube.transform.localScale = new Vector3(0.4f, 0.1f, 0.4f);
-            }
-        }*/
 
         if (Input.GetButtonUp("Fire2") && selectedUnits.Count > 0) {
             if (Physics.Raycast(ray, out hit, Mathf.Infinity, terrainLayer)) {

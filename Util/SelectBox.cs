@@ -8,14 +8,14 @@ public class SelectBox : MonoBehaviour {
 
 
     void OnTriggerEnter(Collider other) {
-        if (other.gameObject.layer == LayerMask.NameToLayer("Unit")) {
-            select.AddUnit(other.gameObject);
+        if (other.gameObject.layer == LayerMask.NameToLayer("Unit") && other.GetComponent<AgentUnit>().faction == Faction.A) {
+            select.AddUnit(other.GetComponent<AgentUnit>());
         }
     }
 
     void OnTriggerExit(Collider other) {
-        if (other.gameObject.layer == LayerMask.NameToLayer("Unit")) {
-            select.RemoveUnit(other.gameObject);
+        if (other.gameObject.layer == LayerMask.NameToLayer("Unit") && other.GetComponent<AgentUnit>().faction == Faction.A) {
+            select.RemoveUnit(other.GetComponent<AgentUnit>());
         }
     }
 }

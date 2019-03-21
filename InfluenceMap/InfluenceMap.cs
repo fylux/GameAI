@@ -70,7 +70,7 @@ public class InfluenceMap : MonoBehaviour {
                 }
 
                 //This penaly for the terrain is based on the idea that if you move from road to forest is slower than from forest to road
-                float newMovementCostToNeighbour = currentNode.gCost + PathUtil.realDist(currentNode, neighbour) * unit.getCost()[neighbour.type];
+                float newMovementCostToNeighbour = currentNode.gCost + PathUtil.realDist(currentNode, neighbour) * unit.Cost[neighbour.type];
 
                 if (newMovementCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour)) {
                     neighbour.gCost = newMovementCostToNeighbour;

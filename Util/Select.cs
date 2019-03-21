@@ -17,7 +17,7 @@ public class Select : MonoBehaviour {
     GameObject selectBox = null;
     Vector3 upper_left, lower_right;
 
-    public HashSet<GameObject> selectedUnits = new HashSet<GameObject>();
+    public HashSet<AgentUnit> selectedUnits = new HashSet<AgentUnit>();
 
     [SerializeField]
     Text selectionText;
@@ -30,7 +30,7 @@ public class Select : MonoBehaviour {
         if (Input.GetButtonDown("Fire1")) {
             if (Physics.Raycast(ray, out hit, Mathf.Infinity, unitLayer)) {
                 FinishSelection();
-                AddUnit(hit.transform.gameObject);
+                AddUnit(hit.transform.gameObject.GetComponent<AgentUnit>());
             }
             else if (Physics.Raycast(ray, out hit, Mathf.Infinity, terrainLayer)) {
                 FinishSelection();
@@ -61,22 +61,23 @@ public class Select : MonoBehaviour {
                 cube.transform.position = hit.point;
                 cube.transform.localScale = new Vector3(0.4f, 0.1f, 0.4f);
 
-                foreach (GameObject unit in selectedUnits) {
-                    unit.GetComponent<AgentUnit>().SetTarget(hit.point);
+                foreach (AgentUnit unit in selectedUnits) {
+                    /*if (unit.faction == Faction.A)
+                        unit.SetTarget(hit.point);*/
                 }
                 
             }
         }
     }
 
-    public void AddUnit(GameObject unit) {
+    public void AddUnit(AgentUnit unit) {
         selectedUnits.Add(unit);
         unit.GetComponent<Renderer>().material.color = Color.blue;
 
         UpdateSelectionText();
     }
 
-    public void RemoveUnit(GameObject unit) {
+    public void RemoveUnit(AgentUnit unit) {
         selectedUnits.Remove(unit);
         unit.GetComponent<Renderer>().material.color = Color.red;
 
@@ -85,13 +86,19 @@ public class Select : MonoBehaviour {
 
     public void UpdateSelectionText() {
         selectionText.text = "";
-        foreach (GameObject unit in selectedUnits) {
-            selectionText.text += unit.name + "\n";
+        foreach (AgentUnit unit in selectedUnits) {
+            string prefix;
+            if (unit is Melee)          prefix = "[M]";
+            else if (unit is Ranged)    prefix = "[R]";
+            else if (unit is Artillery) prefix = "[A]";
+            else if (unit is Scout)     prefix = "[S]";
+            else                        prefix = "[U]";
+            selectionText.text += prefix +" " +unit.name + " " + unit.Life + "/" + unit.MaxLife + "\n";
         }
     }
 
     void FinishSelection() {
-        foreach (GameObject unit in selectedUnits)
+        foreach (AgentUnit unit in selectedUnits)
             unit.GetComponent<Renderer>().material.color = Color.red;
 
         selectedUnits.Clear();

@@ -8,15 +8,12 @@ public abstract class AgentUnit : AgentNPC {
     Map map;
     Location path_target;
 
+    [SerializeField]
+    const float maxLife = 10f;
+    float life;
     public Faction faction = Faction.A;
 
-    public float GetDropOff(float locationDistance) {
-        //100f is 100% influence
-        return 60f / locationDistance;
-    }
-    //
-
-
+    
     protected Dictionary<NodeT, float> cost = new Dictionary<NodeT, float>() { //Coste por defecto, para casos de prueba
             { NodeT.ROAD, 1 },
             { NodeT.GRASS, 1.5f },
@@ -25,12 +22,13 @@ public abstract class AgentUnit : AgentNPC {
             { NodeT.MOUNTAIN, Mathf.Infinity}
         };
 
+
     new
     protected void Start() {
         base.Start();
-        GameObject terrain = GameObject.Find("Terrain");
-        map = terrain.GetComponent<Map>();
+        map = GameObject.Find("Terrain").GetComponent<Map>();
         path_target = null;
+        life = MaxLife;
     }
 
     override
@@ -87,7 +85,20 @@ public abstract class AgentUnit : AgentNPC {
         }
     }
 
-    public Dictionary<NodeT, float> getCost() {
-        return cost;
+
+    public Dictionary<NodeT, float> Cost {
+        get { return cost; }
+    }
+
+    public float MaxLife {
+        get { return maxLife; }
+    }
+    public float Life {
+        get { return life; }
+    }
+
+    public float GetDropOff(float locationDistance) {
+        //100f is 100% influence
+        return 60f / locationDistance;
     }
 }

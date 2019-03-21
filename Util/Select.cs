@@ -61,6 +61,7 @@ public class Select : MonoBehaviour {
                 cube.transform.position = hit.point;
                 cube.transform.localScale = new Vector3(0.4f, 0.1f, 0.4f);
 
+                Console.singleton.Log(selectedUnits.Count + " Units going to target");
                 foreach (AgentUnit unit in selectedUnits) {
                     /*if (unit.faction == Faction.A)*/
                         unit.SetTarget(hit.point);

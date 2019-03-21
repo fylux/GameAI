@@ -33,9 +33,9 @@ public class LRTA : Pathfinding {
             Node minNode;
             do {
                 //argmin_(a in A(u)) {w(u,a) + h(Succ(u,a))}
-                grid.GetNeighbours(currentNode).ForEach(a => { if (!hCost.ContainsKey(a)) hCost[a] = hDist(a, targetNode); });
+                grid.GetNeighbours(currentNode).ForEach(a => { if (!hCost.ContainsKey(a)) hCost[a] = PathUtil.hDist(a, targetNode); });
                 minNode = grid.GetNeighbours(currentNode).Where(a => a.isWalkable())
-                                                         .OrderByDescending(a => realDist(currentNode, a) + hCost[a])
+                                                         .OrderByDescending(a => PathUtil.realDist(currentNode, a) + hCost[a])
                                                          .Last();
                 //until u not in S_lss
             } while (localSpace.Contains(minNode));
@@ -88,11 +88,11 @@ public class LRTA : Pathfinding {
                 if (hCost[node] != Mathf.Infinity) continue;
 
                 //min_(a in A) { w(u,a) + h(Succ(u,a)) }
-                grid.GetNeighbours(node).ForEach(a => { if (!hCost.ContainsKey(a)) hCost[a] = hDist(a, targetNode); });
+                grid.GetNeighbours(node).ForEach(a => { if (!hCost.ContainsKey(a)) hCost[a] = PathUtil.hDist(a, targetNode); });
                 Node minNeighbour = grid.GetNeighbours(node).Where(a => a.isWalkable())
-                                                            .OrderByDescending(a => realDist(node, a) + hCost[a])
+                                                            .OrderByDescending(a => PathUtil.realDist(node, a) + hCost[a])
                                                             .Last();
-                float minValue = realDist(node, minNeighbour) + hCost[minNeighbour];
+                float minValue = PathUtil.realDist(node, minNeighbour) + hCost[minNeighbour];
 
                 //max(temp(u), _ );
                 float result = Mathf.Max(temp[node], minValue);

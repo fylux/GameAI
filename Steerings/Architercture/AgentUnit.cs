@@ -6,6 +6,16 @@ using UnityEngine;
 
 public abstract class AgentUnit : AgentNPC {
     Map map;
+    Location path_target;
+
+    public Faction faction = Faction.A;
+
+    public float GetDropOff(float locationDistance) {
+        //100f is 100% influence
+        return 60f / locationDistance;
+    }
+    //
+
 
     protected Dictionary<NodeT, float> cost = new Dictionary<NodeT, float>() { //Coste por defecto, para casos de prueba
             { NodeT.ROAD, 1 },
@@ -14,8 +24,6 @@ public abstract class AgentUnit : AgentNPC {
             { NodeT.WATER, Mathf.Infinity},
             { NodeT.MOUNTAIN, Mathf.Infinity}
         };
-
-    Location path_target;
 
     new
     protected void Start() {
@@ -56,10 +64,9 @@ public abstract class AgentUnit : AgentNPC {
     }
 
     public void SetTarget(Vector3 targetPosition) {
-        Debug.Log("b");
-        //PathfindingManager.RequestPath(position, targetPosition, cost, GoToTarget);
-        path_target = new Location();
-        path_target.position = targetPosition;
+        PathfindingManager.RequestPath(position, targetPosition, cost, GoToTarget);
+        /*path_target = new Location();
+        path_target.position = targetPosition;*/
     }
 
     void GoToTarget(Vector3[] newPath, bool pathSuccessful) {
@@ -78,5 +85,9 @@ public abstract class AgentUnit : AgentNPC {
             pf.maxAccel = 50f;
             steers.Add(pf);
         }
+    }
+
+    public Dictionary<NodeT, float> getCost() {
+        return cost;
     }
 }

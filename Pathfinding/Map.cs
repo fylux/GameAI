@@ -16,15 +16,13 @@ public class Map : MonoBehaviour {
 
     int[,] tiles;
 
-    public Node[,] grid;
+    public Node[,] grid = null;
     Vector2 gridSize;
     float nodeX, nodeY;
 
     /*The offset is fundamental because by default objects are position based on their center. Thus, if we put a plane of 1x1 in (0,0), the upper left part
     will be in (-0.5,-0.5). Since we want the terrain to be in the range from 0 to gridSize, we need to add an offset*/
     Vector3 offset;
-
-    public Text textGrid;
 
 
     void Awake() {
@@ -117,6 +115,27 @@ public class Map : MonoBehaviour {
         return neighbours;
     }
 
+    public List<Node> GetDirectNeighbours(Node node) {
+        List<Node> neighbours = new List<Node>();
+        
+        for (int x = -1; x <= 1; x++) {
+            for (int y = -1; y <= 1; y++) {
+                if (x == 0 && y == 0)
+                    continue;
+                if (Mathf.Abs(x) > 0 && Mathf.Abs(y) > 0)
+                    continue;
+
+                int checkX = node.gridX + x;
+                int checkY = node.gridY + y;
+
+                if (checkX >= 0 && checkX < mapX && checkY >= 0 && checkY < mapY) {
+                    neighbours.Add(grid[checkX, checkY]);
+                }
+            }
+        }
+        return neighbours;
+    }
+
     public Node NodeFromPosition(Vector3 nodePosition) {
         float percentX = Mathf.Clamp01(nodePosition.x / gridSize.x);
         float percentY = Mathf.Clamp01(nodePosition.z / gridSize.y);
@@ -127,14 +146,37 @@ public class Map : MonoBehaviour {
         return grid[x, y];
     }
 
-    /*
-    void Update() {
-        textGrid.text = "";
+
+    private void OnDrawGizmos() {
+        if (grid == null)
+            return;
+
+
         for (int x = 0; x < mapX; x++) {
             for (int y = 0; y < mapY; y++) {
-                textGrid.text += grid[x, y].hCost.ToString("F1");
+                Vector3 center = grid[x, y].worldPosition;
+                Vector3 size = Vector3.one;
+                float influ = grid[x, y].getInfluence() / 100f;
+                float otherColor = Mathf.Max(0f,1f - influ * 4f);
+                //otherColor = Mathf.Round(otherColor * 5f) / 5f; //To discretize the range of colors
+                Dictionary<Faction, Color> colors = new Dictionary<Faction, Color>() {
+                    {Faction.A, new Color(1f, otherColor, otherColor, 1f) },
+                    {Faction.B, new Color(otherColor, otherColor, 1f ,1f) },
+                    {Faction.C, Color.gray }
+                };
+
+                Gizmos.color = colors[grid[x, y].getFaction()];
+                Gizmos.DrawCube(center,size);
             }
-            textGrid.text += "\n";
         }
-    }*/
+    }
+
+    public void ResetInfluence() {
+        for (int x = 0; x < mapX; x++) {
+            for (int y = 0; y < mapY; y++) {
+                grid[x, y].ResetInfluence();
+            }
+        }
+
+    }
 }

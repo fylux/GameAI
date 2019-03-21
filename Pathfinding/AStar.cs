@@ -10,6 +10,13 @@ public class AStar : Pathfinding {
     Node startNode, targetNode;
     Vector3 targetPos;
     Dictionary<Node, Node> prev;
+    PathfindingManager requestManager;
+
+    new
+    void Awake() {
+        base.Awake();
+        requestManager = GetComponent<PathfindingManager>();
+    }
 
     public IEnumerator FindPath(Vector3 startPos, Vector3 targetPos, Dictionary<NodeT, float> cost) {
         prev = new Dictionary<Node, Node>();
@@ -17,6 +24,7 @@ public class AStar : Pathfinding {
 
         this.targetPos = targetPos;
 		startNode = grid.NodeFromPosition(startPos);
+        startNode.gCost = 0;
 		targetNode = grid.NodeFromPosition(targetPos);
 
         Debug.Log(startNode.type + " -> " + targetNode.type);
@@ -43,11 +51,11 @@ public class AStar : Pathfinding {
 					}
 
                     //This penaly for the terrain is based on the idea that if you move from road to forest is slower than from forest to road
-                    float newMovementCostToNeighbour = currentNode.gCost + realDist(currentNode, neighbour) * cost[neighbour.type];
+                    float newMovementCostToNeighbour = currentNode.gCost + PathUtil.realDist(currentNode, neighbour) * cost[neighbour.type];
 
                     if (newMovementCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour)) {
 						neighbour.gCost = newMovementCostToNeighbour;
-						neighbour.hCost = hDist(neighbour, targetNode);
+						neighbour.hCost = PathUtil.hDist(neighbour, targetNode);
                         prev[neighbour] = currentNode;
 
                         if (!openSet.Contains(neighbour))
@@ -72,7 +80,7 @@ public class AStar : Pathfinding {
         }
         path.Reverse();
 
-        List<Vector3> waypoints = SimplifyPath(path);
+        List<Vector3> waypoints = PathUtil.SimplifyPath(path);
         waypoints.Add(targetPos);
 		return waypoints.ToArray();
 	}

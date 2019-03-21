@@ -9,8 +9,8 @@ public abstract class AgentUnit : AgentNPC {
     Location path_target;
 
     [SerializeField]
-    const float maxLife = 10f;
-    float life;
+    const float maxHealth = 10f;
+    float health;
     public Faction faction = Faction.A;
 
     
@@ -28,7 +28,7 @@ public abstract class AgentUnit : AgentNPC {
         base.Start();
         map = GameObject.Find("Terrain").GetComponent<Map>();
         path_target = null;
-        life = MaxLife;
+        health = MaxLife;
     }
 
     override
@@ -85,16 +85,36 @@ public abstract class AgentUnit : AgentNPC {
         }
     }
 
+    /*public void Attack(AgentUnit unit) {
+        float damage;
+        if (Random.Range(0,100) > 99f) {
+            damage = attackDamage * 5;
+        }
+        else {
+            damage = attackDamage * Random.Range(-0.8f, 1.2f) * factorTble;
+        }
+        unit.ModifyHealth(-damage);
+    }
+
+    public void ModifyHealth(float amount) {
+        health = Mathf.Min(health + amount, maxHealth);
+        if (health < 0.0f) {
+            Console.singleton.Log("Unit died");
+        }
+        if (health == maxHealth) {
+            Console.singleton.Log("Unit has maximun health");
+        }
+    }*/
 
     public Dictionary<NodeT, float> Cost {
         get { return cost; }
     }
 
     public float MaxLife {
-        get { return maxLife; }
+        get { return maxHealth; }
     }
     public float Life {
-        get { return life; }
+        get { return health; }
     }
 
     public float GetDropOff(float locationDistance) {

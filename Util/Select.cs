@@ -56,17 +56,19 @@ public class Select : MonoBehaviour {
         }
 
         if (Input.GetButtonUp("Fire2") && selectedUnits.Count > 0) {
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity, terrainLayer)) {
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, unitLayer)) {
+                Console.singleton.Log(selectedUnits.Count + " Units going to attack target");
+            }
+            else if (Physics.Raycast(ray, out hit, Mathf.Infinity, terrainLayer)) {
                 GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
                 cube.transform.position = hit.point;
                 cube.transform.localScale = new Vector3(0.4f, 0.1f, 0.4f);
 
-                Console.singleton.Log(selectedUnits.Count + " Units going to target");
+                Console.singleton.Log(selectedUnits.Count + " Units moving to target");
                 foreach (AgentUnit unit in selectedUnits) {
                     /*if (unit.faction == Faction.A)*/
                         unit.SetTarget(hit.point);
                 }
-                
             }
         }
     }

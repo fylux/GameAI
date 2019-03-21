@@ -62,8 +62,8 @@ public class Select : MonoBehaviour {
                 cube.transform.localScale = new Vector3(0.4f, 0.1f, 0.4f);
 
                 foreach (AgentUnit unit in selectedUnits) {
-                    /*if (unit.faction == Faction.A)
-                        unit.SetTarget(hit.point);*/
+                    /*if (unit.faction == Faction.A)*/
+                        unit.SetTarget(hit.point);
                 }
                 
             }

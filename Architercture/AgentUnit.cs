@@ -88,22 +88,24 @@ public abstract class AgentUnit : AgentNPC {
     /*public void Attack(AgentUnit unit) {
         float damage;
         if (Random.Range(0,100) > 99f) {
-            damage = attackDamage * 5;
+            damage = attack * 5;
         }
         else {
-            damage = attackDamage * Random.Range(-0.8f, 1.2f) * factorTble;
+            damage = attack * Random.Range(-0.8f, 1.2f) * factorTable;
         }
-        unit.ModifyHealth(-damage);
+        Console.singleton.Log("Unit caused " + unit.ModifyHealth(-damage) +" damage to Unit");
     }
 
-    public void ModifyHealth(float amount) {
-        health = Mathf.Min(health + amount, maxHealth);
+    public float ModifyHealth(float amount) {
+        float damage = amount - defense;
+        health = Mathf.Min(health + damage, maxHealth);
         if (health < 0.0f) {
             Console.singleton.Log("Unit died");
         }
         if (health == maxHealth) {
             Console.singleton.Log("Unit has maximun health");
         }
+        return damage;
     }*/
 
     public Dictionary<NodeT, float> Cost {

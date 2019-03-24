@@ -25,20 +25,18 @@ public class Body : MonoBehaviour {
         position += velocity * Time.deltaTime;
         orientation += rotation * Time.deltaTime;
 
-        ApplySteering();
         ApplyActuator();
 
-        velocity.y = 0;
+       /* velocity.y = 0;
 
         velocity = Vector3.ClampMagnitude(velocity, MaxVelocity);
-        rotation = Mathf.Clamp(rotation, -MaxRotation, MaxRotation);
+        rotation = Mathf.Clamp(rotation, -MaxRotation, MaxRotation);*/
 
         transform.position = position;
         transform.eulerAngles = new Vector3(0, orientation, 0);
     }
 
-    protected virtual void ApplySteering() { }
-    protected virtual void ApplyActuator() {
+    protected virtual void ApplyActuator() { //Aqui el Actuator limita las velocidades para que no superen el maximo
         velocity.y = 0;
 
         velocity = Vector3.ClampMagnitude(velocity, MaxVelocity);

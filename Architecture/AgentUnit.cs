@@ -32,12 +32,22 @@ public abstract class AgentUnit : AgentNPC {
     }
 
     override
-    protected void ApplyActuator() {
+    protected void ApplyActuator()
+    {// Aqui el Actuator suma los steerings, los aplica a las velocidades, y las limita, teniendo en cuenta los costes
         NodeT node = map.NodeFromPosition(position).type;
         float tCost = cost[node];
 
+        Steering steering = ApplySteering();
+
+        velocity += steering.linear * Time.deltaTime;
+        rotation += steering.angular * Time.deltaTime;
+
+        velocity.y = 0;
+
         velocity = Vector3.ClampMagnitude(velocity, (float)MaxVelocity / tCost);
         rotation = Mathf.Clamp(rotation, -MaxRotation, MaxRotation);
+
+        Debug.DrawRay(position, velocity.normalized * 2, Color.green);
     }
 
     override

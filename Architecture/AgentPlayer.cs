@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class AgentPlayer : Agent {
 
-	protected override void ApplySteering()
+	protected void ApplySteering()
     {
         //Funcionalidad de movimiento
     }

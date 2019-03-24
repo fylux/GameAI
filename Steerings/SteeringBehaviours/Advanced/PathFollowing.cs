@@ -24,10 +24,13 @@ public class PathFollowing : SteeringBehaviour {
 
     override
     public Steering GetSteering() {
+        Debug.Log(npc);
         float distance = Util.HorizontalDistance(path[currentPoint], npc.position);
         if (distance < arrivalRadius) {
             if (type == FollowT.STAY) {
                 currentPoint = Mathf.Min(currentPoint + 1, path.Length - 1); //When it reaches the last stays on it
+                if (currentPoint == path.Length - 1)
+                    return Arrive.GetSteering(path[currentPoint], npc, 1f,maxAccel /*50*/);
             }
             else if (type == FollowT.BACK) {
                 currentPoint += direction;
@@ -58,9 +61,10 @@ public class PathFollowing : SteeringBehaviour {
     }*/
 
     void OnDrawGizmos() {
-        if (!visibleRays)
+        if (!visibleRays || path == null)
             return;
-        
+
+
         Gizmos.color = Color.black;
         Debug.DrawLine(npc.position, path[currentPoint] + Vector3.up, Color.yellow);
         for (int i = currentPoint; i < path.Length; ++i) {

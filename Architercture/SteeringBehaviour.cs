@@ -19,7 +19,8 @@ public abstract class SteeringBehaviour : MonoBehaviour {
     public abstract Steering GetSteering();
 
     protected void Start() {
-        npc = GetComponent<Agent>();
+        if (npc == null)
+            npc = GetComponent<Agent>();
     }
 
     protected static void drawRays(Vector3 position, Vector3 ray) {
@@ -28,5 +29,9 @@ public abstract class SteeringBehaviour : MonoBehaviour {
 
     protected static void drawRays(Vector3 position, Vector3 ray, Color color) {
         Debug.DrawRay(position, ray.normalized * 2, color);
+    }
+
+    public void SetNPC(Agent npc) {
+        this.npc = npc;
     }
 }

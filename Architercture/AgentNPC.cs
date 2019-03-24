@@ -6,6 +6,7 @@ using UnityEngine;
 public class AgentNPC : Agent {
 
     protected List<SteeringBehaviour> steers;
+    protected Task task;
 
     [SerializeField]
     protected bool visibleRays;
@@ -16,6 +17,7 @@ public class AgentNPC : Agent {
     protected void Start() {
         base.Start();
         steers = new List<SteeringBehaviour>(GetComponents<SteeringBehaviour>());
+        task = null;
     }
 
 
@@ -25,7 +27,8 @@ public class AgentNPC : Agent {
         foreach (SteeringBehaviour steer in steers) {
             totalSteering += Steering.ApplyPriority(steer.GetSteering(), steer.blendPriority);
         }
-        totalSteering += PathSteering();
+        //totalSteering += PathSteering();
+        if (task != null) totalSteering += task.Apply();
         totalSteering.linear.y = 0;
 
         totalSteering.linear = Vector3.ClampMagnitude(totalSteering.linear, MaxAccel);

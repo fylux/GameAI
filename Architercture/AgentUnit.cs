@@ -49,7 +49,7 @@ public abstract class AgentUnit : AgentNPC {
     }
 
     public void SetFormation(Vector3 position, float orientation) {
-        GoTo go = gameObject.GetComponent<GoTo>();
+        /*GoTo go = gameObject.GetComponent<GoTo>();
         if (go == null) {
             go = gameObject.AddComponent<GoTo>();
             go.Init(position, orientation);
@@ -58,13 +58,23 @@ public abstract class AgentUnit : AgentNPC {
             go.target = position;
             go.orientation = orientation;
             go.active = true;
-        }
+        }*/
     }
 
     public void SetTarget(Vector3 targetPosition) {
-        PathfindingManager.RequestPath(position, targetPosition, cost, GoToTarget);
+        if (task != null)
+            task.Terminate();
+        task = new GoTo(this, targetPosition, DoAfterTaskFinish);
+        
+        //PathfindingManager.RequestPath(position, targetPosition, cost, GoToTarget);
         /*path_target = new Location();
         path_target.position = targetPosition;*/
+    }
+
+    private void DoAfterTaskFinish(bool success) {
+        Debug.Log("Task finished");
+        task.Terminate();
+        task = null;
     }
 
     void GoToTarget(Vector3[] newPath, bool pathSuccessful) {

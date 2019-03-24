@@ -4,6 +4,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
+
 public class Map : MonoBehaviour {
     [SerializeField]
     bool generateMap;
@@ -12,7 +13,7 @@ public class Map : MonoBehaviour {
 
     public int mapX, mapY;
 
-    public GameObject A, B, C, D, E;
+    public GameObject A, B, C, D, E, influenceTile;
 
     int[,] tiles;
 
@@ -33,7 +34,6 @@ public class Map : MonoBehaviour {
         nodeX = size.x;
         nodeY = size.z;
 
-
         offset = new Vector3(size.x, 0, size.z) / 2f ;
         gridSize = new Vector2(mapX * nodeX, mapY * nodeY);
 
@@ -43,11 +43,10 @@ public class Map : MonoBehaviour {
         }
 
         BuildMap();
-        gameObject.isStatic = true;
+        if (generateMap) GenerateMap();
     }
 
     void BuildMap() {
-        
         grid = new Node[mapX, mapX];
 
         for (int x = 0; x < mapX; x++) {
@@ -55,17 +54,20 @@ public class Map : MonoBehaviour {
                 Vector3 position = offset + (Vector3.right * x * nodeX) + (Vector3.forward * y * nodeY);
                 NodeT type = (NodeT)tiles[x, y];
                 grid[x, y] = new Node(x, y, position, type);
+                if (!generateMap) grid[x, y].gameObject = transform.GetChild(x * mapY + y).gameObject;
             }
         }
+    }
 
-        if (!generateMap)
-            return;
-
-        Dictionary<int, GameObject> terrainType = new Dictionary<int, GameObject>() {{0, A}, {1, B}, {2, C}, {3, D}, {4, E}};
+    void GenerateMap() {
+        Dictionary<int, GameObject> terrainType = new Dictionary<int, GameObject>() { { 0, A }, { 1, B }, { 2, C }, { 3, D }, { 4, E } };
         for (int x = 0; x < mapX; x++) {
             for (int y = 0; y < mapY; y++) {
                 GameObject TilePrefab = Instantiate(terrainType[tiles[x, y]], offset + new Vector3(x * nodeX, 0, y * nodeY), Quaternion.identity);
                 TilePrefab.transform.parent = this.transform;
+                GameObject influenceTileObj = Instantiate(influenceTile, offset + new Vector3(x * nodeX, -0.5f, y * nodeY), Quaternion.identity);
+                influenceTileObj.transform.parent = TilePrefab.transform;
+                grid[x, y].gameObject = TilePrefab;
             }
         }
     }
@@ -147,11 +149,7 @@ public class Map : MonoBehaviour {
     }
 
 
-    private void OnDrawGizmos() {
-        if (grid == null)
-            return;
-
-
+    public void SetInfluence() {
         for (int x = 0; x < mapX; x++) {
             for (int y = 0; y < mapY; y++) {
                 Vector3 center = grid[x, y].worldPosition;
@@ -165,8 +163,9 @@ public class Map : MonoBehaviour {
                     {Faction.C, Color.gray }
                 };
 
-                Gizmos.color = colors[grid[x, y].getFaction()];
-                Gizmos.DrawCube(center,size);
+                grid[x, y].gameObject.transform.GetChild(0).GetComponent<Renderer>().material.color = colors[grid[x, y].getFaction()];
+                /*Gizmos.color = colors[grid[x, y].getFaction()];
+                Gizmos.DrawCube(center,size);*/
             }
         }
     }

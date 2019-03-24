@@ -12,6 +12,8 @@ public enum Faction {
 
 public class Node : IHeapItem<Node> {
 
+    public GameObject gameObject;
+
     public NodeT type;
 	public Vector3 worldPosition;
 	public int gridX;
@@ -61,7 +63,8 @@ public class Node : IHeapItem<Node> {
     }
 
     public float getInfluence() {
-        return Mathf.Min(100f, Mathf.Max(influence[0], influence[1]));
+        return Mathf.Min(100f, Mathf.Abs(influence[0]-influence[1])); //Influence of one faction removes influence of another
+        //return Mathf.Min(100f, Mathf.Max(influence[0], influence[1])); //Influence of one faction does not affect the other
     }
 
     public void ResetInfluence() {
@@ -70,7 +73,7 @@ public class Node : IHeapItem<Node> {
     }
 
     public Faction getFaction() {
-        if (influence[0] < 0.1f && influence[1] < 0.1f)
+        if (getInfluence() < 1f)//(influence[0] < 0.1f && influence[1] < 0.1f)
             return Faction.C;
         else if (influence[0] > influence[1])
             return Faction.A;

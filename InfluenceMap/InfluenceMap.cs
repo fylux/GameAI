@@ -15,6 +15,7 @@ public class InfluenceMap : MonoBehaviour {
 
     private void Start() {
         map = GameObject.Find("Terrain").GetComponent<Map>();
+        unitList = new List<AgentUnit>();
         Array.ForEach(  GameObject.FindGameObjectsWithTag("NPC"),
                         npc => unitList.Add(npc.GetComponent<AgentUnit>()));
     }
@@ -23,6 +24,7 @@ public class InfluenceMap : MonoBehaviour {
         if (Mathf.Floor(Time.fixedTime * 1000) % (1000 * SecondsPerInfluenceUpdate) == 0) { //Time is managed in ms
             map.ResetInfluence();
             unitList.ForEach(unit => ComputeInfluenceDijkstra(unit));
+            map.SetInfluence();
         }
            
     }
@@ -49,6 +51,7 @@ public class InfluenceMap : MonoBehaviour {
     }
 
     public void ComputeInfluenceDijkstra(AgentUnit unit) {
+
         Node startNode = map.NodeFromPosition(unit.position);
         startNode.gCost = 1;
         Heap<Node> openSet = new Heap<Node>(map.GetMaxSize());

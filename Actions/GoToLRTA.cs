@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class GoTo : BaseTask {
+public class GoToLRTA : BaseTask {
 
     GameObject empty;
     PathFollowing pathF;
     Vector3 target;
+    LRTA lrta;
 
 
-    public GoTo(AgentUnit agent, Vector3 target, Action<bool> callback) : base(agent,callback) {
+    public GoToLRTA(AgentUnit agent, Vector3 target, Action<bool> callback) : base(agent, callback) {
         this.target = target;
 
         empty = new GameObject();
@@ -21,21 +22,21 @@ public class GoTo : BaseTask {
         pathF.path = null;
         pathF.visibleRays = true;
 
-        PathfindingManager.RequestPath(agent.position, target, agent.Cost, ProcessPath);
+        lrta = new LRTA();
+        lrta.StartPath(target);
+        RequestPath();
     }
 
-    private void ProcessPath(Vector3[] newPath, bool pathSuccessful) {
-        if (pathSuccessful) {
-            pathF.path = newPath;    
-        }
-        else {
-            Debug.Log("Pathfinding was not successful");
-        }
+    private void RequestPath() {
+        pathF.SetPath(lrta.FindPath(agent.position));
     }
 
     override
     public Steering Apply() {
         if (IsFinished()) callback(true);
+
+        if (Time.frameCount % 1 == 0)
+            RequestPath();
 
         if (pathF.path != null)
             return pathF.GetSteering();

@@ -74,36 +74,13 @@ public abstract class AgentUnit : AgentNPC {
     public void SetTarget(Vector3 targetPosition) {
         if (task != null)
             task.Terminate();
-        task = new GoTo(this, targetPosition, DoAfterTaskFinish);
-        
-        //PathfindingManager.RequestPath(position, targetPosition, cost, GoToTarget);
-        /*path_target = new Location();
-        path_target.position = targetPosition;*/
-    }
 
-    private void DoAfterTaskFinish(bool success) {
-        Debug.Log("Task finished");
-        task.Terminate();
-        task = null;
-        StopMoving();
-    }
-
-    void GoToTarget(Vector3[] newPath, bool pathSuccessful) {
-        if (!pathSuccessful) {
-            Debug.Log("Not reachable");
-            return;
-        }
-
-        //Remove previous PathFollowing
-        RemoveSteering(steers.Find(steer => steer is PathFollowing));
-
-        if (newPath.Length > 0) {
-            PathFollowing pf = gameObject.AddComponent<PathFollowing>();
-            pf.path = newPath;
-            pf.visibleRays = visibleRays;
-            pf.maxAccel = 50f;
-            steers.Add(pf);
-        }
+        task = new GoToLRTA(this, targetPosition, (bool sucess) => {
+            Debug.Log("Task finished");
+            task.Terminate();
+            task = null;
+            StopMoving();
+        });
     }
 
     /*public void Attack(AgentUnit unit) {

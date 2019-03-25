@@ -22,9 +22,19 @@ public class PathFollowing : SteeringBehaviour {
         currentPoint = 0;
     }
 
+    public void SetPath(Vector3[] path) {
+        this.path = path;
+        currentPoint = 0;
+    }
+
     override
     public Steering GetSteering() {
-        Debug.Log(npc);
+        if (path == null || currentPoint >= path.Length) {
+            Debug.LogError("Path is invalid");
+            return new Steering();
+        }
+
+
         float distance = Util.HorizontalDistance(path[currentPoint], npc.position);
         if (distance < arrivalRadius) {
             if (type == FollowT.STAY) {
@@ -61,10 +71,8 @@ public class PathFollowing : SteeringBehaviour {
     }*/
 
     void OnDrawGizmos() {
-        if (!visibleRays || path == null)
+        if (!visibleRays || path == null || currentPoint >= path.Length)
             return;
-
-
         Gizmos.color = Color.black;
         Debug.DrawLine(npc.position, path[currentPoint] + Vector3.up, Color.yellow);
         for (int i = currentPoint; i < path.Length; ++i) {

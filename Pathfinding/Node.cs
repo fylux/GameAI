@@ -80,4 +80,9 @@ public class Node : IHeapItem<Node> {
         else
             return Faction.B;
     }
+
+    override
+    public string ToString() {
+        return "("+gridX + "," + gridY+")";
+    }
 }

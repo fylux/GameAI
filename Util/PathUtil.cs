@@ -5,7 +5,7 @@ using UnityEngine;
 public class PathUtil : MonoBehaviour {
 
     //Simplfies path and does not add the targetNode, since the last position is no the center of targetNode but targetPos
-    public static List<Vector3> SimplifyPath(List<Node> path) {
+    public static List<Vector3> SimplifyPath(List<Node> path, bool includeLast = false) {
         List<Vector3> waypoints = new List<Vector3>();
         Vector2 oldDirection = Vector2.zero;
 
@@ -16,8 +16,28 @@ public class PathUtil : MonoBehaviour {
             }
             oldDirection = newDirection;
         }
+        if (includeLast)
+            waypoints.Add(path[path.Count - 1].worldPosition);
 
         return waypoints;
+    }
+
+    public static List<Node> RemoveCycles(List<Node> path) {
+        Stack<Node> new_path = new Stack<Node>();
+        HashSet<Node> ocurrences = new HashSet<Node>();
+
+        foreach (Node node in path) {
+            if (ocurrences.Contains(node)) { //Found a repeated element
+                while (new_path.Peek() != node) {
+                    new_path.Pop(); 
+                }
+                new_path.Pop();
+                
+            }
+            ocurrences.Add(node);
+            new_path.Push(node);
+        }
+        return path;
     }
 
     static float distance(Node nodeA, Node nodeB, DistanceT distanceT = DistanceT.MANHATTAN) {

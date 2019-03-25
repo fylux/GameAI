@@ -12,27 +12,24 @@ public class AStar : Pathfinding {
     Dictionary<Node, Node> prev;
     PathfindingManager requestManager;
 
-    new
-    void Awake() {
-        base.Awake();
-        requestManager = GetComponent<PathfindingManager>();
-    }
 
-    public IEnumerator FindPath(Vector3 startPos, Vector3 targetPos, Dictionary<NodeT, float> cost) {
+    // AStar() : base() {}
+
+    public IEnumerator FindPath(Vector3 startPos, Vector3 targetPos, Dictionary<NodeT, float> cost, Action<Vector3[], bool> FinishedProcessing) {
         prev = new Dictionary<Node, Node>();
         bool pathSuccess = false;
 
         this.targetPos = targetPos;
-		startNode = grid.NodeFromPosition(startPos);
+		startNode = map.NodeFromPosition(startPos);
         startNode.gCost = 0;
-		targetNode = grid.NodeFromPosition(targetPos);
+		targetNode = map.NodeFromPosition(targetPos);
 
         Debug.Log(startNode.type + " -> " + targetNode.type);
 
         /*Acceleration can make a NPC move to a non accesible area so we should not take it into account when computing the path.*/
 
         if (/*startNode.isWalkable() && */targetNode.isWalkable()) {
-			Heap<Node> openSet = new Heap<Node>(grid.GetMaxSize());
+			Heap<Node> openSet = new Heap<Node>(map.GetMaxSize());
 			HashSet<Node> closedSet = new HashSet<Node>();
 			openSet.Add(startNode);
 			
@@ -45,7 +42,7 @@ public class AStar : Pathfinding {
 					break;
 				}
 				
-				foreach (Node neighbour in grid.GetNeighbours(currentNode)) {
+				foreach (Node neighbour in map.GetNeighbours(currentNode)) {
 					if (!neighbour.isWalkable() || closedSet.Contains(neighbour)) {
 						continue;
 					}
@@ -69,7 +66,7 @@ public class AStar : Pathfinding {
 		yield return null;
 
         Vector3[] waypoints = pathSuccess ? RetracePath() : new Vector3[0];
-        requestManager.FinishedProcessingPath(waypoints, pathSuccess);
+        FinishedProcessing(waypoints, pathSuccess);
     }
     
     Vector3[] RetracePath() {

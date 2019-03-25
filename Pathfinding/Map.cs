@@ -152,7 +152,6 @@ public class Map : MonoBehaviour {
     public void SetInfluence() {
         for (int x = 0; x < mapX; x++) {
             for (int y = 0; y < mapY; y++) {
-                Vector3 center = grid[x, y].worldPosition;
                 Vector3 size = Vector3.one;
                 float influ = grid[x, y].getInfluence() / 100f;
                 float otherColor = Mathf.Max(0f,1f - influ * 4f);
@@ -165,7 +164,7 @@ public class Map : MonoBehaviour {
 
                 grid[x, y].gameObject.transform.GetChild(0).GetComponent<Renderer>().material.color = colors[grid[x, y].getFaction()];
                 /*Gizmos.color = colors[grid[x, y].getFaction()];
-                Gizmos.DrawCube(center,size);*/
+                Gizmos.DrawCube(grid[x, y].worldPosition, size);*/
             }
         }
     }

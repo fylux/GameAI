@@ -29,7 +29,7 @@ public class PathfindingManager : MonoBehaviour {
 
     void Awake() {
         instance = this;
-        pathfinding = GetComponent<AStar>();
+        pathfinding = new AStar();
     }
 
     public static void RequestPath(Vector3 pathStart, Vector3 pathEnd, Dictionary<NodeT, float> cost, Action<Vector3[], bool> callback) {
@@ -42,7 +42,7 @@ public class PathfindingManager : MonoBehaviour {
         if (!searchingPath && requestQueue.Count > 0) {
             searchingPath = true;
             currentRequest = requestQueue.Dequeue();
-            StartCoroutine(pathfinding.FindPath(currentRequest.pathStart, currentRequest.pathEnd, currentRequest.cost));
+            StartCoroutine(pathfinding.FindPath(currentRequest.pathStart, currentRequest.pathEnd, currentRequest.cost, FinishedProcessingPath));
         }
     }
 

@@ -8,12 +8,12 @@ public enum DistanceT {
     EUCLIDEAN, MANHATTAN, CHEBYSHEV
 };
 
-public class Pathfinding : MonoBehaviour {
+public class Pathfinding {
 
-    protected Map grid;
+    protected Map map;
 
-    protected void Awake() {
-        grid = GetComponent<Map>();
+    public Pathfinding() {
+        map = GameObject.Find("Terrain").GetComponent<Map>();
     }
 
 }

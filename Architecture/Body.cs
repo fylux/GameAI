@@ -43,6 +43,11 @@ public class Body : MonoBehaviour {
         rotation = Mathf.Clamp(rotation, -MaxRotation, MaxRotation);
     }
 
+    public void StopMoving() {
+        velocity = Vector3.zero;
+        rotation = 0f;
+    }
+
     public Vector3 getForward() {
         return Util.RotateVector(Vector3.forward, orientation).normalized;
     }

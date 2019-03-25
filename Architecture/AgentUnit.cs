@@ -85,6 +85,7 @@ public abstract class AgentUnit : AgentNPC {
         Debug.Log("Task finished");
         task.Terminate();
         task = null;
+        StopMoving();
     }
 
     void GoToTarget(Vector3[] newPath, bool pathSuccessful) {

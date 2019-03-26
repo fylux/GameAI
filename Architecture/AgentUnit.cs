@@ -37,6 +37,9 @@ public abstract class AgentUnit : AgentNPC {
         NodeT node = map.NodeFromPosition(position).type;
         float tCost = cost[node];
 
+        if (tCost == Mathf.Infinity)
+            tCost = 1;
+
         Steering steering = ApplySteering();
 
         velocity += steering.linear * Time.deltaTime;
@@ -44,7 +47,7 @@ public abstract class AgentUnit : AgentNPC {
 
         velocity.y = 0;
 
-        velocity = Vector3.ClampMagnitude(velocity, (float)MaxVelocity / tCost);
+        velocity = Vector3.ClampMagnitude(velocity/tCost, (float)MaxVelocity / tCost);
         rotation = Mathf.Clamp(rotation, -MaxRotation, MaxRotation);
 
         Debug.DrawRay(position, velocity.normalized * 2, Color.green);

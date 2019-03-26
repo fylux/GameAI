@@ -18,7 +18,7 @@ Aquellos términos que son una idea general requieren que se añadan detalles cu
 ## Arquitectura IA Decisiones
 Preguntas que debe resolver el diseño de la IA.
 
-### Cerebro estrategico / Jugador
+### IA Estratégica
 Suponemo que el cerebro estratégico sigue la estructura de un árbol de comportamiento adaptado a nuestras necesidades.
 
 ¿Hay un solo árbol estrategico (con subarboles) o hay varios arboles distintos que se ejecutan en paralelo?

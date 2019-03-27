@@ -184,3 +184,7 @@ Cada frame en el update de la unidad se llama a la función para obtener steerin
  - Eliminar ComplexTask
  - Crear algún efecto visual para ver que una unidad ataca a otra
  - Poder pasar a pathfinding factor de miedo
+ - Mostrar bocadillo con tarea asignada a la unidad y estrategia asignada.
+
+### Otros
+ - Para hacer que parezca que los distintos tipos de unidades siguen estrategias distintas dar distintas afinidades de las unidades a las estrategias en la asignación de unidades. También modificar parámetros como miedo en el camino.

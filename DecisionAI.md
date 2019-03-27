@@ -57,9 +57,130 @@ Esto afecta si se mandan ordenes a grupos de unidades en vez de a todas. Por eje
 
 <hr />
 
-## Propuesta 1
-### Resumen
 
-### Respuestas a preguntas
 
-### Problemas conocidos
+## Modelo inicial
+### Estrategias
+ - Defender base
+ - Defender su mitad del mapa (o defender X distancia alreadedor de la base para que sea más flexible)
+ - Atacar mitad del mapa enemigo
+ - Atacar base enemiga
+
+### Ordenes a unidades:
+ - Dirigete a un punto
+ - Dirigete a una zona (radio entorno a un punto)
+ - Defender posición
+ - Ataque puntual (ataca enemigo hasta que huye)
+ - Ataque hostil (ataca enemigo y si huye (mas de X distancia?) los sigue)
+ - Patrulla por itinerario
+ - Unirse a grupo (Persigue a una unidad aliada hasta que esta suficientemente cerca para unirse al grupo)
+ - Atacar zona
+
+### Métodos para obtener información (Zona se refiere a un Radio X desde una casilla del mapa):
+ - Influencia media del enemigo/total/aliada en una zona
+   - Influencia entorno a la base/base enemiga
+   - Influencia entorno a la frontera
+ - Fuerza de las unidades en una zona
+   - Numero de unidades
+   - Vida media de las unidades
+   - Ataque medio de unidades
+   - % que representa cada tipo de unidad
+ - grupo de enemigos más cercanos a la base
+ - % del mapa con influencia aliada/enemiga
+ - numero de unidades con una determinada estrategia asignada en una zona
+ - Obtener peligro de un camino (en base a la influencia de las casillas que cruza)
+ - Ver si se ha producido un cambio estable en el interes de objetivos (unos nuevos valores distintos que se han mantenido bastantes segundos)
+
+
+## 1º Capa
+ - Crear clase IA Estratégica cuyo método principal es llamado en el Update cada X segundos
+ - Para cada estrategica llama a su método de evaluación que genera un % de su interés en base a funciones de información
+ - Se evaluan condiciones mínimas para cada estrategia (se ponen a 0% aquellas que no las cumplen)
+ - Se pasa la lista de Interes a la siguiente capa
+
+
+## 2º Capa
+Clase MilitaryScheduling
+ - Se multiplican los % por coeficientes de correción para ponderar el interés en las estrategias según nuestro estilo de juego
+ - Se seleccionan un máximo de X estrategias (depende de tamaño del mapa, numero unidades con más interés)
+ - Para cada estrategia seleccionada se marcan las unidades que mejor se ajustan para esa estrategia
+   - Si la unidad ya tenía seleccionada esa estrategia se coge sin problema
+   - Si no se deja marcada hasta la siguiente iteración
+   - De las unidades que no se han cogido todavía se seleccionan aquellas que mejor se ajustan por ciertas heuristicas
+    - Numero de unidades con esa estrategia a su alrededor
+    - Cercanía a ciertas zonas (dividido entre velocidad media?)
+
+
+## 3º Capa
+Cada X segundos se llama a la Clase, CoordinateAI que llama a la ejecución de la lógica de cada estrategia
+
+#### Defender base
+Es la más fácil, solo hay que mandar todas las unidades a lo loco a la base
+ - ¿Hay unidades que no están en la base y no se están reagrupando?
+   - Ordenar ir a la base
+ - ¿Hay unidades yendo a la base que están cercanas o cuyos caminos se vayan a cruzar?
+   - Ordenar agruparse
+ - ¿Hay unidades en la base sin orden de defender posición?
+   - Ordenar defender posición
+
+#### Defender su mitad del mapa
+
+#### Atacar mitad del mapa enemigo
+
+#### Atacar base enemiga
+ - Obtener lista de unidades ordenada por cercanía a la base 
+   - ¿Hay unidades muy alejadas de la mayoría cercana a la base?
+     - Ordenar unirse al grupo más cercano
+   - Si el grupo más cercano a la base tiene más de X unidades
+     - Elegir siguiente posición más cercana a la base
+     - Mandar al grupo a esa posición
+   - Si la distancia a la base es pequeña y numero de unidades > X
+     - Ordenar atacar zona
+
+## 4º Capa
+Cada frame en el update de la unidad se llama a la función para obtener steering de la tarea asignada.
+
+#### Dirigete a un punto
+ - Calcula camino a un punto con factor de miedo
+   - Factor de miedo función de vida, numero unidades aliadas cercanas, influencia, etc.
+ - Seguir camino
+ - (Opcional) Cada X tiempo recalcular camino por si ya no fuera seguro
+ - Si estrategia==(Atacar) y fuerza_unidad_y_aliados * actitud_riesgo < peligro camino
+   - ¿Replantearse que hacer?
+
+
+#### Dirigete a una zona (radio entorno a un punto)
+
+#### Defender posición
+ - Si posición actual > radioAmpliado
+   - Dirigete a zona radioReducido (Esto evita que las unidades en el borde esten atacando/retirandose continuamente)
+ - Si posición actual < radioAmpliada
+   - Si unidad enemiga muy cercana o es atacada
+     - Atacar unidad
+   - Si no, ¿dar vueltas para no estar parado?
+
+#### Ataque puntual (ataca enemigo hasta que huye)
+
+#### Ataque hostil (ataca enemigo y si huye (mas de X distancia?) los sigue)
+
+#### Patrulla por itinerario
+ - Seguir ruta
+ - While enemigo esta cerca de siguiente punto y fuerza_unidad_y_aliados * actitud_riesgo > fuerza_enemigp
+   - Defender zona
+ - While enemigo esta cerca de siguiente punto y fuerza_unidad_y_aliados * actitud_riesgo < fuerza_enemigo
+   - Reforzar base
+
+#### Unirse a grupo (Persigue a una unidad aliada hasta que esta suficientemente cerca para unirse al grupo)
+
+
+
+#### Atacar zona
+
+
+
+
+
+### TODO
+ - Eliminar ComplexTask
+ - Crear algún efecto visual para ver que una unidad ataca a otra
+ - Poder pasar a pathfinding factor de miedo

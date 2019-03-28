@@ -21,9 +21,10 @@ public class GoToLRTA : BaseTask {
         pathF.SetNPC(agent);
         pathF.path = null;
         pathF.visibleRays = true;
+        pathF.maxAccel = 50f;
 
         lrta = new LRTA();
-        lrta.StartPath(target);
+        lrta.StartPath(target, agent.Cost);
         RequestPath();
     }
 
@@ -41,7 +42,7 @@ public class GoToLRTA : BaseTask {
         if (pathF.path != null)
             return pathF.GetSteering();
         else
-            return Seek.GetSteering(target, agent, 10f); //If path has not been solved yet just do Seek.
+            return Seek.GetSteering(target, agent, 50f); //If path has not been solved yet just do Seek.
     }
 
     override

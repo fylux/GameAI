@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.UI;
 
 
@@ -145,6 +146,7 @@ public class Map : MonoBehaviour {
         int x = Mathf.FloorToInt(mapX * percentX);
         int y = Mathf.FloorToInt(mapY * percentY);
 
+        Assert.IsTrue(x < mapX && y < mapY);
         return grid[x, y];
     }
 

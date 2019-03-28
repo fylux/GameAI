@@ -29,10 +29,13 @@ public class PathUtil : MonoBehaviour {
         foreach (Node node in path) {
             if (ocurrences.Contains(node)) { //Found a repeated element
                 while (new_path.Peek() != node) {
-                    new_path.Pop(); 
+                    ocurrences.Remove(new_path.Pop());
+                    if (new_path.Count == 0) {
+                        Debug.Log("path varioooooo");
+                    }
                 }
-                new_path.Pop();
-                
+                ocurrences.Remove(new_path.Pop());
+
             }
             ocurrences.Add(node);
             new_path.Push(node);

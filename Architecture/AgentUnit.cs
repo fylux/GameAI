@@ -13,6 +13,8 @@ public abstract class AgentUnit : AgentNPC {
     float health;
     public Faction faction = Faction.A;
 
+    public GameObject SelectCircle;
+
     
     protected Dictionary<NodeT, float> cost = new Dictionary<NodeT, float>() { //Coste por defecto, para casos de prueba
             { NodeT.ROAD, 1 },

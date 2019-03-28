@@ -14,6 +14,9 @@ public class Select : MonoBehaviour {
     [SerializeField]
     GameObject prefabSelectBox;
 
+    [SerializeField]
+    GameObject prefabSelectCircle;
+
     GameObject selectBox = null;
     Vector3 upper_left, lower_right;
 
@@ -73,18 +76,25 @@ public class Select : MonoBehaviour {
         }
     }
 
-    public void AddUnit(AgentUnit unit) {
+    public void AddUnit(AgentUnit unit, bool updateText = true) {
         selectedUnits.Add(unit);
-        unit.GetComponent<Renderer>().material.color = Color.blue;
+        if (unit.SelectCircle == null) {
+            unit.SelectCircle = Instantiate(prefabSelectCircle, unit.transform);
+            unit.SelectCircle.transform.position = new Vector3(unit.transform.position.x, 0.1f, unit.transform.position.z);
+        }
 
-        UpdateSelectionText();
+        if (updateText)
+            UpdateSelectionText();
     }
 
-    public void RemoveUnit(AgentUnit unit) {
+    public void RemoveUnit(AgentUnit unit, bool updateText = true) {
         selectedUnits.Remove(unit);
-        unit.GetComponent<Renderer>().material.color = Color.red;
 
-        UpdateSelectionText();
+        Destroy(unit.SelectCircle);
+        unit.SelectCircle = null;
+
+        if (updateText)
+            UpdateSelectionText();
     }
 
     public void UpdateSelectionText() {
@@ -101,9 +111,10 @@ public class Select : MonoBehaviour {
     }
 
     void FinishSelection() {
-        foreach (AgentUnit unit in selectedUnits)
-            unit.GetComponent<Renderer>().material.color = Color.red;
-
+        foreach (AgentUnit unit in selectedUnits) {
+            Destroy(unit.SelectCircle);
+            unit.SelectCircle = null;
+        }
         selectedUnits.Clear();
         UpdateSelectionText();
     }

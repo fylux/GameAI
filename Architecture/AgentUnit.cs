@@ -94,6 +94,12 @@ public abstract class AgentUnit : AgentNPC {
             task = null;
             RequestStopMoving();
         });
+        /*task = new DefendZone(this, position, 3f, (bool sucess) => {
+            Debug.Log("Task finished");
+            task.Terminate();
+            task = null;
+            RequestStopMoving();
+        });*/
     }
 
     [SerializeField]

@@ -30,7 +30,10 @@ public class PathFollowing : SteeringBehaviour {
     override
     public Steering GetSteering() {
         if (path == null || currentPoint >= path.Length) {
-            Debug.LogError("Path is invalid");
+            if (path == null)
+                Debug.LogError("Path is invalid: Null");
+            if (currentPoint >= path.Length)
+                Debug.LogError("Path is invalid: Out of bounds");
             return new Steering();
         }
 
@@ -76,6 +79,9 @@ public class PathFollowing : SteeringBehaviour {
         Gizmos.color = Color.black;
         Debug.DrawLine(npc.position, path[currentPoint] + Vector3.up, Color.yellow);
         for (int i = currentPoint; i < path.Length; ++i) {
+
+            path[i] = new Vector3(path[i].x, 0f, path[i].z);
+
             if (i + 1 < path.Length)
                 Debug.DrawLine(path[i] + Vector3.up, path[i+1] + Vector3.up, Color.white);
 

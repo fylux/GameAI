@@ -61,6 +61,9 @@ public class Select : MonoBehaviour {
         if (Input.GetButtonUp("Fire2") && selectedUnits.Count > 0) {
             if (Physics.Raycast(ray, out hit, Mathf.Infinity, unitLayer)) {
                 Console.singleton.Log(selectedUnits.Count + " Units going to attack target");
+                foreach (AgentUnit unit in selectedUnits) {
+                    unit.AttackEnemy(hit.transform.GetComponent<AgentUnit>());
+                }
             }
             else if (Physics.Raycast(ray, out hit, Mathf.Infinity, terrainLayer)) {
                 GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cylinder);

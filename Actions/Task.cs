@@ -11,7 +11,6 @@ public interface Task {
 
 public abstract class BaseTask : Task {
     public abstract Steering Apply();
-    public abstract void Terminate();
     protected abstract bool IsFinished();
 
     protected AgentUnit agent;
@@ -21,19 +20,6 @@ public abstract class BaseTask : Task {
         this.agent = agent;
         this.callback = callback;
     }
-}
 
-public abstract class ComplexTask : BaseTask {
-    protected List<BaseTask> subTasks;
-
-    public ComplexTask(AgentUnit agent, Action<bool> callback) : base(agent,callback) {
-        subTasks = new List<BaseTask>();
-    }
-
-    override
-    public void Terminate() {
-        foreach (BaseTask task in subTasks) {
-            task.Terminate();
-        }
-    }
+    virtual public void Terminate() {}
 }

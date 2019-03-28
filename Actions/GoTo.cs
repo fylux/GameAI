@@ -11,7 +11,7 @@ public class GoTo : BaseTask {
 
 
     public GoTo(AgentUnit agent, Vector3 target, Action<bool> callback) : base(agent,callback) {
-        this.target = target;
+        this.target = new Vector3(target.x, 111f, target.z);
 
         empty = new GameObject();
         empty.transform.parent = agent.gameObject.transform;
@@ -20,17 +20,28 @@ public class GoTo : BaseTask {
         pathF.SetNPC(agent);
         pathF.path = null;
         pathF.visibleRays = true;
+        pathF.maxAccel = 50f;
 
         PathfindingManager.RequestPath(agent.position, target, agent.Cost, ProcessPath);
     }
 
     private void ProcessPath(Vector3[] newPath, bool pathSuccessful) {
         if (pathSuccessful) {
-            pathF.path = newPath;    
+            pathF.SetPath(newPath);
         }
         else {
             Debug.Log("Pathfinding was not successful");
         }
+    }
+
+    public void FinishPath() {
+        pathF.SetPath(null);
+    }
+
+    public void SetNewTarget(Vector3 target) {
+        this.target = new Vector3(target.x, 111f, target.z);
+        pathF.path = null;
+        PathfindingManager.RequestPath(agent.position, target, agent.Cost, ProcessPath);
     }
 
     override

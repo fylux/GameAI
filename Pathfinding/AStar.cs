@@ -24,7 +24,7 @@ public class AStar : Pathfinding {
         startNode.gCost = 0;
 		targetNode = map.NodeFromPosition(targetPos);
 
-        Debug.Log(startNode.type + " -> " + targetNode.type);
+        //Debug.Log(startNode.type + " -> " + targetNode.type);
 
         /*Acceleration can make a NPC move to a non accesible area so we should not take it into account when computing the path.*/
 

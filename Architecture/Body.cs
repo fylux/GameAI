@@ -14,6 +14,8 @@ public class Body : MonoBehaviour {
     public float rotation;
     public Vector3 velocity;
 
+    bool stopMoving = false;
+
     protected void Start() {
       //  velocity = Vector3.zero;
       //  rotation = 0;
@@ -27,10 +29,7 @@ public class Body : MonoBehaviour {
 
         ApplyActuator();
 
-       /* velocity.y = 0;
-
-        velocity = Vector3.ClampMagnitude(velocity, MaxVelocity);
-        rotation = Mathf.Clamp(rotation, -MaxRotation, MaxRotation);*/
+        CheckStopMoving();
 
         transform.position = position;
         transform.eulerAngles = new Vector3(0, orientation, 0);
@@ -43,9 +42,16 @@ public class Body : MonoBehaviour {
         rotation = Mathf.Clamp(rotation, -MaxRotation, MaxRotation);
     }
 
-    public void StopMoving() {
-        velocity = Vector3.zero;
-        rotation = 0f;
+    public void RequestStopMoving() {
+        stopMoving = true;
+    }
+
+    void CheckStopMoving() {
+        if (stopMoving) {
+            velocity = Vector3.zero;
+            rotation = 0f;
+            stopMoving = false;
+        }
     }
 
     public Vector3 getForward() {

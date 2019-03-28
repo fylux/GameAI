@@ -8,9 +8,6 @@ public abstract class AgentUnit : AgentNPC {
     Map map;
     Location path_target;
 
-    [SerializeField]
-    const float maxHealth = 10f;
-    float health;
     public Faction faction = Faction.A;
 
     public GameObject SelectCircle;
@@ -30,7 +27,7 @@ public abstract class AgentUnit : AgentNPC {
         base.Start();
         map = GameObject.Find("Terrain").GetComponent<Map>();
         path_target = null;
-        health = MaxLife;
+        health = maxHealth;
     }
 
     override
@@ -39,17 +36,16 @@ public abstract class AgentUnit : AgentNPC {
         NodeT node = map.NodeFromPosition(position).type;
         float tCost = cost[node];
 
-        if (tCost == Mathf.Infinity)
+        if (tCost == Mathf.Infinity) //Ignore not walkable terrains
             tCost = 1;
 
         Steering steering = ApplySteering();
 
-        velocity += steering.linear * Time.deltaTime;
-        rotation += steering.angular * Time.deltaTime;
-
+        velocity += steering.linear * Time.deltaTime / tCost;
+        rotation += steering.angular * Time.deltaTime / tCost;
         velocity.y = 0;
 
-        velocity = Vector3.ClampMagnitude(velocity/tCost, (float)MaxVelocity / tCost);
+        velocity = Vector3.ClampMagnitude(velocity, (float)MaxVelocity / tCost);
         rotation = Mathf.Clamp(rotation, -MaxRotation, MaxRotation);
 
         Debug.DrawRay(position, velocity.normalized * 2, Color.green);
@@ -80,36 +76,55 @@ public abstract class AgentUnit : AgentNPC {
         if (task != null)
             task.Terminate();
 
-        task = new GoToLRTA(this, targetPosition, (bool sucess) => {
+        task = new GoTo(this, targetPosition, (bool sucess) => {
             Debug.Log("Task finished");
             task.Terminate();
             task = null;
-            StopMoving();
+            RequestStopMoving();
         });
     }
 
-    /*public void Attack(AgentUnit unit) {
+    public void AttackEnemy(AgentUnit enemy) {
+        if (task != null)
+            task.Terminate();
+
+        task = new Attack(this, enemy, (bool sucess) => {
+            Debug.Log("Task finished");
+            task.Terminate();
+            task = null;
+            RequestStopMoving();
+        });
+    }
+
+    [SerializeField]
+    const int maxHealth = 10;
+    int health = 10;
+    public int attack = 6;
+    public int defense = 3;
+    
+
+    public void Attack(AgentUnit unit) {
         float damage;
         if (Random.Range(0,100) > 99f) {
             damage = attack * 5;
         }
         else {
-            damage = attack * Random.Range(-0.8f, 1.2f) * factorTable;
+            damage = attack * Random.Range(0.8f, 1.2f) /** factorTable*/;
         }
-        Console.singleton.Log("Unit caused " + unit.ModifyHealth(-damage) +" damage to Unit");
+        unit.ReceiveAttack((int)Mathf.Round(damage));
     }
 
-    public float ModifyHealth(float amount) {
-        float damage = amount - defense;
-        health = Mathf.Min(health + damage, maxHealth);
-        if (health < 0.0f) {
+    public float ReceiveAttack(int amount) {
+        int damage = Mathf.Max(0, amount - defense);
+        Console.singleton.Log("Unit caused "+damage+" damage");
+        health = health - damage;
+        if (health < 0) {
             Console.singleton.Log("Unit died");
+            this.gameObject.SetActive(false);
         }
-        if (health == maxHealth) {
-            Console.singleton.Log("Unit has maximun health");
-        }
+        //Request to update selection text
         return damage;
-    }*/
+    }
 
     public Dictionary<NodeT, float> Cost {
         get { return cost; }

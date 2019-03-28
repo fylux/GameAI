@@ -64,9 +64,10 @@ public class Map : MonoBehaviour {
         Dictionary<int, GameObject> terrainType = new Dictionary<int, GameObject>() { { 0, A }, { 1, B }, { 2, C }, { 3, D }, { 4, E } };
         for (int x = 0; x < mapX; x++) {
             for (int y = 0; y < mapY; y++) {
-                GameObject TilePrefab = Instantiate(terrainType[tiles[x, y]], offset + new Vector3(x * nodeX, 0, y * nodeY), Quaternion.identity);
+                GameObject TilePrefab = Instantiate(terrainType[tiles[x, y]], offset + new Vector3(x * nodeX, 0, y * nodeY), Quaternion.Euler(90, 0, 0));
                 TilePrefab.transform.parent = this.transform;
-                GameObject influenceTileObj = Instantiate(influenceTile, offset + new Vector3(x * nodeX, -0.5f, y * nodeY), Quaternion.identity);
+
+                GameObject influenceTileObj = Instantiate(influenceTile, offset + new Vector3(x * nodeX, -0.5f, y * nodeY), Quaternion.Euler(90, 0, 0));
                 influenceTileObj.transform.parent = TilePrefab.transform;
                 grid[x, y].gameObject = TilePrefab;
             }

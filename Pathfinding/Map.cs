@@ -14,7 +14,7 @@ public class Map : MonoBehaviour {
 
     public int mapX, mapY;
 
-    public GameObject A, B, C, D, E, influenceTile;
+    public GameObject A, B, C, D, E, influenceTile, influenceGrid;
 
     int[,] tiles;
 
@@ -55,21 +55,92 @@ public class Map : MonoBehaviour {
                 Vector3 position = offset + (Vector3.right * x * nodeX) + (Vector3.forward * y * nodeY);
                 NodeT type = (NodeT)tiles[x, y];
                 grid[x, y] = new Node(x, y, position, type);
-                if (!generateMap) grid[x, y].gameObject = transform.GetChild(x * mapY + y).gameObject;
+                if (!generateMap) grid[x, y].influenceTile = influenceGrid.transform.GetChild(x * mapY + y).gameObject;
             }
         }
     }
 
     void GenerateMap() {
         Dictionary<int, GameObject> terrainType = new Dictionary<int, GameObject>() { { 0, A }, { 1, B }, { 2, C }, { 3, D }, { 4, E } };
+
+        bool[,] used = new bool[mapX, mapX];
         for (int x = 0; x < mapX; x++) {
             for (int y = 0; y < mapY; y++) {
-                GameObject TilePrefab = Instantiate(terrainType[tiles[x, y]], offset + new Vector3(x * nodeX, 0, y * nodeY), Quaternion.Euler(90, 0, 0));
+                GameObject influenceTileObj = Instantiate(influenceTile, offset + new Vector3(x * nodeX, -0.5f, y * nodeY), Quaternion.Euler(90, 0, 0));
+                influenceTileObj.transform.parent = influenceGrid.transform;
+                grid[x, y].influenceTile = influenceTileObj;
+                grid[x, y].influenceTile.GetComponent<Renderer>().material.SetFloat("_Glossiness", 0f);
+
+                if (used[x, y]) {
+                    continue;
+                }
+                   
+
+                int x1 = x, y1 = y;
+                bool ok = true;
+                NodeT type = grid[x, y].type;
+
+                /*while (ok && x1+1 < mapX && y1+1 < mapY) {
+                    ok = true;
+                    for (int i = x; i <= x1 + 1; ++i) {
+                        ok = ok && grid[i, y1+1].type == type;
+                    }
+
+                    for (int i = y; i <= y1 + 1; ++i) {
+                        ok = ok && grid[x1+1, i].type == type;
+                    }
+
+                    if (ok) {
+                        for (int i = x; i <= x1 + 1; ++i) {
+                            used[i, y1+1] = true;
+                        }  
+                        for (int i = y; i <= y1 + 1; ++i) {
+                            used[x1+1, i] = true;
+                        }
+                        x1++;
+                        y1++;
+                    }
+                }*/
+
+                ok = true;
+                while (ok && x1 + 1 < mapX) {
+                    ok = true;
+                    for (int i = y; i <= y1; ++i) {
+                        ok = ok && grid[x1 + 1, i].type == type;
+                    }
+                    if (ok) {
+                        for (int i = y; i <= y1; ++i) {
+                            used[x1 + 1, i] = true;
+                        }
+                        x1++;
+                    }
+                }
+
+                ok = true;
+                while (ok && y1+1 < mapX) {
+                    ok = true;
+                    for (int i = x; i <= x1; ++i) {
+                        ok = ok && grid[i, y1 + 1].type == type;
+                    }
+                    if (ok) {
+                        for (int i = x; i <= x1; ++i) {
+                            used[i, y1 + 1] = true;
+                        }
+                        y1++;
+                    }
+                }
+
+                int rows = x1 - x + 1;
+                int cols = y1 - y + 1;
+
+                float middleX = (float)(x + x1) / 2f;
+                float middleY = (float)(y + y1) / 2f;
+
+                GameObject TilePrefab = Instantiate(terrainType[tiles[x, y]], offset + new Vector3(middleX * nodeX, 0, middleY * nodeY), Quaternion.Euler(90, 0, 0));
+                TilePrefab.transform.localScale = new Vector3(rows,cols,1f);
                 TilePrefab.transform.parent = this.transform;
 
-                GameObject influenceTileObj = Instantiate(influenceTile, offset + new Vector3(x * nodeX, -0.5f, y * nodeY), Quaternion.Euler(90, 0, 0));
-                influenceTileObj.transform.parent = TilePrefab.transform;
-                grid[x, y].gameObject = TilePrefab;
+
             }
         }
     }
@@ -165,7 +236,9 @@ public class Map : MonoBehaviour {
                     {Faction.C, Color.gray }
                 };
 
-                grid[x, y].gameObject.transform.GetChild(0).GetComponent<Renderer>().material.color = colors[grid[x, y].getFaction()];
+                grid[x, y].influenceTile.GetComponent<Renderer>().material.color = colors[grid[x, y].getFaction()];
+                grid[x, y].influenceTile.GetComponent<Renderer>().material.SetFloat("_Glossiness", 0f);
+                //grid[x, y].gameObject.transform.GetChild(0).GetComponent<Renderer>().material.color = colors[grid[x, y].getFaction()];
                 /*Gizmos.color = colors[grid[x, y].getFaction()];
                 Gizmos.DrawCube(grid[x, y].worldPosition, size);*/
             }

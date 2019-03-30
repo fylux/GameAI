@@ -10,8 +10,8 @@ public class InfluenceMap : MonoBehaviour {
     public List<AgentUnit> unitList;
 
     const int NNodesInfluenceMap = 1000;
-    const int RadiusInfluenceMap = 10;
-    const int SecondsPerInfluenceUpdate = 2;
+    const int RadiusInfluenceMap = 15;
+    const int SecondsPerInfluenceUpdate = 3;
 
     private void Start() {
         map = GameObject.Find("Terrain").GetComponent<Map>();
@@ -23,11 +23,25 @@ public class InfluenceMap : MonoBehaviour {
     public void Update() {
         if (Mathf.Floor(Time.fixedTime * 1000) % (1000 * SecondsPerInfluenceUpdate) == 0) { //Time is managed in ms
             map.ResetInfluence();
-            unitList.ForEach(unit => ComputeInfluenceDijkstra(unit));
+            foreach (AgentUnit unit in unitList) {
+                ComputeInfluenceDijkstra(unit);
+            }
             map.SetInfluence();
         }
            
     }
+
+    /*public IEnumerator UpdateInfluence() {
+        map.ResetInfluence();
+        yield return null;
+
+        foreach (AgentUnit unit in unitList) {
+            ComputeInfluenceDijkstra(unit);
+            yield return null;
+        }
+        map.SetInfluence();
+        //Call update minimap camera
+    }*/
 
     public void ComputeInfluenceBFS(AgentUnit unit) {
         HashSet<Node> pending = new HashSet<Node>();
@@ -51,7 +65,6 @@ public class InfluenceMap : MonoBehaviour {
     }
 
     public void ComputeInfluenceDijkstra(AgentUnit unit) {
-
         Node startNode = map.NodeFromPosition(unit.position);
         startNode.gCost = 1;
         Heap<Node> openSet = new Heap<Node>(map.GetMaxSize());

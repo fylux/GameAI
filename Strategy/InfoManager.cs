@@ -52,11 +52,10 @@ public class InfoManager : MonoBehaviour {
     /*
      Obtiene la lista de unidades en un area
     */
-    public HashSet<AgentUnit> GetUnitsArea(Node tile, float areaSize)
+    public HashSet<AgentUnit> GetUnitsArea(Node tile, float areaSize, int layerMask) //Actualmente, layerMask 9 para unidades
     {
         HashSet<AgentUnit> units = new HashSet<AgentUnit>();
 
-        int layerMask = 1 << 9; // Para unidades
         int found = Physics.OverlapSphereNonAlloc(tile.worldPosition, areaSize, hits, layerMask);
         for (int i = 0; i < found; i++)
         {
@@ -68,15 +67,15 @@ public class InfoManager : MonoBehaviour {
         return units;
     }
 
-    public HashSet<AgentUnit> GetUnitsArea(Node tile)
+    public HashSet<AgentUnit> GetUnitsArea(Node tile, int layerMask)
     {
-        return GetUnitsArea(tile, areaSize);
+        return GetUnitsArea(tile, areaSize, layerMask);
     }
 
     // Obtiene el numero de uniades aliadas que siguen esa estrategia en un area
-    public int StrategyFollowersArea(Node tile, Strategy strat) 
+    public int StrategyFollowersArea(Node tile, Strategy strat, int layerMask) 
     {
-        HashSet<AgentUnit> units = GetUnitsArea(tile);
+        HashSet<AgentUnit> units = GetUnitsArea(tile, layerMask);
         int number = 0;
 
         foreach (AgentUnit unit in units)
@@ -126,9 +125,9 @@ public class InfoManager : MonoBehaviour {
     }
 
     // Obtiene un numero que indica la ventaja militar en un area
-    public void MilitaryAdvantage(Node tile)
+    public void MilitaryAdvantage(Node tile, int layerMask)
     {
-        HashSet<AgentUnit> units = GetUnitsArea(tile);
+        HashSet<AgentUnit> units = GetUnitsArea(tile, layerMask);
 
         int numberA = 0; // Numero de unidades de cada faccion
         int numberB = 0;
@@ -198,28 +197,18 @@ public class InfoManager : MonoBehaviour {
     //Devuelve un valor entre 0 y 1 que representa el porcentaje
     public float GetMapInfluence(Faction fac)
     {
-        int A = 0;
-        int B = 0;
-        int C = 0;
-
-        Faction fact;
+        Dictionary<Faction, int> infl = new Dictionary<Faction, int>() { { Faction.A, 0 }, { Faction.B, 0 }, { Faction.C, 0 } };
 
         foreach (Node nodo in map.grid)
         {
-             fact = nodo.getFaction();
-
-            if (fact == Faction.A)
-                A++;
-            if (fact == Faction.B)
-                B++;
-            if (fact == Faction.C)
-                C++;
+            infl[nodo.getFaction()]++;
         }
 
+
         if (fac == Faction.A)
-            return ((float)A / (A + B + C));
+            return ((float)infl[Faction.A] / (infl[Faction.A] + infl[Faction.B] + infl[Faction.C]));
         else
-            return ((float)B / (A + B + C));
+            return ((float)infl[Faction.B] / (infl[Faction.A] + infl[Faction.B] + infl[Faction.C]));
     }
 
     public float GetBaseInfluence(Body bs, Faction faction)
@@ -238,29 +227,19 @@ public class InfoManager : MonoBehaviour {
 
     public float GetAreaInfluence(Faction fac, Node node)
     {
-        int A = 0;
-        int B = 0;
-        int C = 0;
-
+        Dictionary<Faction, int> infl = new Dictionary<Faction, int>() { { Faction.A, 0 }, { Faction.B, 0 }, { Faction.C, 0 } }
         List<Node> nodes = GetNodesInArea(node, areaSize);
 
-        Faction fact;
-
-        foreach (Node nd in nodes)
+        foreach (Node nodo in nodes)
         {
-            fact = nd.getFaction();
-            if (fact == Faction.A)
-                A++;
-            if (fact == Faction.B)
-                B++;
-            if (fact == Faction.C)
-                C++;
+            infl[nodo.getFaction()]++;
         }
 
+
         if (fac == Faction.A)
-            return ((float)A / (A + B + C));
+            return ((float)infl[Faction.A] / (infl[Faction.A] + infl[Faction.B] + infl[Faction.C]));
         else
-            return ((float)B / (A + B + C));
+            return ((float)infl[Faction.B] / (infl[Faction.A] + infl[Faction.B] + infl[Faction.C]));
     }
 
     public List<Node> GetNodesInArea(Node node, float areaSize)
@@ -290,26 +269,17 @@ public class InfoManager : MonoBehaviour {
 
     float PathInfluence (List<Node> path, Faction fac)
     {
-        int A = 0;
-        int B = 0;
-        int C = 0;
+        Dictionary<Faction, int> infl = new Dictionary<Faction, int>() { { Faction.A, 0 }, { Faction.B, 0 }, { Faction.C, 0 } }
 
-        Faction fact;
-
-        foreach (Node nd in path)
+        foreach (Node nodo in path)
         {
-            fact = nd.getFaction();
-            if (fact == Faction.A)
-                A++;
-            if (fact == Faction.B)
-                B++;
-            if (fact == Faction.C)
-                C++;
+            infl[nodo.getFaction()]++;
         }
 
+
         if (fac == Faction.A)
-            return ((float)A / (A + B + C));
+            return ((float)infl[Faction.A] / (infl[Faction.A] + infl[Faction.B] + infl[Faction.C]));
         else
-            return ((float)B / (A + B + C));
+            return ((float)infl[Faction.B] / (infl[Faction.A] + infl[Faction.B] + infl[Faction.C]));
     }
 }

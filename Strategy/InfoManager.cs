@@ -288,8 +288,28 @@ public class InfoManager : MonoBehaviour {
         return nodes;
     }
 
-    /*float PathInfluence (Node start, Node end)
+    float PathInfluence (List<Node> path, Faction fac)
     {
-        
-    }*/
+        int A = 0;
+        int B = 0;
+        int C = 0;
+
+        Faction fact;
+
+        foreach (Node nd in path)
+        {
+            fact = nd.getFaction();
+            if (fact == Faction.A)
+                A++;
+            if (fact == Faction.B)
+                B++;
+            if (fact == Faction.C)
+                C++;
+        }
+
+        if (fac == Faction.A)
+            return ((float)A / (A + B + C));
+        else
+            return ((float)B / (A + B + C));
+    }
 }

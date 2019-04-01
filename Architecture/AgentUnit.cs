@@ -8,6 +8,8 @@ public abstract class AgentUnit : AgentNPC {
     Map map;
     Location path_target;
 
+    Strategy strategy;
+
     public Faction faction = Faction.A;
 
     public GameObject SelectCircle;
@@ -104,7 +106,7 @@ public abstract class AgentUnit : AgentNPC {
 
     [SerializeField]
     const int maxHealth = 10;
-    int health = 10;
+    public int health = 10;
     public int attack = 6;
     public int defense = 3;
     

@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum Strategy
-{
-    DEFBASE, DEFHALF, ATKBASE, ATKHALF
-};
+
 
 public class InfoManager : MonoBehaviour {
 
@@ -30,6 +27,9 @@ public class InfoManager : MonoBehaviour {
     Body allyBase;
 
     [SerializeField]
+    float sphereSize;
+
+    [SerializeField]
     Body enemyBase;
 
     Collider[] hits = new Collider[40]; 
@@ -39,7 +39,15 @@ public class InfoManager : MonoBehaviour {
         
     }
 
-	void Update () {
+   /* private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawSphere(allyBase.position, sphereSize);
+    }*/
+
+    void Update () {
+        
+
         //Node nodo = map.NodeFromPosition(position);
         //GetUnitsArea(nodo); //Para probar que funciona
         //ForcesUnitsArea(nodo);
@@ -88,7 +96,7 @@ public class InfoManager : MonoBehaviour {
         return number;
     }
 
-    public HashSet<AgentUnit> UnitsNearBase(Faction baseFaction, Faction unitsFaction)
+    public HashSet<AgentUnit> UnitsNearBase(Faction baseFaction, Faction unitsFaction, float areaSize)
     {
         HashSet<AgentUnit> unitsFound = new HashSet<AgentUnit>();
 
@@ -99,7 +107,7 @@ public class InfoManager : MonoBehaviour {
         else
             nodo = map.NodeFromPosition(enemyBase.position);
 
-        HashSet<AgentUnit> units = GetUnitsArea(nodo, 30);
+        HashSet<AgentUnit> units = GetUnitsArea(nodo, areaSize, 9);
 
         foreach (AgentUnit unit in units)
         {
@@ -227,7 +235,7 @@ public class InfoManager : MonoBehaviour {
 
     public float GetAreaInfluence(Faction fac, Node node)
     {
-        Dictionary<Faction, int> infl = new Dictionary<Faction, int>() { { Faction.A, 0 }, { Faction.B, 0 }, { Faction.C, 0 } }
+        Dictionary<Faction, int> infl = new Dictionary<Faction, int>() { { Faction.A, 0 }, { Faction.B, 0 }, { Faction.C, 0 } };
         List<Node> nodes = GetNodesInArea(node, areaSize);
 
         foreach (Node nodo in nodes)
@@ -269,7 +277,7 @@ public class InfoManager : MonoBehaviour {
 
     float PathInfluence (List<Node> path, Faction fac)
     {
-        Dictionary<Faction, int> infl = new Dictionary<Faction, int>() { { Faction.A, 0 }, { Faction.B, 0 }, { Faction.C, 0 } }
+        Dictionary<Faction, int> infl = new Dictionary<Faction, int>() { { Faction.A, 0 }, { Faction.B, 0 }, { Faction.C, 0 } };
 
         foreach (Node nodo in path)
         {

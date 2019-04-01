@@ -8,7 +8,7 @@ public abstract class AgentUnit : AgentNPC {
     Map map;
     Location path_target;
 
-    Strategy strategy;
+    public Strategy strategy;
 
     public Faction faction = Faction.A;
 

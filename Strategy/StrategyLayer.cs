@@ -2,17 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum Strategy
-{
-    DEFBASE, DEFHALF, ATKBASE, ATKHALF
+public enum Strategy {
+    DEF_BASE, DEF_HALF, ATK_BASE, ATK_HALF
 };
 
 public class StrategyLayer : MonoBehaviour {
 
-    Dictionary<Strategy, float> weights = new Dictionary<Strategy, float>() { { Strategy.DEFBASE, 0 },
-                                                                              { Strategy.DEFHALF, 0 },
-                                                                              { Strategy.ATKBASE, 0 },
-                                                                              { Strategy.ATKHALF, 0 } };
+    Dictionary<Strategy, float> weights = new Dictionary<Strategy, float>() { { Strategy.DEF_BASE, 0 },
+                                                                              { Strategy.DEF_HALF, 0 },
+                                                                              { Strategy.ATK_BASE, 0 },
+                                                                              { Strategy.ATK_HALF, 0 } };
 
     InfoManager info;
 
@@ -29,20 +28,13 @@ public class StrategyLayer : MonoBehaviour {
         weights = UpdateWeights();
 	}
 
-    Dictionary<Strategy, float> UpdateWeights()
-    {
-        Dictionary<Strategy, float> weights = new Dictionary<Strategy, float>() { { Strategy.DEFBASE, 0 },
-                                                                              { Strategy.DEFHALF, 0 },
-                                                                              { Strategy.ATKBASE, 0 },
-                                                                              { Strategy.ATKHALF, 0 } };
-
-        weights[Strategy.DEFBASE] = WeightDefbase();
-        weights[Strategy.DEFHALF] = WeightDefhalf();
-        weights[Strategy.ATKHALF] = WeightAtkhalf();
-        weights[Strategy.ATKBASE] = WeightAtkbase();
-
-
-        return weights;
+    Dictionary<Strategy, float> UpdateWeights() {
+        return new Dictionary<Strategy, float>(){
+            { Strategy.DEF_BASE, WeightDefbase() },
+            { Strategy.DEF_HALF, WeightDefhalf() },
+            { Strategy.ATK_BASE, WeightAtkhalf() },
+            { Strategy.ATK_HALF, WeightAtkbase() }
+        };
     }
 
     float WeightDefbase()
@@ -66,37 +58,28 @@ public class StrategyLayer : MonoBehaviour {
 
         mid.ExceptWith(near);
 
-        foreach(AgentUnit unit in near)
-        {
+        foreach(AgentUnit unit in near) {
             Debug.Log("Cerca --> " + unit);
         }
-        foreach (AgentUnit unit in mid)
-        {
+        foreach (AgentUnit unit in mid) {
             Debug.Log("Medio --> " + unit);
         }
-        foreach (AgentUnit unit in far)
-        {
+        foreach (AgentUnit unit in far) {
             Debug.Log("Lejos --> " + unit);
         }
 
         return 0;
     }
 
-    float WeightDefhalf()
-    {
+    float WeightDefhalf() {
         return 0;
     }
 
-    float WeightAtkhalf()
-    {
+    float WeightAtkhalf() {
         return 0;
     }
 
-    float WeightAtkbase()
-    {
+    float WeightAtkbase() {
         return 0;
     }
-
-
-
 }

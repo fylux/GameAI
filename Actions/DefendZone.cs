@@ -5,14 +5,18 @@ using UnityEngine;
 
 public class DefendZone : BaseTask {
 
-    Vector3 target;
+    Vector3 center;
     float rangeRadius;
     float timeLastAttack;
+    AgentUnit targetEnemy;
+    Attack attack;
 
-    public DefendZone(AgentUnit agent, Vector3 target, float rangeRadius, Action<bool> callback) : base(agent,callback) {
-        this.target = target;
+    public DefendZone(AgentUnit agent, Vector3 center, float rangeRadius, Action<bool> callback) : base(agent,callback) {
+        this.center = center;
         this.rangeRadius = rangeRadius;
         timeLastAttack = Time.fixedTime;
+        targetEnemy = null;
+        attack = null;
     }
 
 
@@ -20,32 +24,47 @@ public class DefendZone : BaseTask {
         if (IsFinished())
             callback(true);
 
+        Steering st = new Steering();
+        if (attack != null) st = attack.Apply();
 
-        //Problems
-        /*If you select one enemy in the next iteration you may change. If you take an
-         enemy you should keep fighting him till he goes out of range*/
-        /*It should pursue the enemy as long as is in the zone*/
+        Debug.DrawLine(center, center + Vector3.right * rangeRadius, Color.blue);
+        Debug.DrawLine(center, center + Vector3.forward * rangeRadius, Color.blue);
+        Debug.DrawLine(center, center - Vector3.right * rangeRadius, Color.blue);
+        Debug.DrawLine(center, center - Vector3.forward * rangeRadius, Color.blue);
 
-        List<AgentUnit> unitList = new List<AgentUnit>();
-        Collider[] hits = Physics.OverlapSphere(agent.position, rangeRadius);
-        foreach (Collider coll in hits) {
-            AgentUnit unit = coll.GetComponent<AgentUnit>();
-            //Get any enemy in the range
-            if (unit != null && unit.faction != agent.faction) {
-                //unitList.Add(unit);
-                if (Time.fixedTime - timeLastAttack > 1) {
-                    agent.Attack(unit);
-                    timeLastAttack = Time.fixedTime;
-                }
-                break;
+
+        //Comprobar si se ha matado a la unidad
+        if (attack == null || Util.HorizontalDistance(targetEnemy.position, center) > rangeRadius) {
+            targetEnemy = null;
+            if (attack != null) {
+                attack.Terminate();
+                attack = null;
             }
+
+            Collider[] hits = Physics.OverlapSphere(center, rangeRadius);
+            foreach (Collider coll in hits) {
+                AgentUnit unit = coll.GetComponent<AgentUnit>();
+     
+                if (unit != null && unit.faction != agent.faction) {
+                    Debug.Log("Found enemy");
+                    targetEnemy = unit;
+                    attack = new Attack(agent, targetEnemy, (_) => { });
+                    break;
+                }
+            }
+            //It would be nice if it does not find any target that it returns back to the center
         }
 
-        return new Steering();
+        return st;
     }
 
-
-    protected override bool IsFinished() {
+    override
+    protected bool IsFinished() {
         return false;
+    }
+
+    override
+    public void Terminate() {
+        if (attack != null) attack.Terminate();
     }
 }

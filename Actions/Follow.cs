@@ -3,18 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Pursuo : BaseTask {
+//Considerar variacion basada en pursue sin pathfinding en vez de GoTo
+public class Follow : BaseTask {
 
     AgentUnit target;
     Vector3 lastTargetPosition;
     GoTo goTo;
     bool inRange;
+    float timeStamp;
 
-	public Pursuo(AgentUnit agent, AgentUnit target, Action<bool> callback) : base(agent,callback) {
+	public Follow(AgentUnit agent, AgentUnit target, Action<bool> callback) : base(agent,callback) {
         this.target = target;
         this.lastTargetPosition = target.position;
         this.goTo = new GoTo(agent, target.position, (_) => {});
         inRange = false;
+        timeStamp = Time.fixedTime;
     }
 
     bool ReconsiderPath() {
@@ -34,7 +37,8 @@ public class Pursuo : BaseTask {
         float realDistance = Util.HorizontalDistance(agent.position, target.position);
 
         // If has reached range or fixed time reconsider path
-        if ( (!inRange && distanceToTarget < 1.4f) || Time.fixedTime % 20 == 0) {
+        if ( (!inRange && distanceToTarget < 1.4f) || Time.fixedTime - timeStamp > 2) {
+            timeStamp = Time.fixedTime;
             bool changed_path = ReconsiderPath();
             //If the path has not changed and we are on range
             if (!changed_path && distanceToTarget < 1.4f) {
@@ -64,5 +68,10 @@ public class Pursuo : BaseTask {
 
     protected override bool IsFinished() {
         return false;
+    }
+
+    override
+    public void Terminate() {
+        goTo.Terminate();
     }
 }

@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum Strategy
-{
-    DEFBASE, DEFHALF, ATKBASE, ATKHALF
-};
+
 
 public class InfoManager : MonoBehaviour {
 
@@ -30,6 +27,9 @@ public class InfoManager : MonoBehaviour {
     Body allyBase;
 
     [SerializeField]
+    float sphereSize;
+
+    [SerializeField]
     Body enemyBase;
 
     Collider[] hits = new Collider[40]; 
@@ -39,7 +39,15 @@ public class InfoManager : MonoBehaviour {
         
     }
 
-	void Update () {
+   /* private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawSphere(allyBase.position, sphereSize);
+    }*/
+
+    void Update () {
+        
+
         //Node nodo = map.NodeFromPosition(position);
         //GetUnitsArea(nodo); //Para probar que funciona
         //ForcesUnitsArea(nodo);
@@ -57,11 +65,12 @@ public class InfoManager : MonoBehaviour {
         HashSet<AgentUnit> units = new HashSet<AgentUnit>();
 
         int found = Physics.OverlapSphereNonAlloc(tile.worldPosition, areaSize, hits, layerMask);
+
         for (int i = 0; i < found; i++)
         {
             AgentUnit agent = hits[i].GetComponent<AgentUnit>();
             units.Add(agent);
-            Debug.Log("Encontrada una unidad: " + agent);
+            Debug.Log("Encontrada una unidad: " + agent + " .. " + agent.position);
         }
 
         return units;
@@ -88,7 +97,7 @@ public class InfoManager : MonoBehaviour {
         return number;
     }
 
-    public HashSet<AgentUnit> UnitsNearBase(Faction baseFaction, Faction unitsFaction)
+    public HashSet<AgentUnit> UnitsNearBase(Faction baseFaction, Faction unitsFaction, float areaSize, int layerMask)
     {
         HashSet<AgentUnit> unitsFound = new HashSet<AgentUnit>();
 
@@ -99,7 +108,7 @@ public class InfoManager : MonoBehaviour {
         else
             nodo = map.NodeFromPosition(enemyBase.position);
 
-        HashSet<AgentUnit> units = GetUnitsArea(nodo, 30);
+        HashSet<AgentUnit> units = GetUnitsArea(nodo, areaSize, layerMask);
 
         foreach (AgentUnit unit in units)
         {
@@ -109,7 +118,8 @@ public class InfoManager : MonoBehaviour {
             }
         }
 
-        foreach (AgentUnit unit in unitsFound)
+       // Dado que vamos a tener en cuenta todas las unidades por cercanía, no hace falta tener en cuenta grupos
+       /* foreach (AgentUnit unit in unitsFound)
         {
             units = GetUnitsArea(map.NodeFromPosition(unit.position), 5);
             foreach (AgentUnit un in units)
@@ -119,7 +129,7 @@ public class InfoManager : MonoBehaviour {
                     unitsFound.Add(un);
                 }
             }
-        }
+        }*/
 
         return unitsFound;
     }
@@ -227,7 +237,7 @@ public class InfoManager : MonoBehaviour {
 
     public float GetAreaInfluence(Faction fac, Node node)
     {
-        Dictionary<Faction, int> infl = new Dictionary<Faction, int>() { { Faction.A, 0 }, { Faction.B, 0 }, { Faction.C, 0 } }
+        Dictionary<Faction, int> infl = new Dictionary<Faction, int>() { { Faction.A, 0 }, { Faction.B, 0 }, { Faction.C, 0 } };
         List<Node> nodes = GetNodesInArea(node, areaSize);
 
         foreach (Node nodo in nodes)
@@ -269,7 +279,7 @@ public class InfoManager : MonoBehaviour {
 
     float PathInfluence (List<Node> path, Faction fac)
     {
-        Dictionary<Faction, int> infl = new Dictionary<Faction, int>() { { Faction.A, 0 }, { Faction.B, 0 }, { Faction.C, 0 } }
+        Dictionary<Faction, int> infl = new Dictionary<Faction, int>() { { Faction.A, 0 }, { Faction.B, 0 }, { Faction.C, 0 } };
 
         foreach (Node nodo in path)
         {

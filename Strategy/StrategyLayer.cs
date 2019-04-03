@@ -2,17 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum Strategy
-{
-    DEFBASE, DEFHALF, ATKBASE, ATKHALF
+public enum Strategy {
+    DEF_BASE, DEF_HALF, ATK_BASE, ATK_HALF
 };
 
 public class StrategyLayer : MonoBehaviour {
 
-    Dictionary<Strategy, float> weights = new Dictionary<Strategy, float>() { { Strategy.DEFBASE, 0 },
-                                                                              { Strategy.DEFHALF, 0 },
-                                                                              { Strategy.ATKBASE, 0 },
-                                                                              { Strategy.ATKHALF, 0 } };
+    Dictionary<Strategy, float> weights = new Dictionary<Strategy, float>() { { Strategy.DEF_BASE, 0 },
+                                                                              { Strategy.DEF_HALF, 0 },
+                                                                              { Strategy.ATK_BASE, 0 },
+                                                                              { Strategy.ATK_HALF, 0 } };
 
     InfoManager info;
 
@@ -26,24 +25,16 @@ public class StrategyLayer : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if(Input.GetKeyDown(KeyCode.C))
-            weights = UpdateWeights();
+        weights = UpdateWeights();
 	}
 
-    Dictionary<Strategy, float> UpdateWeights()
-    {
-        Dictionary<Strategy, float> weights = new Dictionary<Strategy, float>() { { Strategy.DEFBASE, 0 },
-                                                                              { Strategy.DEFHALF, 0 },
-                                                                              { Strategy.ATKBASE, 0 },
-                                                                              { Strategy.ATKHALF, 0 } };
-
-        weights[Strategy.DEFBASE] = WeightDefbase();
-        weights[Strategy.DEFHALF] = WeightDefhalf();
-        weights[Strategy.ATKHALF] = WeightAtkhalf();
-        weights[Strategy.ATKBASE] = WeightAtkbase();
-
-
-        return weights;
+    Dictionary<Strategy, float> UpdateWeights() {
+        return new Dictionary<Strategy, float>(){
+            { Strategy.DEF_BASE, WeightDefbase() },
+            { Strategy.DEF_HALF, WeightDefhalf() },
+            { Strategy.ATK_BASE, WeightAtkhalf() },
+            { Strategy.ATK_HALF, WeightAtkbase() }
+        };
     }
 
     float WeightDefbase()
@@ -58,54 +49,37 @@ public class StrategyLayer : MonoBehaviour {
         else
             enemFac = Faction.A;
 
-        int layerMask = 1 << 9;
-
-        HashSet<AgentUnit> near = info.UnitsNearBase(faction, enemFac, 25, layerMask);
-        HashSet<AgentUnit> mid = info.UnitsNearBase(faction, enemFac, 40, layerMask);
-        HashSet<AgentUnit> far = info.UnitsNearBase(faction, enemFac, 55, layerMask);
+        HashSet<AgentUnit> near = info.UnitsNearBase(faction, enemFac, 25);
+        HashSet<AgentUnit> mid = info.UnitsNearBase(faction, enemFac, 40);
+        HashSet<AgentUnit> far = info.UnitsNearBase(faction, enemFac, 55);
 
         far.ExceptWith(mid);
         far.ExceptWith(near);
 
         mid.ExceptWith(near);
 
-        foreach(AgentUnit unit in near)
-        {
+        foreach(AgentUnit unit in near) {
             Debug.Log("Cerca --> " + unit);
         }
-        foreach (AgentUnit unit in mid)
-        {
+        foreach (AgentUnit unit in mid) {
             Debug.Log("Medio --> " + unit);
         }
-        foreach (AgentUnit unit in far)
-        {
+        foreach (AgentUnit unit in far) {
             Debug.Log("Lejos --> " + unit);
         }
 
-        float result = 0;
-
-        result += (1 / 20) * near.Count; //Dado que si todas las unidades enemigas están en la base, tendría una prioridad de 100%
-        result += (0.75f / 20) * mid.Count; //Cada unidad a media distancia cuenta 0.75 de una unidad en la base
-        result += (0.4f / 20) * far.Count; //Cada unidad en la mitad del mapa cuenta 0.4 de como si estuviese en la base
-
-        return result;
-    }
-
-    float WeightDefhalf()
-    {
         return 0;
     }
 
-    float WeightAtkhalf()
-    {
+    float WeightDefhalf() {
         return 0;
     }
 
-    float WeightAtkbase()
-    {
+    float WeightAtkhalf() {
         return 0;
     }
 
-
-
+    float WeightAtkbase() {
+        return 0;
+    }
 }

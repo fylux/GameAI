@@ -39,7 +39,7 @@ public class GoTo : BaseTask {
     }
 
     public void SetNewTarget(Vector3 target) {
-        this.target = new Vector3(target.x, 111f, target.z);
+        this.target = new Vector3(target.x, 0f, target.z);
         pathF.path = null;
         PathfindingManager.RequestPath(agent.position, target, agent.Cost, ProcessPath);
     }
@@ -62,5 +62,6 @@ public class GoTo : BaseTask {
     override
     public void Terminate() {
         UnityEngine.Object.Destroy(empty);
+        agent.RequestStopMoving(); //To remove remaining forces of movement
     }
 }

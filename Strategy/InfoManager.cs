@@ -8,7 +8,6 @@ using UnityEngine;
 public class InfoManager : MonoBehaviour {
 
     public Map map;
-
     
     public GameObject mid, top, bottom;
     public Dictionary<string, GameObject> waypoints = new Dictionary<string, GameObject>();
@@ -27,7 +26,8 @@ public class InfoManager : MonoBehaviour {
 
     Collider[] hits = new Collider[40]; 
 
-    void Start () {
+    public void Initialize ()
+    { // Se necesita coordinacion entre los Starts de StrategyLayer e InfoManager
         map = GameObject.Find("Terrain").GetComponent<Map>();
 
         waypoints.Add("mid", mid);
@@ -99,11 +99,9 @@ public class InfoManager : MonoBehaviour {
         for (int i = 0; i < found; i++)
         {
             AgentUnit agent = hits[i].GetComponent<AgentUnit>();
-          //  Debug.Log("Encontrada una unidad: " + agent);
             if (agent.faction == fact)
             {
                 units.Add(agent);
-                
             }   
         }
 
@@ -203,15 +201,33 @@ public class InfoManager : MonoBehaviour {
         return ((float)infl[fac] / (infl[Faction.A] + infl[Faction.B] + infl[Faction.C]));
     }
 
-    public float GetAreaInfluence(Faction fac, Node node) {
+    public float GetAreaInfluence(Faction fac, Node node, float areaSize)
+    {
         Dictionary<Faction, int> infl = new Dictionary<Faction, int>() { { Faction.A, 0 }, { Faction.B, 0 }, { Faction.C, 0 } };
         List<Node> nodes = GetNodesInArea(node, areaSize);
 
-        foreach (Node nodo in nodes) {
+        foreach (Node nodo in nodes)
+        {
             infl[nodo.getFaction()]++;
         }
 
         return ((float)infl[fac] / (infl[Faction.A] + infl[Faction.B] + infl[Faction.C]));
+    }
+
+    public float GetAreaInfluence(Faction fac, List<Node> nodes)
+    {
+        Dictionary<Faction, int> infl = new Dictionary<Faction, int>() { { Faction.A, 0 }, { Faction.B, 0 }, { Faction.C, 0 } };
+
+        foreach (Node nodo in nodes)
+        {
+            infl[nodo.getFaction()]++;
+        }
+
+        return ((float)infl[fac] / (infl[Faction.A] + infl[Faction.B] + infl[Faction.C]));
+    }
+
+    public float GetAreaInfluence(Faction fac, Node node) {
+        return GetAreaInfluence(fac, node, areaSize);
     }
 
     float PathInfluence(Faction fac, List<Node> path) {

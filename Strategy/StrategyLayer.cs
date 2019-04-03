@@ -15,6 +15,8 @@ public class StrategyLayer : MonoBehaviour {
                                                                               { Strategy.ATK_BASE, 0 },
                                                                               { Strategy.ATK_HALF, 0 } };
 
+    Dictionary<string, List<Node>> waypointArea;
+
     InfoManager info;
 
     [SerializeField]
@@ -23,9 +25,15 @@ public class StrategyLayer : MonoBehaviour {
     string mapSide;
     Faction enemFac;
 
-    // Use this for initialization
-    void Start () {
+    private void Start()
+    {
         info = GetComponent<InfoManager>();
+        info.Initialize();
+        Initialize();
+    }
+
+    public void Initialize () { // Se necesita coordinacion entre los Starts de StrategyLayer e InfoManager
+        
 
         if (faction == Faction.A)
         {
@@ -37,12 +45,18 @@ public class StrategyLayer : MonoBehaviour {
             enemFac = Faction.A;
             mapSide = "down";
         }
-            
+        // Dado que, más adelante, tendremos que consultar la influencia en el área alrededor de estos waypoints a cada segundo, vamos a tener guardados
+        // los nodos y así nos ahorramos repetir el trabajo
+        waypointArea = new Dictionary<string, List<Node>>() { { mapSide+"Mid", info.GetNodesInArea(info.waypointNode[info.waypoints[mapSide + "Mid"]], 5) },
+                                                              { mapSide+"Top", info.GetNodesInArea(info.waypointNode[info.waypoints[mapSide + "Top"]], 5) },
+                                                              { mapSide+"Bottom", info.GetNodesInArea(info.waypointNode[info.waypoints[mapSide + "Bottom"]], 5) },
+                                                                };
     }
-	
-	// Update is called once per frame
-	void Update () {
-        weights = UpdateWeights();
+
+    // Update is called once per frame
+    void Update () {
+        if (Time.frameCount % 60 == 0)
+            weights = UpdateWeights();
 	}
 
     Dictionary<Strategy, float> UpdateWeights() {
@@ -59,7 +73,7 @@ public class StrategyLayer : MonoBehaviour {
         // Desde el centro de la base, un radio de 55 cubre todo el territorio
         // 40 sería un "casi llegando a la base"
         // 25 sería que están en la misma base
-
+        Debug.Log("START DEFBASE");
         HashSet<AgentUnit> near = info.UnitsNearBase(faction, enemFac, 25);
         HashSet<AgentUnit> mid = info.UnitsNearBase(faction, enemFac, 40);
         HashSet<AgentUnit> far = info.UnitsNearBase(faction, enemFac, 55);
@@ -69,21 +83,25 @@ public class StrategyLayer : MonoBehaviour {
 
         mid.ExceptWith(near);
 
+        float result = 0;
+
         foreach(AgentUnit unit in near) {
-            Debug.Log("Cerca --> " + unit);
+            result += ((float)1 / 20); // ¿Deberiamos considerar el "peor caso" antes, o no tiene sentido?
         }
         foreach (AgentUnit unit in mid) {
-            Debug.Log("Medio --> " + unit);
+            result += ((float)1 / 20) * 0.75f;
         }
         foreach (AgentUnit unit in far) {
-            Debug.Log("Lejos --> " + unit);
+            result += ((float)1 / 20) * 0.5f;
         }
+
+        Debug.Log("La proximidad de unidades enemigas a la base contribuye a DEFBASE en " + result);
 
         return 0;
     }
 
     float WeightDefhalf() {
-
+        Debug.Log("START DEFHALF");
         //TODO: Una a una, comprobar que funcionan las tres partes
 
         float[] result = new float[3]; //0 = mid, 1 = top, 2 = bottom
@@ -118,9 +136,9 @@ public class StrategyLayer : MonoBehaviour {
         /*float allyInfl = info.GetAreaInfluence(faction, info.waypointNode[info.waypoints[mapSide+"Mid"]]);
         float enemyInfl = info.GetAreaInfluence(enemFac, info.waypointNode[info.waypoints[mapSide+"Mid"]]);*/
 
-  //      result[0] -= WeightAllyInfluenceWaypoint("Mid"); 
-  //      result[1] -= WeightAllyInfluenceWaypoint("Top");
-  //      result[2] -= WeightAllyInfluenceWaypoint("Bottom");
+        result[0] -= WeightAllyInfluenceWaypoint("Mid"); 
+        result[1] -= WeightAllyInfluenceWaypoint("Top");
+        result[2] -= WeightAllyInfluenceWaypoint("Bottom");
 
         /*allyInfl = info.GetAreaInfluence(faction, info.waypointNode[info.waypoints[mapSide + "Top"]]);
         enemyInfl = info.GetAreaInfluence(enemFac, info.waypointNode[info.waypoints[mapSide + "Top"]]);
@@ -151,23 +169,24 @@ public class StrategyLayer : MonoBehaviour {
 
     float WeightUnitsNearWaypoint(string waypoint, float nearMult, float farMult)
     {
-
         HashSet<AgentUnit> near = info.GetUnitsFactionArea(info.waypointNode[info.waypoints[waypoint]], 10, unitsMask, enemFac);
-        HashSet<AgentUnit> far = info.GetUnitsFactionArea(info.waypointNode[info.waypoints[waypoint]], 25, unitsMask, enemFac);
+        HashSet<AgentUnit> far = info.GetUnitsFactionArea(info.waypointNode[info.waypoints[waypoint]], 18, unitsMask, enemFac);
 
         far.ExceptWith(near);
-
         float result = (nearMult / 20) * near.Count + (farMult / 20) * far.Count;
-
+        Debug.Log("El waypoint " + waypoint + " contribuye a DEFHALF en " + result + " debido a la cercanía de unidades enemigas");
         return result;
     }
 
     float WeightAllyInfluenceWaypoint(string waypoint) //TODO: Cambiar los nombres para que sean "Upmid", por ejemplo
     {
-        float allyInfl = info.GetAreaInfluence(faction, info.waypointNode[info.waypoints[mapSide + waypoint]]);
-        float enemyInfl = info.GetAreaInfluence(enemFac, info.waypointNode[info.waypoints[mapSide + waypoint]]);
+        float allyInfl = info.GetAreaInfluence(faction, waypointArea[mapSide+waypoint]);
+        float enemyInfl = info.GetAreaInfluence(enemFac, waypointArea[mapSide + waypoint]);
 
-        return Mathf.Min(0.2f, enemyInfl - allyInfl); // Preferimos que la influencia en nuestro lado sea nuestra
+        Debug.Log("En el waypoint " + waypoint + " hay una influencia aliada de " + allyInfl + " y una influencia enemiga de " + enemyInfl);
+        Debug.Log("Por tanto el waypoint " + waypoint + " contribuye al peso debido a influencias enemigas en " + Mathf.Min(0.2f, Mathf.Max((enemyInfl - allyInfl),0)));
+
+        return Mathf.Min(0.2f, Mathf.Max((enemyInfl - allyInfl), 0)); // Preferimos que la influencia en nuestro lado sea nuestra
     }
 
     float WeightAtkhalf() {

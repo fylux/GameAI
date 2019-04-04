@@ -20,11 +20,11 @@ public class Melee : AgentUnit
             { NodeT.MOUNTAIN, Mathf.Infinity}
         };
 
-        atk = new Dictionary<UnitClass, float>() { //Coste por defecto, para casos de prueba
-            { UnitClass.MELEE, 1 },
-            { UnitClass.RANGED, 1.5f },
-            { UnitClass.SCOUT, 2 },
-            { UnitClass.ARTIL, 1 }
+        atk = new Dictionary<UnitT, float>() { //Coste por defecto, para casos de prueba
+            { UnitT.MELEE, 1 },
+            { UnitT.RANGED, 1.5f },
+            { UnitT.SCOUT, 2 },
+            { UnitT.ARTIL, 1 }
         };
     }
 }

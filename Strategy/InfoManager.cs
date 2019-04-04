@@ -6,13 +6,10 @@ using UnityEngine;
 
 public class InfoManager : MonoBehaviour {
 
-
-    public Map map;
     public LayerMask unitsMask;
 
     public GameObject mid, top, bottom;
-    public Dictionary<string, GameObject> waypoints = new Dictionary<string, GameObject>();
-    public Dictionary<GameObject, Node> waypointNode = new Dictionary<GameObject,Node>();
+    public Dictionary<string, Node> waypoints = new Dictionary<string, Node>();
 
 
     [SerializeField]
@@ -30,32 +27,35 @@ public class InfoManager : MonoBehaviour {
 
     public void Initialize ()
     { // Equivalente al Start. Se necesita coordinacion entre los Starts de StrategyLayer e InfoManager
-        map = GameObject.Find("Terrain").GetComponent<Map>();
         unitsMask = LayerMask.GetMask("Unit");
 
-        waypoints.Add("mid", mid);
-        waypoints.Add("top", top);
-        waypoints.Add("bottom", bottom);
+        GameObject mid = GameObject.Find("mid");
+        GameObject top = GameObject.Find("top");
+        GameObject bottom = GameObject.Find("bottom");
 
-        waypoints.Add("upMid",mid.transform.Find("UpMid").gameObject);
-        waypoints.Add("downMid", mid.transform.Find("DownMid").gameObject);
+        waypoints.Add("mid", Map.NodeFromPosition(mid.transform.position));
+        waypoints.Add("top", Map.NodeFromPosition(top.transform.position));
+        waypoints.Add("bottom", Map.NodeFromPosition(bottom.transform.position));
 
-        waypoints.Add("upTop", top.transform.Find("UpTop").gameObject);
-        waypoints.Add("downTop", top.transform.Find("DownTop").gameObject);
+        waypoints.Add("upMid", Map.NodeFromPosition(mid.transform.Find("UpMid").transform.position));
+        waypoints.Add("downMid", Map.NodeFromPosition(mid.transform.Find("DownMid").transform.position));
 
-        waypoints.Add("upBottom", bottom.transform.Find("UpBottom").gameObject);
-        waypoints.Add("downBottom", bottom.transform.Find("DownBottom").gameObject);
+        waypoints.Add("upTop", Map.NodeFromPosition(top.transform.Find("UpTop").transform.position));
+        waypoints.Add("downTop", Map.NodeFromPosition(top.transform.Find("DownTop").transform.position));
 
-        foreach (KeyValuePair<string, GameObject> entry in waypoints)
+        waypoints.Add("upBottom", Map.NodeFromPosition(bottom.transform.Find("UpBottom").transform.position));
+        waypoints.Add("downBottom", Map.NodeFromPosition(bottom.transform.Find("DownBottom").transform.position));
+
+       /* foreach (KeyValuePair<string, GameObject> entry in waypoints)
         {
-            waypointNode.Add(entry.Value, map.NodeFromPosition(entry.Value.transform.position));
-            Debug.Log("Añadido el waypoint " + entry.Value + " en la posicion " + map.NodeFromPosition(entry.Value.transform.position));
-        }
+            waypointNode.Add(entry.Value, Map.NodeFromPosition(entry.Value.transform.position));
+            Debug.Log("Añadido el waypoint " + entry.Value + " en la posicion " + Map.NodeFromPosition(entry.Value.transform.position));
+        }*/
 
 
         allies = new HashSet<AgentUnit>(); //ESTO DE AQUI ES PROVISIONAL, YA QUE EN EL JUEGO FINAL NO HABRA UNIDADES DIRECTAMENTE EN EL MAPA AL PRINCIPIO
         enemies = new HashSet<AgentUnit>();
-        HashSet<AgentUnit> units = GetUnitsArea(waypointNode[waypoints["mid"]], 80);
+        HashSet<AgentUnit> units = GetUnitsArea(waypoints["mid"], 80);
         foreach (AgentUnit unit in units)
         {
             if (unit.faction == faction)
@@ -142,7 +142,7 @@ public class InfoManager : MonoBehaviour {
         int newDist;
         foreach (AgentUnit unit in units)
         {
-            if ((newDist = map.NodeFromPosition(unit.position).DistanceTo(tile)) < minDist)
+            if ((newDist = Map.NodeFromPosition(unit.position).DistanceTo(tile)) < minDist)
             {
                 minDist = newDist;
                 closestUnit = unit;
@@ -161,7 +161,7 @@ public class InfoManager : MonoBehaviour {
         int newDist;
         foreach (AgentUnit unit in units)
         {
-            if ((newDist = map.NodeFromPosition(unit.position).DistanceTo(tile)) < minDist)
+            if ((newDist = Map.NodeFromPosition(unit.position).DistanceTo(tile)) < minDist)
             {
                 minDist = newDist;
                 closestUnit = unit;
@@ -181,7 +181,7 @@ public class InfoManager : MonoBehaviour {
 
 
         if (baseFaction == Faction.A)
-            nodo = map.NodeFromPosition(allyBase.position);
+            nodo = Map.NodeFromPosition(allyBase.position);
         else
             nodo = Map.NodeFromPosition(enemyBase.position);
 
@@ -324,7 +324,7 @@ public class InfoManager : MonoBehaviour {
 
         for (int i = xstart; i < xend; i++) {
             for (int j = ystart; j < yend; j++) {
-                nodes.Add(map.grid[i, j]);
+                nodes.Add(Map.grid[i, j]);
              //   Debug.Log("Añadido el nodo " + map.grid[i, j]);
             }
         }

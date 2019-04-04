@@ -8,8 +8,6 @@ public enum Strategy {
 
 public class StrategyLayer : MonoBehaviour {
 
-    LayerMask unitsMask;
-
     Dictionary<Strategy, float> weights = new Dictionary<Strategy, float>() { { Strategy.DEF_BASE, 0 },
                                                                               { Strategy.DEF_HALF, 0 },
                                                                               { Strategy.ATK_BASE, 0 },
@@ -29,8 +27,6 @@ public class StrategyLayer : MonoBehaviour {
     {
         info = GetComponent<InfoManager>();
         info.Initialize();
-
-        unitsMask = info.unitsMask;
         if (faction == Faction.A)
         {
             enemFac = Faction.B;
@@ -52,10 +48,12 @@ public class StrategyLayer : MonoBehaviour {
     void Update () {
         if (Time.frameCount % 60 == 0)
         {
-            weights = UpdateWeights();
+            Dictionary<Strategy,float> newWeights = UpdateWeights();
             foreach (KeyValuePair<Strategy, float> entry in weights)
             {
                 Debug.Log("El valor de la estrategia " + entry.Key + " es de " + entry.Value);
+                if (Mathf.Abs(entry.Value - weights[entry.Key]) >= 0.15) //TODO: Decidir valor real. ¿Lo hacemos así o pedimos cambio estable?
+                    weights = newWeights;
             }
         }
             
@@ -122,10 +120,10 @@ public class StrategyLayer : MonoBehaviour {
         float area = 20;
         // En el mejor caso para nosotros, tendremos un +0.5 en mid, que significa que al menos doblamos en fuerza al enemigo. En el peor, -0.35,
         // ya que es probable que el enemigo se vea limitado por el terreno
-        float inflM = Mathf.Max(Mathf.Min(info.AreaMilitaryAdvantage(info.waypointNode[info.waypoints["mid"]], area, unitsMask, faction) - 1, 0.5f),-0.35f);
+        float inflM = Mathf.Max(Mathf.Min(info.AreaMilitaryAdvantage(info.waypointNode[info.waypoints["mid"]], area, faction) - 1, 0.5f),-0.35f);
         // Para los otros dos waypoints, el resultado será menos relevante
-        float inflT = Mathf.Max(Mathf.Min(info.AreaMilitaryAdvantage(info.waypointNode[info.waypoints["top"]], area, unitsMask, faction) - 1, 0.35f), -0.25f);
-        float inflB = Mathf.Max(Mathf.Min(info.AreaMilitaryAdvantage(info.waypointNode[info.waypoints["bottom"]], area, unitsMask, faction) - 1, 0.35f), -0.25f);
+        float inflT = Mathf.Max(Mathf.Min(info.AreaMilitaryAdvantage(info.waypointNode[info.waypoints["top"]], area, faction) - 1, 0.35f), -0.25f);
+        float inflB = Mathf.Max(Mathf.Min(info.AreaMilitaryAdvantage(info.waypointNode[info.waypoints["bottom"]], area, faction) - 1, 0.35f), -0.25f);
 
 
         result[0] += inflM;
@@ -144,8 +142,8 @@ public class StrategyLayer : MonoBehaviour {
 
     float WeightUnitsNearWaypoint(string waypoint, float nearMult, float farMult)
     {
-        HashSet<AgentUnit> near = info.GetUnitsFactionArea(info.waypointNode[info.waypoints[waypoint]], 8, unitsMask, enemFac);
-        HashSet<AgentUnit> far = info.GetUnitsFactionArea(info.waypointNode[info.waypoints[waypoint]], 15, unitsMask, enemFac);
+        HashSet<AgentUnit> near = info.GetUnitsFactionArea(info.waypointNode[info.waypoints[waypoint]], 8, enemFac);
+        HashSet<AgentUnit> far = info.GetUnitsFactionArea(info.waypointNode[info.waypoints[waypoint]], 15, enemFac);
 
         far.ExceptWith(near);
         float result = (nearMult / 20) * near.Count + (farMult / 20) * far.Count;
@@ -197,9 +195,9 @@ public class StrategyLayer : MonoBehaviour {
 
         // Para calcular la diferencia de fuerza en los waypoints, mismo sistema que en DEFHALF
         float area = 20;
-        float inflM = Mathf.Max(Mathf.Min(info.AreaMilitaryAdvantage(info.waypointNode[info.waypoints["mid"]], area, unitsMask, faction) - 1, 0.5f), -0.35f);
-        float inflT = Mathf.Max(Mathf.Min(info.AreaMilitaryAdvantage(info.waypointNode[info.waypoints["top"]], area, unitsMask, faction) - 1, 0.35f), -0.25f);
-        float inflB = Mathf.Max(Mathf.Min(info.AreaMilitaryAdvantage(info.waypointNode[info.waypoints["bottom"]], area, unitsMask, faction) - 1, 0.35f), -0.25f);
+        float inflM = Mathf.Max(Mathf.Min(info.AreaMilitaryAdvantage(info.waypointNode[info.waypoints["mid"]], area, faction) - 1, 0.5f), -0.35f);
+        float inflT = Mathf.Max(Mathf.Min(info.AreaMilitaryAdvantage(info.waypointNode[info.waypoints["top"]], area, faction) - 1, 0.35f), -0.25f);
+        float inflB = Mathf.Max(Mathf.Min(info.AreaMilitaryAdvantage(info.waypointNode[info.waypoints["bottom"]], area, faction) - 1, 0.35f), -0.25f);
         Debug.Log("En mid, la ventaja militar de los aliados es de " + inflM);
         Debug.Log("En top, la ventaja militar de los aliados es de " + inflT);
         Debug.Log("En bottom, la ventaja militar de los aliados es de " + inflB);
@@ -213,7 +211,7 @@ public class StrategyLayer : MonoBehaviour {
     float WeightAtkbase() {
         Debug.Log("START ATKBASE");
         HashSet<AgentUnit> baseEnemies = info.UnitsNearBase(enemFac, enemFac, 20); //Cogemos los enemigos cercanos a la base enemiga
-        baseEnemies.UnionWith(info.GetUnitsFactionArea(info.map.NodeFromPosition(info.enemyBase.position), 50, unitsMask, faction)); // Añadimos los aliados en territorio enemigo
+        baseEnemies.UnionWith(info.GetUnitsFactionArea(info.map.NodeFromPosition(info.enemyBase.position), 50, faction)); // Añadimos los aliados en territorio enemigo
         float result = Mathf.Max(Mathf.Min(info.MilitaryAdvantage(baseEnemies, faction) - 1, 0.4f), -0.4f);
         Debug.Log("Gracias a la ventaja de las fuerzas aliadas en territorio enemigo frente a las enemigas en la base enemigo, tenemos un peso actual de " + result);
         HashSet<AgentUnit> units = new HashSet<AgentUnit>(info.allies);
@@ -225,8 +223,8 @@ public class StrategyLayer : MonoBehaviour {
         HashSet<AgentUnit> unitsInOtherHalf = info.UnitsNearBase(enemFac, faction, 45); //Unidades de un bando en territorio del otro
         unitsInOtherHalf.UnionWith(info.UnitsNearBase(faction, enemFac, 45));
 
-        float allyAdv = info.AreaMilitaryAdvantage(info.map.NodeFromPosition(info.enemyBase.position), 45, unitsMask, faction);
-        float enemAdv = info.AreaMilitaryAdvantage(info.map.NodeFromPosition(info.allyBase.position), 45, unitsMask, enemFac);
+        float allyAdv = info.AreaMilitaryAdvantage(info.map.NodeFromPosition(info.enemyBase.position), 45, faction);
+        float enemAdv = info.AreaMilitaryAdvantage(info.map.NodeFromPosition(info.allyBase.position), 45, enemFac);
 
         result += Mathf.Max(Mathf.Min(allyAdv - enemAdv, 0.4f), -0.4f);
         Debug.Log("Finalmente, comparandola ventaja atacante aliada con la enemiga, el peso de ATKBASE es de " + result);

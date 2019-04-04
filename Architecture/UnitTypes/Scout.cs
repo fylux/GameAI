@@ -21,5 +21,12 @@ public class Scout : AgentUnit
             { NodeT.WATER, Mathf.Infinity},
             { NodeT.MOUNTAIN, Mathf.Infinity}
         };
+
+        atk = new Dictionary<UnitClass, float>() { //Coste por defecto, para casos de prueba
+            { UnitClass.MELEE, 0.75f },
+            { UnitClass.RANGED, 1.25f },
+            { UnitClass.SCOUT, 1 },
+            { UnitClass.ARTIL, 0.5f }
+        };
     }
 }

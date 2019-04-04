@@ -30,6 +30,7 @@ public class InfoManager : MonoBehaviour {
     public void Initialize ()
     { // Equivalente al Start. Se necesita coordinacion entre los Starts de StrategyLayer e InfoManager
         map = GameObject.Find("Terrain").GetComponent<Map>();
+        unitsMask = LayerMask.GetMask("Unit");
 
         waypoints.Add("mid", mid);
         waypoints.Add("top", top);
@@ -53,7 +54,7 @@ public class InfoManager : MonoBehaviour {
 
         allies = new HashSet<AgentUnit>(); //ESTO DE AQUI ES PROVISIONAL, YA QUE EN EL JUEGO FINAL NO HABRA UNIDADES DIRECTAMENTE EN EL MAPA AL PRINCIPIO
         enemies = new HashSet<AgentUnit>();
-        HashSet<AgentUnit> units = GetUnitsArea(waypointNode[waypoints["mid"]], 80, unitsMask);
+        HashSet<AgentUnit> units = GetUnitsArea(waypointNode[waypoints["mid"]], 80);
         foreach (AgentUnit unit in units)
         {
             if (unit.faction == faction)
@@ -72,23 +73,24 @@ public class InfoManager : MonoBehaviour {
     }
 
     void Update () {
-       //Node nodo = map.NodeFromPosition(position);
+        //Node nodo = map.NodeFromPosition(position);
         //GetUnitsArea(nodo); //Para probar que funciona
         //ForcesUnitsArea(nodo);
         //Debug.Log("Seguidores de ATKBASE: " + StrategyFollowersArea(nodo, Strategy.ATKBASE));
         //Debug.Log("La influencia en el mapa es de " + GetMapInfluence(Faction.B));
         //Debug.Log("La influencia de A en la base aliada es de " + GetBaseInfluence(allyBase, Faction.A));
         //Debug.Log("La influencia de A en el Waypoint de Mid es de " + GetWaypointInfluence(mid.transform.position, Faction.A));
+        //Debug.Log("La unidad enemiga más cercana a la base aliada es " + SelectClosestUnit(map.NodeFromPosition(allyBase.position), 30));
     }
 
     /*
      Obtiene la lista de unidades en un area
     */
     //Actualmente, layerMask 9 para unidades
-    public HashSet<AgentUnit> GetUnitsArea(Node tile, float areaSize, int layerMask) {
+    public HashSet<AgentUnit> GetUnitsArea(Node tile, float areaSize) {
         HashSet<AgentUnit> units = new HashSet<AgentUnit>();
      //   Debug.Log("Obteniendo unidades desde el punto " + tile + " con un area de " + areaSize);
-        int found = Physics.OverlapSphereNonAlloc(tile.worldPosition, areaSize, hits, layerMask);
+        int found = Physics.OverlapSphereNonAlloc(tile.worldPosition, areaSize, hits, unitsMask);
 
         for (int i = 0; i < found; i++) {
             AgentUnit agent = hits[i].GetComponent<AgentUnit>();
@@ -99,16 +101,16 @@ public class InfoManager : MonoBehaviour {
         return units;
     }
 
-    public HashSet<AgentUnit> GetUnitsArea(Node tile, int layerMask)
+    public HashSet<AgentUnit> GetUnitsArea(Node tile)
     {
-        return GetUnitsArea(tile, areaSize, layerMask);
+        return GetUnitsArea(tile, areaSize);
     }
 
-    public HashSet<AgentUnit> GetUnitsFactionArea(Node tile, float areaSize, int layerMask, Faction fact)
+    public HashSet<AgentUnit> GetUnitsFactionArea(Node tile, float areaSize, Faction fact)
     {
         HashSet<AgentUnit> units = new HashSet<AgentUnit>();
 
-        int found = Physics.OverlapSphereNonAlloc(tile.worldPosition, areaSize, hits, layerMask);
+        int found = Physics.OverlapSphereNonAlloc(tile.worldPosition, areaSize, hits, unitsMask);
 
         for (int i = 0; i < found; i++)
         {
@@ -122,14 +124,53 @@ public class InfoManager : MonoBehaviour {
         return units;
     }
 
-    public HashSet<AgentUnit> GetUnitsFactionArea(Node tile, int layerMask, Faction fact)
+    public HashSet<AgentUnit> GetUnitsFactionArea(Node tile, Faction fact)
     {
-        return GetUnitsFactionArea(tile, areaSize, layerMask, fact);
+        return GetUnitsFactionArea(tile, areaSize, fact);
+    }
+
+    //CUIDADO: Puede devolver null si no hay unidades en ese rango
+    public AgentUnit SelectClosestUnit(Node tile, float areaSize, Faction fact)
+    {
+        HashSet<AgentUnit> units = GetUnitsFactionArea(tile, areaSize, fact);
+
+        int minDist = 10000;
+        AgentUnit closestUnit = null;
+        int newDist;
+        foreach (AgentUnit unit in units)
+        {
+            if ((newDist = map.NodeFromPosition(unit.position).DistanceTo(tile)) < minDist)
+            {
+                minDist = newDist;
+                closestUnit = unit;
+            }
+        }
+
+        return closestUnit;
+    }
+
+    public AgentUnit SelectClosestUnit(Node tile, float areaSize)
+    {
+        HashSet<AgentUnit> units = GetUnitsArea(tile, areaSize);
+
+        int minDist = 10000;
+        AgentUnit closestUnit = null;
+        int newDist;
+        foreach (AgentUnit unit in units)
+        {
+            if ((newDist = map.NodeFromPosition(unit.position).DistanceTo(tile)) < minDist)
+            {
+                minDist = newDist;
+                closestUnit = unit;
+            }
+        }
+
+        return closestUnit;
     }
 
     // Obtiene el numero de uniades aliadas que siguen esa estrategia en un area
-    public int StrategyFollowersArea(Node tile, Strategy strat, int layerMask) {
-        return GetUnitsArea(tile, layerMask).Count(unit => unit.strategy == strat && unit.faction == faction); ;
+    public int StrategyFollowersArea(Node tile, Strategy strat) {
+        return GetUnitsArea(tile).Count(unit => unit.strategy == strat && unit.faction == faction); ;
     }
 
     public HashSet<AgentUnit> UnitsNearBase(Faction baseFaction, Faction unitsFaction, float areaSize) {
@@ -140,7 +181,7 @@ public class InfoManager : MonoBehaviour {
         else
             nodo = map.NodeFromPosition(enemyBase.position);
 
-        HashSet<AgentUnit> units = GetUnitsFactionArea(nodo, areaSize, 1 << 9, unitsFaction);
+        HashSet<AgentUnit> units = GetUnitsFactionArea(nodo, areaSize, unitsFaction);
        // HashSet<AgentUnit> unitsFound = new HashSet<AgentUnit>(units.Where(u => u.faction == unitsFaction));
 
        /* foreach (AgentUnit unit in units) { //No necesario con el enfoque de multiples distancias
@@ -152,9 +193,9 @@ public class InfoManager : MonoBehaviour {
     }
 
     // Obtiene un numero que indica la ventaja militar en un area
-    public float AreaMilitaryAdvantage(Node tile, float areaSize, int layerMask, Faction fact)
+    public float AreaMilitaryAdvantage(Node tile, float areaSize, Faction fact)
     {
-        HashSet<AgentUnit> units = GetUnitsArea(tile, areaSize, layerMask);
+        HashSet<AgentUnit> units = GetUnitsArea(tile, areaSize);
 
         return MilitaryAdvantage(units, fact);
     }

@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+public enum UnitClass
+{
+    MELEE, RANGED, SCOUT, ARTIL
+};
 
 public abstract class AgentUnit : AgentNPC {
     Map map;
@@ -21,6 +25,13 @@ public abstract class AgentUnit : AgentNPC {
             { NodeT.FOREST, 2 },
             { NodeT.WATER, Mathf.Infinity},
             { NodeT.MOUNTAIN, Mathf.Infinity}
+        };
+
+    protected Dictionary<UnitClass, float> atk = new Dictionary<UnitClass, float>() { //Coste por defecto, para casos de prueba
+            { UnitClass.MELEE, 1 },
+            { UnitClass.RANGED, 1 },
+            { UnitClass.SCOUT, 1 },
+            { UnitClass.ARTIL, 1 }
         };
 
 

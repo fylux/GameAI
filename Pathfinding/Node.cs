@@ -86,4 +86,9 @@ public class Node : IHeapItem<Node> {
     public string ToString() {
         return "("+gridX + "," + gridY+")";
     }
+
+    public int DistanceTo(Node node)
+    {
+        return Mathf.Abs(gridX - node.gridX) + Mathf.Abs(gridY - node.gridY);
+    }
 }

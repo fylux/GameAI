@@ -8,7 +8,8 @@ using UnityEngine;
 public class InfoManager : MonoBehaviour {
 
     public Map map;
-    
+    public LayerMask unitsMask;
+
     public GameObject mid, top, bottom;
     public Dictionary<string, GameObject> waypoints = new Dictionary<string, GameObject>();
     public Dictionary<GameObject, Node> waypointNode = new Dictionary<GameObject,Node>();
@@ -19,15 +20,15 @@ public class InfoManager : MonoBehaviour {
     [SerializeField]
     float areaSize, sphereSize;
 
-   // public Vector3 position;
+    public Body allyBase, enemyBase;
 
-    [SerializeField]
-    Body allyBase, enemyBase;
+    Collider[] hits = new Collider[40];
 
-    Collider[] hits = new Collider[40]; 
+    public HashSet<AgentUnit> allies;
+    public HashSet<AgentUnit> enemies;
 
     public void Initialize ()
-    { // Se necesita coordinacion entre los Starts de StrategyLayer e InfoManager
+    { // Equivalente al Start. Se necesita coordinacion entre los Starts de StrategyLayer e InfoManager
         map = GameObject.Find("Terrain").GetComponent<Map>();
 
         waypoints.Add("mid", mid);
@@ -48,24 +49,37 @@ public class InfoManager : MonoBehaviour {
             waypointNode.Add(entry.Value, map.NodeFromPosition(entry.Value.transform.position));
             Debug.Log("Añadido el waypoint " + entry.Value + " en la posicion " + map.NodeFromPosition(entry.Value.transform.position));
         }
+
+
+        allies = new HashSet<AgentUnit>(); //ESTO DE AQUI ES PROVISIONAL, YA QUE EN EL JUEGO FINAL NO HABRA UNIDADES DIRECTAMENTE EN EL MAPA AL PRINCIPIO
+        enemies = new HashSet<AgentUnit>();
+        HashSet<AgentUnit> units = GetUnitsArea(waypointNode[waypoints["mid"]], 80, unitsMask);
+        foreach (AgentUnit unit in units)
+        {
+            if (unit.faction == faction)
+            {
+                allies.Add(unit);
+            }
+            else
+                enemies.Add(unit);
+        }
     }
 
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
-        Gizmos.DrawSphere(waypoints["upBottom"].transform.position, sphereSize);
+        Gizmos.DrawSphere(enemyBase.position, sphereSize);
     }
 
     void Update () {
-
-        //Node nodo = map.NodeFromPosition(position);
+       //Node nodo = map.NodeFromPosition(position);
         //GetUnitsArea(nodo); //Para probar que funciona
         //ForcesUnitsArea(nodo);
         //Debug.Log("Seguidores de ATKBASE: " + StrategyFollowersArea(nodo, Strategy.ATKBASE));
         //Debug.Log("La influencia en el mapa es de " + GetMapInfluence(Faction.B));
         //Debug.Log("La influencia de A en la base aliada es de " + GetBaseInfluence(allyBase, Faction.A));
         //Debug.Log("La influencia de A en el Waypoint de Mid es de " + GetWaypointInfluence(mid.transform.position, Faction.A));
-	}
+    }
 
     /*
      Obtiene la lista de unidades en un area
@@ -73,13 +87,13 @@ public class InfoManager : MonoBehaviour {
     //Actualmente, layerMask 9 para unidades
     public HashSet<AgentUnit> GetUnitsArea(Node tile, float areaSize, int layerMask) {
         HashSet<AgentUnit> units = new HashSet<AgentUnit>();
-
+     //   Debug.Log("Obteniendo unidades desde el punto " + tile + " con un area de " + areaSize);
         int found = Physics.OverlapSphereNonAlloc(tile.worldPosition, areaSize, hits, layerMask);
 
         for (int i = 0; i < found; i++) {
             AgentUnit agent = hits[i].GetComponent<AgentUnit>();
             units.Add(agent);
-          //  Debug.Log("Encontrada una unidad: " + agent);
+     //       Debug.Log("Encontrada una unidad: " + agent);
         }
 
         return units;
@@ -121,7 +135,7 @@ public class InfoManager : MonoBehaviour {
     public HashSet<AgentUnit> UnitsNearBase(Faction baseFaction, Faction unitsFaction, float areaSize) {
         Node nodo;
 
-        if (faction == Faction.A)
+        if (baseFaction == Faction.A)
             nodo = map.NodeFromPosition(allyBase.position);
         else
             nodo = map.NodeFromPosition(enemyBase.position);
@@ -138,54 +152,55 @@ public class InfoManager : MonoBehaviour {
     }
 
     // Obtiene un numero que indica la ventaja militar en un area
-    public float MilitaryAdvantage(Node tile, float areaSize, int layerMask, Faction fact)
+    public float AreaMilitaryAdvantage(Node tile, float areaSize, int layerMask, Faction fact)
     {
         HashSet<AgentUnit> units = GetUnitsArea(tile, areaSize, layerMask);
 
-        Vector2 number = new Vector2(0,0);
-        Vector2 avgHP = new Vector2(0, 0);
-        Vector2 avgATK = new Vector2(0, 0);
+        return MilitaryAdvantage(units, fact);
+    }
+
+    public float MilitaryAdvantage(HashSet<AgentUnit> units, Faction fact)
+    {
+        Vector2 number = new Vector2(0, 0);
+        Vector2 HP = new Vector2(0.00000000001f, 0.0000000001f); // Para evitar divisiones por cero
+        Vector2 ATK = new Vector2(0.0000000001f, 0.0000000001f);
         Vector2 melee = new Vector2(0, 0);
         Vector2 ranged = new Vector2(0, 0);
         Vector2 scouts = new Vector2(0, 0);
         Vector2 artill = new Vector2(0, 0);
-        Vector2 dmpf = new Vector2(0, 0); // Daño medio por frame (ignorando tablas, generalización)
-        Vector2 totalHP = new Vector2(0, 0);
 
-        foreach (AgentUnit unit in units) {
+        foreach (AgentUnit unit in units)
+        {
             int i = unit.faction == Faction.A ? 0 : 1;
 
             number[i]++;
-            avgHP[i] += unit.health;
-            totalHP[i] += unit.health;
-            avgATK[i] += unit.attack;
-            dmpf[i] += unit.attack;
-            if (unit is Melee)  melee[i]++;
+            HP[i] += unit.health;
+            ATK[i] += unit.attack;
+            if (unit is Melee) melee[i]++;
             else if (unit is Ranged) ranged[i]++;
             else if (unit is Scout) scouts[i]++;
             else if (unit is Artillery) artill[i]++;
         }
-        for (int i = 0; i <= 1; ++i) {
-            avgHP[0] /= number[0];
-            avgATK[0] /= number[0];
-        }
 
-        /* Debug.Log("Numero de unidades de A: " + number[0] + ", y de B: " + number[1]);
-         Debug.Log("HP average de A: " + avgHP[0] + ", y de B: " + avgHP[1]);
-         Debug.Log("ATK average de A: " + avgATK[0] + ", y de B: " + avgATK[1]);
+         Debug.Log("Numero de unidades de A: " + number[0] + ", y de B: " + number[1]);
+        /* Debug.Log("HP de A: " + HP[0] + ", y de B: " + HP[1]);
+         Debug.Log("ATK de A: " + ATK[0] + ", y de B: " + ATK[1]);
          Debug.Log("Melees de A: " + melee[0] + ", rangeds: " + ranged[0] + ", scouts: " + scouts[0] + ", y artilleria: " + artill[0]);
          Debug.Log("Melees de B: " + melee[1] + ", rangeds: " + ranged[1] + ", scouts: " + scouts[1] + ", y artilleria: " + artill[1]);*/
 
-        //Sacar una formula para calcular ese numero a devolver en base a los datos
 
-        Vector2 strength = new Vector2(0, 0);
-        strength[0] = totalHP[0] * dmpf[0]; // Considerar usar de algun modo el daño medio y el nº de unidades
-        strength[1] = totalHP[1] * dmpf[1];
-
-        if (fact == Faction.A)
-            return strength[0] - strength[1]; //Un numero positivo indica ventaja del bando A, un numero negativo indica ventaja del bando B
+        if (fact == Faction.A) // >1 indica ventaja, <1 implica desventaja
+        {
+            float result = Mathf.Sqrt(HP[0] / HP[1] * ATK[0] / ATK[1]); //TODO: Aplicar tablas
+                                                                        //   Debug.Log("La ventaja es de " + result);
+            return result;
+        }
         else
-            return strength[1] - strength[0]; //Como antes pero al reves
+        {
+            float result = Mathf.Sqrt(HP[1] / HP[0] * ATK[1] / ATK[0]);
+            //   Debug.Log("La ventaja es de " + result);
+            return result;
+        }
     }
 
     //Funciones que trabajan con influencia:
@@ -265,7 +280,7 @@ public class InfoManager : MonoBehaviour {
         for (int i = xstart; i < xend; i++)  {
             for (int j = ystart; j < yend; j++) {
                 nodes.Add(map.grid[i, j]);
-                Debug.Log("Añadido el nodo " + map.grid[i, j]);
+             //   Debug.Log("Añadido el nodo " + map.grid[i, j]);
             }
         }
 

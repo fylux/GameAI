@@ -107,7 +107,7 @@ public class InfoManager : MonoBehaviour {
             int i = unit.faction == Faction.A ? 0 : 1;
 
             number[i]++;
-            avgHP[i] += unit.health;
+            avgHP[i] += unit.militar.health;
             avgATK[i] += 1; // TODO Modificar cuando se añada como atributo
             if (unit is Melee) melee[i]++;
             else if (unit is Ranged) ranged[i]++;

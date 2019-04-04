@@ -6,12 +6,12 @@ public abstract class AgentUnit : AgentNPC {
     Location path_target;
 
     public Strategy strategy;
-
     public Faction faction = Faction.A;
-
     public GameObject SelectCircle;
 
-    
+    public MilitarComponent militar = new MilitarComponent();
+
+
     protected Dictionary<NodeT, float> cost = new Dictionary<NodeT, float>() { //Coste por defecto, para casos de prueba
             { NodeT.ROAD, 1 },
             { NodeT.GRASS, 1.5f },
@@ -20,12 +20,11 @@ public abstract class AgentUnit : AgentNPC {
             { NodeT.MOUNTAIN, Mathf.Infinity}
         };
 
-
     new
     protected void Start() {
         base.Start();
         path_target = null;
-        health = maxHealth;
+        militar.SetAgent(this);
     }
 
     override
@@ -97,45 +96,8 @@ public abstract class AgentUnit : AgentNPC {
         });
     }
 
-    [SerializeField]
-    const int maxHealth = 10;
-    public int health = 10;
-    public int attack = 6;
-    public int defense = 3;
-    
-
-    public void Attack(AgentUnit unit) {
-        float damage;
-        if (Random.Range(0,100) > 99f) {
-            damage = attack * 5;
-        }
-        else {
-            damage = attack * Random.Range(0.8f, 1.2f) /** factorTable*/;
-        }
-        unit.ReceiveAttack((int)Mathf.Round(damage));
-    }
-
-    public float ReceiveAttack(int amount) {
-        int damage = Mathf.Max(0, amount - defense);
-        Console.Log("Unit caused "+damage+" damage");
-        health = health - damage;
-        if (health < 0) {
-            Console.Log("Unit died");
-            this.gameObject.SetActive(false);
-        }
-        //Request to update selection text
-        return damage;
-    }
-
     public Dictionary<NodeT, float> Cost {
         get { return cost; }
-    }
-
-    public float MaxLife {
-        get { return maxHealth; }
-    }
-    public float Life {
-        get { return health; }
     }
 
     public float GetDropOff(float locationDistance) {

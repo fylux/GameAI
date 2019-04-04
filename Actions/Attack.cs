@@ -22,7 +22,7 @@ public class Attack : BaseTask {
         Steering st = follow.Apply();
 
         if (follow.IsInRange() && (Time.fixedTime - timeLastAttack > 1)) {
-            agent.Attack(targetEnemy);
+            agent.militar.Attack(targetEnemy);
             timeLastAttack = Time.fixedTime;
         }
 

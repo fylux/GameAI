@@ -13,11 +13,12 @@ public class Map {
 
     //This is called from load map
     public static void Init(Node[,] _grid, Vector2 _gridSize) {
+        
         grid = _grid;
         gridSize = _gridSize;
         mapX = grid.GetLength(0);
         mapY = grid.GetLength(1);
-
+        Debug.LogError(mapY + ", " + mapX);
         unitList = new List<AgentUnit>();
         
         foreach (GameObject npc in GameObject.FindGameObjectsWithTag("NPC")) {

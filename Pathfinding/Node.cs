@@ -86,4 +86,5 @@ public class Node : IHeapItem<Node> {
     public string ToString() {
         return "("+gridX + "," + gridY+")";
     }
+
 }

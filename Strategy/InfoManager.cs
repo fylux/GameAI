@@ -142,7 +142,7 @@ public class InfoManager : MonoBehaviour {
         int newDist;
         foreach (AgentUnit unit in units)
         {
-            if ((newDist = Map.NodeFromPosition(unit.position).DistanceTo(tile)) < minDist)
+            if ((newDist = Util.NodeDistance(tile, Map.NodeFromPosition(unit.position))) < minDist)
             {
                 minDist = newDist;
                 closestUnit = unit;
@@ -161,7 +161,7 @@ public class InfoManager : MonoBehaviour {
         int newDist;
         foreach (AgentUnit unit in units)
         {
-            if ((newDist = Map.NodeFromPosition(unit.position).DistanceTo(tile)) < minDist)
+            if ((newDist = Util.NodeDistance(tile, Map.NodeFromPosition(unit.position))) < minDist)
             {
                 minDist = newDist;
                 closestUnit = unit;

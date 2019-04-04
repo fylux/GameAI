@@ -8,12 +8,8 @@ public enum DistanceT {
     EUCLIDEAN, MANHATTAN, CHEBYSHEV
 };
 
+// TODO: Vale para algo?
+
 public class Pathfinding {
-
-    protected Map map;
-
-    public Pathfinding() {
-        map = GameObject.Find("Terrain").GetComponent<Map>();
-    }
 
 }

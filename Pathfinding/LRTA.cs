@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
-using System;
 using System.Linq;
 
 
@@ -16,18 +14,16 @@ public class LRTA : Pathfinding {
     Node currentNode, targetNode;
     Vector3 targetPos;
 
-    
-
     public void StartPath(Vector3 targetPos, Dictionary<NodeT, float> cost) {
         this.targetPos = targetPos;
         this.cost = cost;
 
-        targetNode = map.NodeFromPosition(targetPos);
+        targetNode = Map.NodeFromPosition(targetPos);
         hCost = new Dictionary<Node, float>();
     }
 
     public Vector3[] FindPath(Vector3 currentPos) {
-        currentNode = map.NodeFromPosition(currentPos);
+        currentNode = Map.NodeFromPosition(currentPos);
         List<Node> path = new List<Node>();
 
         //While u not in T
@@ -38,8 +34,8 @@ public class LRTA : Pathfinding {
             Node minNode;
             do {
                 //argmin_(a in A(u)) {w(u,a) + h(Succ(u,a))}
-                map.GetNeighbours(currentNode).ForEach(a => { if (!hCost.ContainsKey(a)) hCost[a] = PathUtil.hDist(a, targetNode); });
-                minNode = map.GetNeighbours(currentNode).Where(a => a.isWalkable())
+                Map.GetNeighbours(currentNode).ForEach(a => { if (!hCost.ContainsKey(a)) hCost[a] = PathUtil.hDist(a, targetNode); });
+                minNode = Map.GetNeighbours(currentNode).Where(a => a.isWalkable())
                                                          .OrderByDescending(a => PathUtil.realDist(currentNode, a) * cost[a.type] + hCost[a])
                                                          .Last();
                 //u <- a(u)
@@ -58,7 +54,7 @@ public class LRTA : Pathfinding {
     }
 
     HashSet<Node> genLocalSearchSpace(Node node) {
-        HashSet<Node> space = new HashSet<Node>(map.GetNeighbours(node));
+        HashSet<Node> space = new HashSet<Node>(Map.GetNeighbours(node));
         space.Add(node); //with u in S_lss
         space.Remove(targetNode);//and T & S_lss = 0
         return space;
@@ -100,8 +96,8 @@ public class LRTA : Pathfinding {
                 if (hCost[node] != Mathf.Infinity) continue;
 
                 //min_(a in A) { w(u,a) + h(Succ(u,a)) }
-                map.GetNeighbours(node).ForEach(a => { if (!hCost.ContainsKey(a)) hCost[a] = PathUtil.hDist(a, targetNode); });
-                Node minNeighbour = map.GetNeighbours(node).OrderByDescending(a => PathUtil.realDist(node, a) * cost[a.type] + hCost[a]).Last();
+                Map.GetNeighbours(node).ForEach(a => { if (!hCost.ContainsKey(a)) hCost[a] = PathUtil.hDist(a, targetNode); });
+                Node minNeighbour = Map.GetNeighbours(node).OrderByDescending(a => PathUtil.realDist(node, a) * cost[a.type] + hCost[a]).Last();
                 float minValue = PathUtil.realDist(node, minNeighbour) * cost[minNeighbour.type] + hCost[minNeighbour];
 
                 //max(temp(u), _ );
@@ -115,7 +111,7 @@ public class LRTA : Pathfinding {
 
             //h(v) = max(temp(u), min_(a in A) { w(u,a) + h(Succ(u,a)) } )
             hCost[v] = minV;
-            Console.singleton.Log(v.ToString() + " = " + minV);
+            Console.Log(v.ToString() + " = " + minV);
 
             //if h(v) == inf : return
             if (hCost[v] == Mathf.Infinity) return;

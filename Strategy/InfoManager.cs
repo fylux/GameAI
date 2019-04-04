@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -7,12 +6,14 @@ using UnityEngine;
 
 public class InfoManager : MonoBehaviour {
 
+
     public Map map;
     public LayerMask unitsMask;
 
     public GameObject mid, top, bottom;
     public Dictionary<string, GameObject> waypoints = new Dictionary<string, GameObject>();
     public Dictionary<GameObject, Node> waypointNode = new Dictionary<GameObject,Node>();
+
 
     [SerializeField]
     Faction faction;
@@ -81,6 +82,7 @@ public class InfoManager : MonoBehaviour {
         //Debug.Log("La influencia de A en la base aliada es de " + GetBaseInfluence(allyBase, Faction.A));
         //Debug.Log("La influencia de A en el Waypoint de Mid es de " + GetWaypointInfluence(mid.transform.position, Faction.A));
         //Debug.Log("La unidad enemiga más cercana a la base aliada es " + SelectClosestUnit(map.NodeFromPosition(allyBase.position), 30));
+
     }
 
     /*
@@ -89,11 +91,12 @@ public class InfoManager : MonoBehaviour {
     //Actualmente, layerMask 9 para unidades
     public HashSet<AgentUnit> GetUnitsArea(Node tile, float areaSize) {
         HashSet<AgentUnit> units = new HashSet<AgentUnit>();
+
      //   Debug.Log("Obteniendo unidades desde el punto " + tile + " con un area de " + areaSize);
         int found = Physics.OverlapSphereNonAlloc(tile.worldPosition, areaSize, hits, unitsMask);
 
-        for (int i = 0; i < found; i++) {
-            AgentUnit agent = hits[i].GetComponent<AgentUnit>();
+        foreach (Collider hit in hits) {
+            AgentUnit agent = hit.GetComponent<AgentUnit>();
             units.Add(agent);
      //       Debug.Log("Encontrada una unidad: " + agent);
         }
@@ -176,10 +179,11 @@ public class InfoManager : MonoBehaviour {
     public HashSet<AgentUnit> UnitsNearBase(Faction baseFaction, Faction unitsFaction, float areaSize) {
         Node nodo;
 
+
         if (baseFaction == Faction.A)
             nodo = map.NodeFromPosition(allyBase.position);
         else
-            nodo = map.NodeFromPosition(enemyBase.position);
+            nodo = Map.NodeFromPosition(enemyBase.position);
 
         HashSet<AgentUnit> units = GetUnitsFactionArea(nodo, areaSize, unitsFaction);
        // HashSet<AgentUnit> unitsFound = new HashSet<AgentUnit>(units.Where(u => u.faction == unitsFaction));
@@ -250,7 +254,7 @@ public class InfoManager : MonoBehaviour {
     public float GetMapInfluence(Faction fac) {
         Dictionary<Faction, int> infl = new Dictionary<Faction, int>() { { Faction.A, 0 }, { Faction.B, 0 }, { Faction.C, 0 } };
 
-        foreach (Node nodo in map.grid) {
+        foreach (Node nodo in Map.grid) {
             infl[nodo.getFaction()]++;
         }
 
@@ -298,11 +302,11 @@ public class InfoManager : MonoBehaviour {
 
 
     public float GetBaseInfluence(Body bs, Faction faction) {
-        return GetAreaInfluence(faction, map.NodeFromPosition(bs.position));
+        return GetAreaInfluence(faction, Map.NodeFromPosition(bs.position));
     }
 
     public float GetWaypointInfluence(Vector3 position, Faction faction) {
-        return GetAreaInfluence(faction, map.NodeFromPosition(position));
+        return GetAreaInfluence(faction, Map.NodeFromPosition(position));
     }
 
 
@@ -312,13 +316,13 @@ public class InfoManager : MonoBehaviour {
         int x = node.gridX;
         int y = node.gridY;
 
-        int xstart = Mathf.Max(0, x - (int)(areaSize/2));
-        int ystart = Mathf.Max(0, y - (int)(areaSize/2));
+        int xstart = Mathf.Max(0, x - (int)(areaSize / 2));
+        int ystart = Mathf.Max(0, y - (int)(areaSize / 2));
 
-        int xend = Mathf.Min(map.mapX, x + (int)areaSize);
-        int yend = Mathf.Min(map.mapY, y + (int)areaSize);
+        int xend = Mathf.Min(Map.mapX, x + (int)areaSize);
+        int yend = Mathf.Min(Map.mapY, y + (int)areaSize);
 
-        for (int i = xstart; i < xend; i++)  {
+        for (int i = xstart; i < xend; i++) {
             for (int j = ystart; j < yend; j++) {
                 nodes.Add(map.grid[i, j]);
              //   Debug.Log("Añadido el nodo " + map.grid[i, j]);

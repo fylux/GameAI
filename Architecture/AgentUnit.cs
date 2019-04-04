@@ -1,6 +1,10 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+public enum UnitT
+{
+    MELEE, RANGED, SCOUT, ARTIL
+};
 
 public abstract class AgentUnit : AgentNPC {
     Location path_target;
@@ -19,6 +23,14 @@ public abstract class AgentUnit : AgentNPC {
             { NodeT.WATER, Mathf.Infinity},
             { NodeT.MOUNTAIN, Mathf.Infinity}
         };
+
+    protected Dictionary<UnitT, float> atk = new Dictionary<UnitT, float>() { //Coste por defecto, para casos de prueba
+            { UnitT.MELEE, 1 },
+            { UnitT.RANGED, 1 },
+            { UnitT.SCOUT, 1 },
+            { UnitT.ARTIL, 1 }
+        };
+
 
     new
     protected void Start() {

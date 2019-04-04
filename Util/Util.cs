@@ -19,4 +19,9 @@ public static class Util {
         return new Vector3(v1.x - v2.x, 0, v1.z - v2.z).magnitude;
     }
 
+    public static int NodeDistance (Node node1, Node node2)
+    {
+        return Mathf.Abs(node1.gridX - node2.gridX) + Mathf.Abs(node1.gridY - node2.gridY);
+    }
+
 }

@@ -16,6 +16,13 @@ public class Ranged : AgentUnit {
             { NodeT.WATER, Mathf.Infinity},
             { NodeT.MOUNTAIN, Mathf.Infinity}
         };
+
+        atk = new Dictionary<UnitT, float>() { //Coste por defecto, para casos de prueba
+            { UnitT.MELEE, 1 },
+            { UnitT.RANGED, 0.8f },
+            { UnitT.SCOUT, 1.5f },
+            { UnitT.ARTIL, 0.5f }
+        };
     }
 
     

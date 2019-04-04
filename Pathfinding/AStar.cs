@@ -20,16 +20,16 @@ public class AStar : Pathfinding {
         bool pathSuccess = false;
 
         this.targetPos = targetPos;
-		startNode = map.NodeFromPosition(startPos);
+		startNode = Map.NodeFromPosition(startPos);
         startNode.gCost = 0;
-		targetNode = map.NodeFromPosition(targetPos);
+		targetNode = Map.NodeFromPosition(targetPos);
 
         //Debug.Log(startNode.type + " -> " + targetNode.type);
 
         /*Acceleration can make a NPC move to a non accesible area so we should not take it into account when computing the path.*/
 
         if (/*startNode.isWalkable() && */targetNode.isWalkable()) {
-			Heap<Node> openSet = new Heap<Node>(map.GetMaxSize());
+			Heap<Node> openSet = new Heap<Node>(Map.GetMaxSize());
 			HashSet<Node> closedSet = new HashSet<Node>();
 			openSet.Add(startNode);
 			
@@ -42,7 +42,7 @@ public class AStar : Pathfinding {
 					break;
 				}
 				
-				foreach (Node neighbour in map.GetNeighbours(currentNode)) {
+				foreach (Node neighbour in Map.GetNeighbours(currentNode)) {
 					if (!neighbour.isWalkable() || closedSet.Contains(neighbour)) {
 						continue;
 					}

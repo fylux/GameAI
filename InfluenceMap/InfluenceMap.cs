@@ -1,32 +1,24 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class InfluenceMap : MonoBehaviour {
 
-    Map map;
-    public List<AgentUnit> unitList;
 
     const int NNodesInfluenceMap = 1000;
     const int RadiusInfluenceMap = 15;
     const int SecondsPerInfluenceUpdate = 3;
 
     private void Start() {
-        map = GameObject.Find("Terrain").GetComponent<Map>();
-        unitList = new List<AgentUnit>();
-        Array.ForEach(  GameObject.FindGameObjectsWithTag("NPC"),
-                        npc => unitList.Add(npc.GetComponent<AgentUnit>()));
+       
     }
 
     public void Update() {
         if (Mathf.Floor(Time.fixedTime * 1000) % (1000 * SecondsPerInfluenceUpdate) == 0) { //Time is managed in ms
-            map.ResetInfluence();
-            foreach (AgentUnit unit in unitList) {
+            Map.ResetInfluence();
+            foreach (AgentUnit unit in Map.unitList) {
                 ComputeInfluenceDijkstra(unit);
             }
-            map.SetInfluence();
+            Map.SetInfluence();
         }
            
     }
@@ -47,7 +39,7 @@ public class InfluenceMap : MonoBehaviour {
         HashSet<Node> pending = new HashSet<Node>();
         HashSet<Node> visited = new HashSet<Node>();
 
-        Node vert = map.NodeFromPosition(unit.position);
+        Node vert = Map.NodeFromPosition(unit.position);
         pending.Add(vert);
             
         // BFS for assigning influence
@@ -58,16 +50,16 @@ public class InfluenceMap : MonoBehaviour {
                     continue;
                 visited.Add(p);
                 p.SetInfluence(unit.faction, unit.GetDropOff(i));
-                frontier.UnionWith(map.GetDirectNeighbours(p));
+                frontier.UnionWith(Map.GetDirectNeighbours(p));
             }
             pending = new HashSet<Node>(frontier);
         }
     }
 
     public void ComputeInfluenceDijkstra(AgentUnit unit) {
-        Node startNode = map.NodeFromPosition(unit.position);
+        Node startNode = Map.NodeFromPosition(unit.position);
         startNode.gCost = 1;
-        Heap<Node> openSet = new Heap<Node>(map.GetMaxSize());
+        Heap<Node> openSet = new Heap<Node>(Map.GetMaxSize());
         HashSet<Node> closedSet = new HashSet<Node>();
         openSet.Add(startNode);
 
@@ -80,7 +72,7 @@ public class InfluenceMap : MonoBehaviour {
                 break;
             }
 
-            foreach (Node neighbour in map.GetNeighbours(currentNode)) {
+            foreach (Node neighbour in Map.GetNeighbours(currentNode)) {
                 if (/*!neighbour.isWalkable() || */closedSet.Contains(neighbour)) {
                     continue;
                 }

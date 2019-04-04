@@ -61,7 +61,7 @@ public class GoTo : BaseTask {
 
     override
     public void Terminate() {
-        UnityEngine.Object.Destroy(empty);
+        if (empty != null) UnityEngine.Object.Destroy(empty);
         agent.RequestStopMoving(); //To remove remaining forces of movement
     }
 }

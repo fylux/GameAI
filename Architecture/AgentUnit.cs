@@ -1,11 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 
 public abstract class AgentUnit : AgentNPC {
-    Map map;
     Location path_target;
 
     public Strategy strategy;
@@ -27,7 +24,6 @@ public abstract class AgentUnit : AgentNPC {
     new
     protected void Start() {
         base.Start();
-        map = GameObject.Find("Terrain").GetComponent<Map>();
         path_target = null;
         health = maxHealth;
     }
@@ -35,7 +31,7 @@ public abstract class AgentUnit : AgentNPC {
     override
     protected void ApplyActuator()
     {// Aqui el Actuator suma los steerings, los aplica a las velocidades, y las limita, teniendo en cuenta los costes
-        NodeT node = map.NodeFromPosition(position).type;
+        NodeT node = Map.NodeFromPosition(position).type;
         float tCost = cost[node];
 
         if (tCost == Mathf.Infinity) //Ignore not walkable terrains
@@ -121,10 +117,10 @@ public abstract class AgentUnit : AgentNPC {
 
     public float ReceiveAttack(int amount) {
         int damage = Mathf.Max(0, amount - defense);
-        Console.singleton.Log("Unit caused "+damage+" damage");
+        Console.Log("Unit caused "+damage+" damage");
         health = health - damage;
         if (health < 0) {
-            Console.singleton.Log("Unit died");
+            Console.Log("Unit died");
             this.gameObject.SetActive(false);
         }
         //Request to update selection text

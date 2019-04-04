@@ -1,177 +1,35 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.UI;
 
 
-public class Map : MonoBehaviour {
-    [SerializeField]
-    bool generateMap;
+public class Map {
+    public static int mapX, mapY;
+    public static Node[,] grid = null;
+    static Vector2 gridSize;
 
-    public string fileNameToLoad;
-
-    public int mapX, mapY;
-
-    public GameObject A, B, C, D, E, influenceTile, influenceGrid;
-
-    int[,] tiles;
-
-    public Node[,] grid = null;
-    Vector2 gridSize;
-    float nodeX, nodeY;
-
-    /*The offset is fundamental because by default objects are position based on their center. Thus, if we put a plane of 1x1 in (0,0), the upper left part
-    will be in (-0.5,-0.5). Since we want the terrain to be in the range from 0 to gridSize, we need to add an offset*/
-    Vector3 offset;
+    public static List<AgentUnit> unitList;
 
 
-    void Awake() {
-        this.transform.position = Vector3.zero;
-        Debug.Log(Application.dataPath + "/" + fileNameToLoad);
+    //This is called from load map
+    public static void Init(Node[,] _grid, Vector2 _gridSize) {
+        grid = _grid;
+        gridSize = _gridSize;
+        mapX = grid.GetLength(0);
+        mapY = grid.GetLength(1);
 
-        Vector3 size = A.GetComponent<Renderer>().bounds.size;
-        nodeX = size.x;
-        nodeY = size.z;
-
-        offset = new Vector3(size.x, 0, size.z) / 2f ;
-        gridSize = new Vector2(mapX * nodeX, mapY * nodeY);
-
-        tiles = Load(Application.dataPath + "/" + fileNameToLoad);
-        if (tiles == null || tiles.GetLength(0) != mapX && tiles.GetLength(1) != mapY) {
-            Debug.LogError("Size of the map does not match: " + tiles.GetLength(0) + "x" + tiles.GetLength(1));
-        }
-
-        BuildMap();
-        if (generateMap) GenerateMap();
-    }
-
-    void BuildMap() {
-        grid = new Node[mapX, mapX];
-
-        for (int x = 0; x < mapX; x++) {
-            for (int y = 0; y < mapY; y++) {
-                Vector3 position = offset + (Vector3.right * x * nodeX) + (Vector3.forward * y * nodeY);
-                NodeT type = (NodeT)tiles[x, y];
-                grid[x, y] = new Node(x, y, position, type);
-                if (!generateMap) grid[x, y].influenceTile = influenceGrid.transform.GetChild(x * mapY + y).gameObject;
-            }
+        unitList = new List<AgentUnit>();
+        
+        foreach (GameObject npc in GameObject.FindGameObjectsWithTag("NPC")) {
+            unitList.Add(npc.GetComponent<AgentUnit>());
         }
     }
 
-    void GenerateMap() {
-        Dictionary<int, GameObject> terrainType = new Dictionary<int, GameObject>() { { 0, A }, { 1, B }, { 2, C }, { 3, D }, { 4, E } };
-
-        bool[,] used = new bool[mapX, mapX];
-        for (int x = 0; x < mapX; x++) {
-            for (int y = 0; y < mapY; y++) {
-                GameObject influenceTileObj = Instantiate(influenceTile, offset + new Vector3(x * nodeX, -0.5f, y * nodeY), Quaternion.Euler(90, 0, 0));
-                influenceTileObj.transform.parent = influenceGrid.transform;
-                grid[x, y].influenceTile = influenceTileObj;
-                grid[x, y].influenceTile.GetComponent<Renderer>().material.SetFloat("_Glossiness", 0f);
-
-                if (used[x, y]) {
-                    continue;
-                }
-                   
-
-                int x1 = x, y1 = y;
-                bool ok = true;
-                NodeT type = grid[x, y].type;
-
-                /*while (ok && x1+1 < mapX && y1+1 < mapY) {
-                    ok = true;
-                    for (int i = x; i <= x1 + 1; ++i) {
-                        ok = ok && grid[i, y1+1].type == type;
-                    }
-
-                    for (int i = y; i <= y1 + 1; ++i) {
-                        ok = ok && grid[x1+1, i].type == type;
-                    }
-
-                    if (ok) {
-                        for (int i = x; i <= x1 + 1; ++i) {
-                            used[i, y1+1] = true;
-                        }  
-                        for (int i = y; i <= y1 + 1; ++i) {
-                            used[x1+1, i] = true;
-                        }
-                        x1++;
-                        y1++;
-                    }
-                }*/
-
-                ok = true;
-                while (ok && x1 + 1 < mapX) {
-                    ok = true;
-                    for (int i = y; i <= y1; ++i) {
-                        ok = ok && grid[x1 + 1, i].type == type;
-                    }
-                    if (ok) {
-                        for (int i = y; i <= y1; ++i) {
-                            used[x1 + 1, i] = true;
-                        }
-                        x1++;
-                    }
-                }
-
-                ok = true;
-                while (ok && y1+1 < mapX) {
-                    ok = true;
-                    for (int i = x; i <= x1; ++i) {
-                        ok = ok && grid[i, y1 + 1].type == type;
-                    }
-                    if (ok) {
-                        for (int i = x; i <= x1; ++i) {
-                            used[i, y1 + 1] = true;
-                        }
-                        y1++;
-                    }
-                }
-
-                int rows = x1 - x + 1;
-                int cols = y1 - y + 1;
-
-                float middleX = (float)(x + x1) / 2f;
-                float middleY = (float)(y + y1) / 2f;
-
-                GameObject TilePrefab = Instantiate(terrainType[tiles[x, y]], offset + new Vector3(middleX * nodeX, 0, middleY * nodeY), Quaternion.Euler(90, 0, 0));
-                TilePrefab.transform.localScale = new Vector3(rows,cols,1f);
-                TilePrefab.transform.parent = this.transform;
-
-
-            }
-        }
-    }
-
-    int[,] Load(string filePath) {
-        try {
-            using (StreamReader sr = new StreamReader(filePath)) {
-                string[] lines = sr.ReadToEnd().Split(new[] {'\r', '\n'}, System.StringSplitOptions.RemoveEmptyEntries);
-                int[,] tiles = new int[lines.Length, mapX];
-
-                for (int i = 0; i < lines.Length; i++) {
-                    string[] nums = lines[i].Split(new[] { ',' });
-                    for (int j = 0; j < Mathf.Min(nums.Length, mapX); j++) {
-                        if (!int.TryParse(nums[j], out tiles[i, j])) {
-                            Debug.LogError("Cannot parse" + nums[j]);
-                        }
-                    }
-                }
-                return tiles;
-            }
-        } catch (IOException e) {
-            Debug.Log(e.Message);
-            return null;
-        }
-    }
-
-    public int GetMaxSize() {
+    public static int GetMaxSize() {
         return mapX * mapY;
     }
 
-    public List<Node> GetNeighbours(Node node) {
+    public static List<Node> GetNeighbours(Node node) {
         List<Node> neighbours = new List<Node>();
 
         for (int x = -1; x <= 1; x++) {
@@ -190,7 +48,7 @@ public class Map : MonoBehaviour {
         return neighbours;
     }
 
-    public List<Node> GetDirectNeighbours(Node node) {
+    public static List<Node> GetDirectNeighbours(Node node) {
         List<Node> neighbours = new List<Node>();
         
         for (int x = -1; x <= 1; x++) {
@@ -211,7 +69,7 @@ public class Map : MonoBehaviour {
         return neighbours;
     }
 
-    public Node NodeFromPosition(Vector3 nodePosition) {
+    public static Node NodeFromPosition(Vector3 nodePosition) {
         float percentX = Mathf.Clamp01(nodePosition.x / gridSize.x);
         float percentY = Mathf.Clamp01(nodePosition.z / gridSize.y);
 
@@ -223,7 +81,7 @@ public class Map : MonoBehaviour {
     }
 
 
-    public void SetInfluence() {
+    public static void SetInfluence() {
         for (int x = 0; x < mapX; x++) {
             for (int y = 0; y < mapY; y++) {
                 Vector3 size = Vector3.one;
@@ -245,7 +103,7 @@ public class Map : MonoBehaviour {
         }
     }
 
-    public void ResetInfluence() {
+    public static void ResetInfluence() {
         for (int x = 0; x < mapX; x++) {
             for (int y = 0; y < mapY; y++) {
                 grid[x, y].ResetInfluence();

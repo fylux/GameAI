@@ -1,27 +1,22 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class Console : MonoBehaviour {
 
     [SerializeField]
-    Text consoleText;
+    Text consoleTextObj;
 
-    [SerializeField]
-    int maxLines = 2;
-
-    int nLines;
-    public static Console singleton;
+    static Text consoleText;
+    const int maxLines = 2;
+    static int nLines;
 
 	void Start () {
-        singleton = this;
-        consoleText.text = "";
+        consoleTextObj.text = "";
         nLines = 0;
-	}
+        consoleText = consoleTextObj;
+    }
 	
-	public void Log(string str) {
+	public static void Log(string str) {
         consoleText.text += str + '\n';
         nLines++;
 

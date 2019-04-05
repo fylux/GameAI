@@ -53,17 +53,18 @@ public class InfoManager : MonoBehaviour {
         }*/
 
 
-        allies = new HashSet<AgentUnit>(); //ESTO DE AQUI ES PROVISIONAL, YA QUE EN EL JUEGO FINAL NO HABRA UNIDADES DIRECTAMENTE EN EL MAPA AL PRINCIPIO
+        allies = new HashSet<AgentUnit>();
         enemies = new HashSet<AgentUnit>();
-        HashSet<AgentUnit> units = GetUnitsArea(waypoints["mid"], 80);
-        foreach (AgentUnit unit in units)
+        GameObject[] units = GameObject.FindGameObjectsWithTag("NPC");
+        foreach (GameObject unit in units)
         {
-            if (unit.faction == faction)
+            AgentUnit agent = unit.GetComponent<AgentUnit>();
+            if (agent.faction == faction)
             {
-                allies.Add(unit);
+                allies.Add(agent);
             }
             else
-                enemies.Add(unit);
+                enemies.Add(agent);
         }
     }
 
@@ -214,6 +215,7 @@ public class InfoManager : MonoBehaviour {
         Vector2 scouts = new Vector2(0, 0);
         Vector2 artill = new Vector2(0, 0);
 
+
         foreach (AgentUnit unit in units)
         {
             int i = unit.faction == Faction.A ? 0 : 1;
@@ -237,7 +239,6 @@ public class InfoManager : MonoBehaviour {
         if (fact == Faction.A) // >1 indica ventaja, <1 implica desventaja
         {
             float result = Mathf.Sqrt(HP[0] / HP[1] * ATK[0] / ATK[1]); //TODO: Aplicar tablas
-                                                                        //   Debug.Log("La ventaja es de " + result);
             return result;
         }
         else

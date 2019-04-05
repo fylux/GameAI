@@ -36,13 +36,13 @@ public class LoadMap : MonoBehaviour {
         Vector2 gridSize = new Vector2(mapX * nodeSizeX, mapY * nodeSizeY);
 
         tiles = Load(Application.dataPath + "/" + fileNameToLoad);
-
         if (tiles == null || tiles.GetLength(0) != mapX && tiles.GetLength(1) != mapY) {
             Debug.LogError("Size of the map does not match: " + tiles.GetLength(0) + "x" + tiles.GetLength(1));
         }
-
-        if (generateMap) GenerateMap();
-
+        if (generateMap)
+            {
+                GenerateMap();
+            }
         Map.Init(BuildMap(), gridSize);
     }
 

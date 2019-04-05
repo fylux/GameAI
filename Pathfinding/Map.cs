@@ -18,7 +18,6 @@ public class Map {
         gridSize = _gridSize;
         mapX = grid.GetLength(0);
         mapY = grid.GetLength(1);
-        Debug.LogError(mapY + ", " + mapX);
         unitList = new List<AgentUnit>();
         
         foreach (GameObject npc in GameObject.FindGameObjectsWithTag("NPC")) {

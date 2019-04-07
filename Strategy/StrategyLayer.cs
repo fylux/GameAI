@@ -48,7 +48,7 @@ public class StrategyLayer : MonoBehaviour {
         if (Time.frameCount % 60 == 0)
         {
             Dictionary<Strategy,float> newWeights = UpdateWeights();
-            foreach (KeyValuePair<Strategy, float> entry in weights)
+            foreach (KeyValuePair<Strategy, float> entry in newWeights)
             {
                 Debug.Log("El valor de la estrategia " + entry.Key + " es de " + entry.Value);
                 if (Mathf.Abs(entry.Value - weights[entry.Key]) >= 0.15) //TODO: Decidir valor real. ¿Lo hacemos así o pedimos cambio estable?

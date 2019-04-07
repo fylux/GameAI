@@ -29,9 +29,9 @@ public class InfoManager : MonoBehaviour {
     { // Equivalente al Start. Se necesita coordinacion entre los Starts de StrategyLayer e InfoManager
         unitsMask = LayerMask.GetMask("Unit");
 
-        GameObject mid = GameObject.Find("mid");
-        GameObject top = GameObject.Find("top");
-        GameObject bottom = GameObject.Find("bottom");
+        GameObject mid = GameObject.Find("Mid");
+        GameObject top = GameObject.Find("Top");
+        GameObject bottom = GameObject.Find("Bottom");
 
         waypoints.Add("mid", Map.NodeFromPosition(mid.transform.position));
         waypoints.Add("top", Map.NodeFromPosition(top.transform.position));
@@ -93,11 +93,11 @@ public class InfoManager : MonoBehaviour {
     public HashSet<AgentUnit> GetUnitsArea(Node tile, float areaSize) {
         HashSet<AgentUnit> units = new HashSet<AgentUnit>();
 
-     //   Debug.Log("Obteniendo unidades desde el punto " + tile + " con un area de " + areaSize);
+    //    Debug.Log("Obteniendo unidades desde el punto " + tile + " con un area de " + areaSize);
         int found = Physics.OverlapSphereNonAlloc(tile.worldPosition, areaSize, hits, unitsMask);
 
-        foreach (Collider hit in hits) {
-            AgentUnit agent = hit.GetComponent<AgentUnit>();
+        for (int i = 0; i < found; i++) {
+            AgentUnit agent = hits[i].GetComponent<AgentUnit>();
             units.Add(agent);
      //       Debug.Log("Encontrada una unidad: " + agent);
         }
@@ -236,17 +236,69 @@ public class InfoManager : MonoBehaviour {
          Debug.Log("Melees de B: " + melee[1] + ", rangeds: " + ranged[1] + ", scouts: " + scouts[1] + ", y artilleria: " + artill[1]);*/
 
 
+        float advA = (float)(GetAvgAdvantage(UnitT.MELEE, (int)melee[1], (int)ranged[1], (int)scouts[1], (int)artill[1]) * melee[0]
+                     + GetAvgAdvantage(UnitT.RANGED, (int)melee[1], (int)ranged[1], (int)scouts[1], (int)artill[1]) * ranged[0]
+                     + GetAvgAdvantage(UnitT.SCOUT, (int)melee[1], (int)ranged[1], (int)scouts[1], (int)artill[1]) * scouts[0]
+                     + GetAvgAdvantage(UnitT.ARTIL, (int)melee[1], (int)ranged[1], (int)scouts[1], (int)artill[1]) * artill[0]) / number[0];
+        float advB = (float)(GetAvgAdvantage(UnitT.MELEE, (int)melee[0], (int)ranged[0], (int)scouts[0], (int)artill[0]) * melee[1]
+                     + GetAvgAdvantage(UnitT.RANGED, (int)melee[0], (int)ranged[0], (int)scouts[0], (int)artill[0]) * ranged[1]
+                     + GetAvgAdvantage(UnitT.SCOUT, (int)melee[0], (int)ranged[0], (int)scouts[0], (int)artill[0]) * scouts[1]
+                     + GetAvgAdvantage(UnitT.ARTIL, (int)melee[0], (int)ranged[0], (int)scouts[0], (int)artill[0]) * artill[1]) / number[1];
+
+        Debug.Log("La ventaja gracias a las tablas de A es de " + advA + ", y la de B es " + advB);
+
+        float result;
+
         if (fact == Faction.A) // >1 indica ventaja, <1 implica desventaja
         {
-            float result = Mathf.Sqrt(HP[0] / HP[1] * ATK[0] / ATK[1]); //TODO: Aplicar tablas
-            return result;
+            if (number[0] == 0) return 0;
+            if (number[1] == 0) return Mathf.Infinity;
+            result = Mathf.Sqrt(HP[0] / HP[1] * (ATK[0] + advA) / (ATK[1] + advB));
+            Debug.Log("La ventaja total de A es de :" + result);
         }
         else
         {
-            float result = Mathf.Sqrt(HP[1] / HP[0] * ATK[1] / ATK[0]);
-            //   Debug.Log("La ventaja es de " + result);
-            return result;
+            if (number[0] == 0) return Mathf.Infinity;
+            if (number[1] == 0) return 0;
+            result = Mathf.Sqrt(HP[1] / HP[0] * (ATK[1] + advB) / (ATK[0] + advA));
+            Debug.Log("La ventaja total de B es de :" + result);
         }
+        return result;
+    }
+
+    public float GetAvgAdvantage(UnitT type, int melees, int rangeds, int scouts, int artills)
+    {
+        float result = 0;
+        if (type == UnitT.MELEE)
+        {
+            result += Melee.atk[UnitT.MELEE] * melees;
+            result += Melee.atk[UnitT.RANGED] * rangeds;
+            result += Melee.atk[UnitT.SCOUT] * scouts;
+            result += Melee.atk[UnitT.ARTIL] * artills;
+        }
+        else if (type == UnitT.RANGED)
+        {
+            result += Ranged.atk[UnitT.MELEE] * melees;
+            result += Ranged.atk[UnitT.RANGED] * rangeds;
+            result += Ranged.atk[UnitT.SCOUT] * scouts;
+            result += Ranged.atk[UnitT.ARTIL] * artills;
+        }
+        else if (type == UnitT.SCOUT)
+        {
+            result += Scout.atk[UnitT.MELEE] * melees;
+            result += Scout.atk[UnitT.RANGED] * rangeds;
+            result += Scout.atk[UnitT.SCOUT] * scouts;
+            result += Scout.atk[UnitT.ARTIL] * artills;
+        }
+        else if (type == UnitT.ARTIL)
+        {
+            result += Artillery.atk[UnitT.MELEE] * melees;
+            result += Artillery.atk[UnitT.RANGED] * rangeds;
+            result += Artillery.atk[UnitT.SCOUT] * scouts;
+            result += Artillery.atk[UnitT.ARTIL] * artills;
+        }
+
+        return (float)result / (melees + rangeds + scouts + artills);
     }
 
     //Funciones que trabajan con influencia:

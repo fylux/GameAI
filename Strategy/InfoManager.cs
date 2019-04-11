@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -132,6 +133,8 @@ public class InfoManager : MonoBehaviour {
     }
 
     public float MilitaryAdvantage(HashSet<AgentUnit> units, Faction fact) {
+        Debug.Assert(fact == Faction.A || fact == Faction.B);
+
         Vector2 number = new Vector2(0, 0);
         Vector2 HP = new Vector2(0.00000000001f, 0.0000000001f); // Para evitar divisiones por cero
         Vector2 ATK = new Vector2(0.0000000001f, 0.0000000001f);
@@ -140,91 +143,52 @@ public class InfoManager : MonoBehaviour {
         Vector2 scouts = new Vector2(0, 0);
         Vector2 artill = new Vector2(0, 0);
 
+        Dictionary<UnitT, Vector2> unitGroups = new Dictionary<UnitT, Vector2>() {
+            {UnitT.MELEE, new Vector2(0, 0) },
+            {UnitT.RANGED, new Vector2(0, 0) },
+            {UnitT.SCOUT, new Vector2(0, 0) },
+            {UnitT.ARTIL, new Vector2(0, 0) }
+        };
 
         foreach (AgentUnit unit in units) {
-            int i = unit.faction == Faction.A ? 0 : 1;
+            int index = (int)unit.faction;
+            number[index]++;
+            HP[index] += unit.militar.health;
+            ATK[index] += unit.militar.attack;
 
-            number[i]++;
-            HP[i] += unit.militar.health;
-            ATK[i] += unit.militar.attack;
-            if (unit is Melee) melee[i]++;
-            else if (unit is Ranged) ranged[i]++;
-            else if (unit is Scout) scouts[i]++;
-            else if (unit is Artillery) artill[i]++;
+            unitGroups[unit.GetUnitType()] += new Vector2(index, 1 - index);
         }
+        Vector2 adv = new Vector2(GetAvgAdvantage(unitGroups, 1), GetAvgAdvantage(unitGroups, 0));
 
-         Debug.Log("Numero de unidades de A: " + number[0] + ", y de B: " + number[1]);
+        Debug.Log("Numero de unidades de A: " + number[0] + ", y de B: " + number[1]);
         /* Debug.Log("HP de A: " + HP[0] + ", y de B: " + HP[1]);
          Debug.Log("ATK de A: " + ATK[0] + ", y de B: " + ATK[1]);
          Debug.Log("Melees de A: " + melee[0] + ", rangeds: " + ranged[0] + ", scouts: " + scouts[0] + ", y artilleria: " + artill[0]);
          Debug.Log("Melees de B: " + melee[1] + ", rangeds: " + ranged[1] + ", scouts: " + scouts[1] + ", y artilleria: " + artill[1]);*/
 
+        Debug.Log("La ventaja gracias a las tablas de A es de " + adv[0] + ", y la de B es " + adv[1]);
 
-        float advA = (float)(GetAvgAdvantage(UnitT.MELEE, (int)melee[1], (int)ranged[1], (int)scouts[1], (int)artill[1]) * melee[0]
-                     + GetAvgAdvantage(UnitT.RANGED, (int)melee[1], (int)ranged[1], (int)scouts[1], (int)artill[1]) * ranged[0]
-                     + GetAvgAdvantage(UnitT.SCOUT, (int)melee[1], (int)ranged[1], (int)scouts[1], (int)artill[1]) * scouts[0]
-                     + GetAvgAdvantage(UnitT.ARTIL, (int)melee[1], (int)ranged[1], (int)scouts[1], (int)artill[1]) * artill[0]) / number[0];
-        float advB = (float)(GetAvgAdvantage(UnitT.MELEE, (int)melee[0], (int)ranged[0], (int)scouts[0], (int)artill[0]) * melee[1]
-                     + GetAvgAdvantage(UnitT.RANGED, (int)melee[0], (int)ranged[0], (int)scouts[0], (int)artill[0]) * ranged[1]
-                     + GetAvgAdvantage(UnitT.SCOUT, (int)melee[0], (int)ranged[0], (int)scouts[0], (int)artill[0]) * scouts[1]
-                     + GetAvgAdvantage(UnitT.ARTIL, (int)melee[0], (int)ranged[0], (int)scouts[0], (int)artill[0]) * artill[1]) / number[1];
+        int i = (int)fact;
+        int j = 1 - i;
+        if (number[i] == 0) return 0;
+        if (number[j] == 0) return Mathf.Infinity;
+        float result = Mathf.Sqrt(HP[i] / HP[j] * (ATK[i] + adv[i]) / (ATK[j] + adv[j]));
 
-      
+        Debug.Log("La ventaja total de "+fact.ToString()+" es de :" + result);
 
-        Debug.Log("La ventaja gracias a las tablas de A es de " + advA + ", y la de B es " + advB);
-
-        float result;
-
-        if (fact == Faction.A) // >1 indica ventaja, <1 implica desventaja
-        {
-            if (number[0] == 0) return 0;
-            if (number[1] == 0) return Mathf.Infinity;
-            result = Mathf.Sqrt(HP[0] / HP[1] * (ATK[0] + advA) / (ATK[1] + advB));
-            Debug.Log("La ventaja total de A es de :" + result);
-        }
-        else
-        {
-            if (number[0] == 0) return Mathf.Infinity;
-            if (number[1] == 0) return 0;
-            result = Mathf.Sqrt(HP[1] / HP[0] * (ATK[1] + advB) / (ATK[0] + advA));
-            Debug.Log("La ventaja total de B es de :" + result);
-        }
         return result;
     }
 
-    public float GetAvgAdvantage(UnitT type, int melees, int rangeds, int scouts, int artills)
-    {
-        float result = 0;
-        if (type == UnitT.MELEE)
-        {
-            result += Melee.atk[UnitT.MELEE] * melees;
-            result += Melee.atk[UnitT.RANGED] * rangeds;
-            result += Melee.atk[UnitT.SCOUT] * scouts;
-            result += Melee.atk[UnitT.ARTIL] * artills;
+    public float GetAvgAdvantage(Dictionary<UnitT, Vector2> unitGroups, int factionIndex) {
+        float adv = 0f;
+        float nTotalUnits = 0;
+        foreach (UnitT type in Enum.GetValues(typeof(UnitT))) {
+            float nUnits = unitGroups[UnitT.MELEE][factionIndex];
+            adv += AgentUnit.atkTable[(int)UnitT.MELEE, (int)UnitT.MELEE] * nUnits;
+            nTotalUnits += nUnits;
         }
-        else if (type == UnitT.RANGED)
-        {
-            result += Ranged.atk[UnitT.MELEE] * melees;
-            result += Ranged.atk[UnitT.RANGED] * rangeds;
-            result += Ranged.atk[UnitT.SCOUT] * scouts;
-            result += Ranged.atk[UnitT.ARTIL] * artills;
-        }
-        else if (type == UnitT.SCOUT)
-        {
-            result += Scout.atk[UnitT.MELEE] * melees;
-            result += Scout.atk[UnitT.RANGED] * rangeds;
-            result += Scout.atk[UnitT.SCOUT] * scouts;
-            result += Scout.atk[UnitT.ARTIL] * artills;
-        }
-        else if (type == UnitT.ARTIL)
-        {
-            result += Artillery.atk[UnitT.MELEE] * melees;
-            result += Artillery.atk[UnitT.RANGED] * rangeds;
-            result += Artillery.atk[UnitT.SCOUT] * scouts;
-            result += Artillery.atk[UnitT.ARTIL] * artills;
-        }
-
-        return (float)result / (melees + rangeds + scouts + artills);
+        Debug.Assert(nTotalUnits > 0);
+        return adv / nTotalUnits;
     }
 
     public List<Body> GetHealingPoints(Node tile, float areaSize) {
@@ -236,27 +200,14 @@ public class InfoManager : MonoBehaviour {
 
     //Devuelve un valor entre 0 y 1 que representa el porcentaje
     public float GetMapInfluence(Faction fac) {
-        Dictionary<Faction, int> infl = new Dictionary<Faction, int>() { { Faction.A, 0 }, { Faction.B, 0 }, { Faction.C, 0 } };
-
-        foreach (Node nodo in Map.grid) {
-            infl[nodo.getFaction()]++;
-        }
-
-        return ((float)infl[fac] / (infl[Faction.A] + infl[Faction.B] + infl[Faction.C]));
+        return GetNodesInfluence(fac, Map.grid.Cast<Node>().ToList());
     }
 
     public float GetAreaInfluence(Faction fac, Node node, float areaSize) {
-        Dictionary<Faction, int> infl = new Dictionary<Faction, int>() { { Faction.A, 0 }, { Faction.B, 0 }, { Faction.C, 0 } };
-        List<Node> nodes = GetNodesInArea(node, areaSize);
-
-        foreach (Node nodo in nodes) {
-            infl[nodo.getFaction()]++;
-        }
-
-        return ((float)infl[fac] / (infl[Faction.A] + infl[Faction.B] + infl[Faction.C]));
+       return GetNodesInfluence(fac, GetNodesInArea(node, areaSize));
     }
 
-    public float GetAreaInfluence(Faction fac, List<Node> nodes) {
+    public float GetNodesInfluence(Faction fac, List<Node> nodes) {
         Dictionary<Faction, int> infl = new Dictionary<Faction, int>() { { Faction.A, 0 }, { Faction.B, 0 }, { Faction.C, 0 } };
 
         foreach (Node nodo in nodes) {
@@ -264,10 +215,6 @@ public class InfoManager : MonoBehaviour {
         }
 
         return ((float)infl[fac] / (infl[Faction.A] + infl[Faction.B] + infl[Faction.C]));
-    }
-
-    public float GetAreaInfluence(Faction fac, Node node) {
-        return GetAreaInfluence(fac, node, areaSize);
     }
 
     float PathInfluence(Faction fac, List<Node> path) {
@@ -278,6 +225,10 @@ public class InfoManager : MonoBehaviour {
         }
 
         return ((float)infl[fac] / (infl[Faction.A] + infl[Faction.B] + infl[Faction.C]));
+    }
+
+    public float GetAreaInfluence(Faction fac, Node node) {
+        return GetAreaInfluence(fac, node, areaSize);
     }
 
 

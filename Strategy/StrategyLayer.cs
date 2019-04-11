@@ -152,8 +152,8 @@ public class StrategyLayer : MonoBehaviour {
 
     float WeightAllyInfluenceWaypoint(string waypoint)
     {
-        float allyInfl = info.GetAreaInfluence(faction, waypointArea[mapSide+waypoint]);
-        float enemyInfl = info.GetAreaInfluence(enemFac, waypointArea[mapSide + waypoint]);
+        float allyInfl = info.GetNodesInfluence(faction, waypointArea[mapSide+waypoint]);
+        float enemyInfl = info.GetNodesInfluence(enemFac, waypointArea[mapSide + waypoint]);
 
         Debug.Log("En el waypoint " + waypoint + " hay una influencia aliada de " + allyInfl + " y una influencia enemiga de " + enemyInfl);
         Debug.Log("Por tanto el waypoint " + waypoint + " contribuye al peso debido a influencias enemigas en -" + Mathf.Min(0.2f, Mathf.Max((enemyInfl - allyInfl),0)));

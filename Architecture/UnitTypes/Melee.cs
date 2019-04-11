@@ -19,12 +19,9 @@ public class Melee : AgentUnit
             { NodeT.WATER, Mathf.Infinity},
             { NodeT.MOUNTAIN, Mathf.Infinity}
         };
+    }
 
-        atk = new Dictionary<UnitT, float>() { //Coste por defecto, para casos de prueba
-            { UnitT.MELEE, 1 },
-            { UnitT.RANGED, 1.5f },
-            { UnitT.SCOUT, 2 },
-            { UnitT.ARTIL, 1 }
-        };
+    public override UnitT GetUnitType() {
+        return UnitT.MELEE;
     }
 }

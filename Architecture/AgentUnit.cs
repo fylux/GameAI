@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public enum UnitT
-{
+public enum UnitT {
     MELEE, RANGED, SCOUT, ARTIL
 };
 
@@ -24,14 +23,14 @@ public abstract class AgentUnit : AgentNPC {
             { NodeT.MOUNTAIN, Mathf.Infinity}
         };
 
-    public static Dictionary<UnitT, float> atk = new Dictionary<UnitT, float>() { //Coste por defecto, para casos de prueba
-            { UnitT.MELEE, 1 },
-            { UnitT.RANGED, 1 },
-            { UnitT.SCOUT, 1 },
-            { UnitT.ARTIL, 1 }
+    public static float[,] atkTable = new float[4, 4] {
+            //Melee Ranged  Scout   Artill
+            {1,     1.5f,   2 ,     1 	},
+            {1, 	0.8f, 	1.5f, 	0.5f},
+            {0.75f,	1.25f, 	1, 		0.5f},
+            { 0.8f, 1.25f, 	1.5f, 	1	}
         };
 
-    
 
     new
     protected void Start() {
@@ -39,6 +38,8 @@ public abstract class AgentUnit : AgentNPC {
         path_target = null;
         militar.SetAgent(this);
     }
+
+    abstract public UnitT GetUnitType();
 
     override
     protected void ApplyActuator()

@@ -20,12 +20,9 @@ public class Artillery : AgentUnit
             { NodeT.WATER, Mathf.Infinity},
             { NodeT.MOUNTAIN, Mathf.Infinity}
         };
+    }
 
-        atk = new Dictionary<UnitT, float>() { //Coste por defecto, para casos de prueba
-            { UnitT.MELEE, 0.8f },
-            { UnitT.RANGED, 1.25f },
-            { UnitT.SCOUT, 1.5f },
-            { UnitT.ARTIL, 1 }
-        };
+    public override UnitT GetUnitType() {
+        return UnitT.ARTIL;
     }
 }

@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public enum Strategy {
+public enum StrategyT {
     DEF_BASE, DEF_HALF, ATK_BASE, ATK_HALF
 };
 
 public class StrategyLayer : MonoBehaviour {
 
-    Dictionary<Strategy, float> weights = new Dictionary<Strategy, float>() { { Strategy.DEF_BASE, 0 },
-                                                                              { Strategy.DEF_HALF, 0 },
-                                                                              { Strategy.ATK_BASE, 0 },
-                                                                              { Strategy.ATK_HALF, 0 } };
+    Dictionary<StrategyT, float> weights = new Dictionary<StrategyT, float>() { { StrategyT.DEF_BASE, 0 },
+                                                                              { StrategyT.DEF_HALF, 0 },
+                                                                              { StrategyT.ATK_BASE, 0 },
+                                                                              { StrategyT.ATK_HALF, 0 } };
 
     Dictionary<string, List<Node>> waypointArea;
 
@@ -47,8 +47,8 @@ public class StrategyLayer : MonoBehaviour {
     void Update () {
         if (Time.frameCount % 60 == 0)
         {
-            Dictionary<Strategy,float> newWeights = UpdateWeights();
-            foreach (KeyValuePair<Strategy, float> entry in newWeights)
+            Dictionary<StrategyT,float> newWeights = UpdateWeights();
+            foreach (KeyValuePair<StrategyT, float> entry in newWeights)
             {
                 Debug.Log("El valor de la estrategia " + entry.Key + " es de " + entry.Value);
                 if (Mathf.Abs(entry.Value - weights[entry.Key]) >= 0.15) //TODO: Decidir valor real. ¿Lo hacemos así o pedimos cambio estable?
@@ -58,12 +58,12 @@ public class StrategyLayer : MonoBehaviour {
             
 	}
 
-    Dictionary<Strategy, float> UpdateWeights() {
-        return new Dictionary<Strategy, float>(){
-            { Strategy.DEF_BASE, WeightDefbase() },
-            { Strategy.DEF_HALF, WeightDefhalf() },
-            { Strategy.ATK_HALF, WeightAtkhalf() },
-            { Strategy.ATK_BASE, WeightAtkbase() }
+    Dictionary<StrategyT, float> UpdateWeights() {
+        return new Dictionary<StrategyT, float>(){
+            { StrategyT.DEF_BASE, WeightDefbase() },
+            { StrategyT.DEF_HALF, WeightDefhalf() },
+            { StrategyT.ATK_HALF, WeightAtkhalf() },
+            { StrategyT.ATK_BASE, WeightAtkbase() }
         };
     }
 

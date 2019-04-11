@@ -82,8 +82,8 @@ public class InfoManager : MonoBehaviour {
     //Actualmente, layerMask 9 para unidades
     public HashSet<AgentUnit> GetUnitsArea(Node tile, float areaSize) {
         //Debug.Log("Obteniendo unidades desde el punto " + tile + " con un area de " + areaSize);
-        Physics.OverlapSphereNonAlloc(tile.worldPosition, areaSize, hits, unitsMask);
-        return new HashSet<AgentUnit>(hits.Select(hit => hit.GetComponent<AgentUnit>()));
+        int nFound = Physics.OverlapSphereNonAlloc(tile.worldPosition, areaSize, hits, unitsMask);
+        return new HashSet<AgentUnit>(hits.Take(nFound).Select(hit => hit.GetComponent<AgentUnit>()));
     }
 
     public HashSet<AgentUnit> GetUnitsArea(Node tile) {
@@ -91,8 +91,8 @@ public class InfoManager : MonoBehaviour {
     }
 
     public HashSet<AgentUnit> GetUnitsFactionArea(Node tile, float areaSize, Faction fact) {
-        Physics.OverlapSphereNonAlloc(tile.worldPosition, areaSize, hits, unitsMask);
-        return new HashSet<AgentUnit>(hits.Select(hit => hit.GetComponent<AgentUnit>()).Where(unit => unit.faction == fact));
+        int nFound = Physics.OverlapSphereNonAlloc(tile.worldPosition, areaSize, hits, unitsMask);
+        return new HashSet<AgentUnit>(hits.Take(nFound).Select(hit => hit.GetComponent<AgentUnit>()).Where(unit => unit.faction == fact));
     }
 
     public HashSet<AgentUnit> GetUnitsFactionArea(Node tile, Faction fact) {
@@ -169,6 +169,8 @@ public class InfoManager : MonoBehaviour {
                      + GetAvgAdvantage(UnitT.SCOUT, (int)melee[0], (int)ranged[0], (int)scouts[0], (int)artill[0]) * scouts[1]
                      + GetAvgAdvantage(UnitT.ARTIL, (int)melee[0], (int)ranged[0], (int)scouts[0], (int)artill[0]) * artill[1]) / number[1];
 
+      
+
         Debug.Log("La ventaja gracias a las tablas de A es de " + advA + ", y la de B es " + advB);
 
         float result;
@@ -225,20 +227,9 @@ public class InfoManager : MonoBehaviour {
         return (float)result / (melees + rangeds + scouts + artills);
     }
 
-    public List<Body> GetHealingPoints(Node tile, float areaSize)
-    {
-        List<Body> healingPoints = new List<Body>();
-
-        int found = Physics.OverlapSphereNonAlloc(tile.worldPosition, areaSize, hits, healingMask);
-
-        for (int i = 0; i < found; i++)
-        {
-            Body body = hits[i].GetComponent<Body>();
-                healingPoints.Add(body);
-        }
-
-        return healingPoints;
-
+    public List<Body> GetHealingPoints(Node tile, float areaSize) {
+        int nFound = Physics.OverlapSphereNonAlloc(tile.worldPosition, areaSize, hits, healingMask);
+        return new List<Body>(hits.Take(nFound).Select(hit => hit.GetComponent<Body>()));
     }
 
     //Funciones que trabajan con influencia:

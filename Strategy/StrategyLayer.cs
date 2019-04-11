@@ -210,20 +210,19 @@ public class StrategyLayer : MonoBehaviour {
     float WeightAtkbase() {
         Debug.Log("START ATKBASE");
         HashSet<AgentUnit> baseEnemies = info.UnitsNearBase(enemFac, enemFac, 20); //Cogemos los enemigos cercanos a la base enemiga
-        baseEnemies.UnionWith(info.GetUnitsFactionArea(Map.NodeFromPosition(info.enemyBase.position), 50, faction)); // Añadimos los aliados en territorio enemigo
+        baseEnemies.UnionWith(info.GetUnitsFactionArea(info.waypoints["enemyBase"], 50, faction)); // Añadimos los aliados en territorio enemigo
         float result = Mathf.Max(Mathf.Min(info.MilitaryAdvantage(baseEnemies, faction) - 1, 0.4f), -0.4f);
         Debug.Log("Gracias a la ventaja de las fuerzas aliadas en territorio enemigo frente a las enemigas en la base enemigo, tenemos un peso actual de " + result);
+
         HashSet<AgentUnit> units = new HashSet<AgentUnit>(info.allies);
         units.UnionWith(info.enemies); // Tenemos ahora un hashset con todas las unidades vivas
-
         result += Mathf.Max(Mathf.Min(info.MilitaryAdvantage(units, faction) - 1, 0.2f), -0.2f);
         Debug.Log("Teniendo en cuenta todas las unidades vivas, ese peso es ahora " + result);
 
         HashSet<AgentUnit> unitsInOtherHalf = info.UnitsNearBase(enemFac, faction, 45); //Unidades de un bando en territorio del otro
         unitsInOtherHalf.UnionWith(info.UnitsNearBase(faction, enemFac, 45));
-
-        float allyAdv = info.AreaMilitaryAdvantage(Map.NodeFromPosition(info.enemyBase.position), 45, faction);
-        float enemAdv = info.AreaMilitaryAdvantage(Map.NodeFromPosition(info.allyBase.position), 45, enemFac);
+        float allyAdv = info.AreaMilitaryAdvantage(info.waypoints["enemyBase"], 45, faction);
+        float enemAdv = info.AreaMilitaryAdvantage(info.waypoints["allyBase"], 45, enemFac);
 
         result += Mathf.Max(Mathf.Min(allyAdv - enemAdv, 0.4f), -0.4f);
         Debug.Log("Finalmente, comparandola ventaja atacante aliada con la enemiga, el peso de ATKBASE es de " + result);

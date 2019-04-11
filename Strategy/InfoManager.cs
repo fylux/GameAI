@@ -20,8 +20,6 @@ public class InfoManager : MonoBehaviour {
     [SerializeField]
     float areaSize, sphereSize;
 
-    public Body allyBase, enemyBase;
-
     Collider[] hits = new Collider[40];
 
     public HashSet<AgentUnit> allies;
@@ -35,9 +33,15 @@ public class InfoManager : MonoBehaviour {
         GameObject top = GameObject.Find("Top");
         GameObject bottom = GameObject.Find("Bottom");
 
+        Body allyBase = GameObject.Find("BaseAliada").GetComponent<Body>();
+        Body enemyBase = GameObject.Find("BaseEnemiga").GetComponent<Body>();
+
         waypoints.Add("mid", Map.NodeFromPosition(mid.transform.position));
         waypoints.Add("top", Map.NodeFromPosition(top.transform.position));
         waypoints.Add("bottom", Map.NodeFromPosition(bottom.transform.position));
+
+        waypoints.Add("downFront", Map.NodeFromPosition(GameObject.Find("DownFront").transform.position));
+        waypoints.Add("upFront", Map.NodeFromPosition(GameObject.Find("UpFront").transform.position));
 
         waypoints.Add("upMid", Map.NodeFromPosition(mid.transform.Find("UpMid").transform.position));
         waypoints.Add("downMid", Map.NodeFromPosition(mid.transform.Find("DownMid").transform.position));
@@ -48,11 +52,14 @@ public class InfoManager : MonoBehaviour {
         waypoints.Add("upBottom", Map.NodeFromPosition(bottom.transform.Find("UpBottom").transform.position));
         waypoints.Add("downBottom", Map.NodeFromPosition(bottom.transform.Find("DownBottom").transform.position));
 
-       /* foreach (KeyValuePair<string, GameObject> entry in waypoints)
-        {
-            waypointNode.Add(entry.Value, Map.NodeFromPosition(entry.Value.transform.position));
-            Debug.Log("Añadido el waypoint " + entry.Value + " en la posicion " + Map.NodeFromPosition(entry.Value.transform.position));
-        }*/
+        waypoints.Add("allyBase", Map.NodeFromPosition(allyBase.position));
+        waypoints.Add("enemyBase", Map.NodeFromPosition(enemyBase.position));
+
+        /* foreach (KeyValuePair<string, GameObject> entry in waypoints)
+         {
+             waypointNode.Add(entry.Value, Map.NodeFromPosition(entry.Value.transform.position));
+             Debug.Log("Añadido el waypoint " + entry.Value + " en la posicion " + Map.NodeFromPosition(entry.Value.transform.position));
+         }*/
 
 
         allies = new HashSet<AgentUnit>(Map.unitList.Where(agent => agent.faction == faction));
@@ -60,11 +67,12 @@ public class InfoManager : MonoBehaviour {
         enemies.ExceptWith(allies);
     }
 
-    private void OnDrawGizmosSelected()
+    // Para comprobar tamaños de areas con el mapa del juego
+   /* private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawSphere(enemyBase.position, sphereSize);
-    }
+    }*/
 
     void Update () {
         //Node nodo = map.NodeFromPosition(position);
@@ -111,7 +119,7 @@ public class InfoManager : MonoBehaviour {
         return units.OrderBy(unit => Util.NodeDistance(tile, Map.NodeFromPosition(unit.position))).First();
     }
 
-    // Obtiene el numero de uniades aliadas que siguen esa estrategia en un area
+    // Obtiene el numero de unidades aliadas que siguen esa estrategia en un area
     public int StrategyFollowersArea(Node tile, StrategyT strat) {
         return GetUnitsArea(tile).Count(unit => unit.strategy == strat && unit.faction == faction); ;
     }
@@ -120,9 +128,9 @@ public class InfoManager : MonoBehaviour {
         Node nodo;
 
         if (baseFaction == Faction.A)
-            nodo = Map.NodeFromPosition(allyBase.position);
+            nodo = waypoints["allyBase"]; 
         else
-            nodo = Map.NodeFromPosition(enemyBase.position);
+            nodo = waypoints["enemyBase"];
 
         return GetUnitsFactionArea(nodo, areaSize, unitsFaction); 
     }

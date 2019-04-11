@@ -16,17 +16,33 @@ public class OrderAsignDefBase : OrderAsign {
                 {
                     Debug.Log("La unidad " + unit + " tiene un healing point cercano: " + hp);
                 }
-                
-                // En caso de haber alguno, comprueba si en algún punto del camino la influencia supera cierto umbral
-                // Si NO lo supera, darle la orden GoTo hacia el punto de curación (o alguna orden enfocada a irse, curarse, y volver
-                // Si SI lo supera, se ignorará esta orden
+                Body closerPoint = Util.GetCloserBody(healPts, Map.NodeFromPosition(unit.position));
+
+                if (closerPoint != null)
+                {
+                    Debug.Log("Asignada a la unidad " + unit + " la orden GoTo con destino el healPoint" + closerPoint);
+                }
             }
-            else if (info.AreaMilitaryAdvantage(Map.NodeFromPosition(info.allyBase.position), 25, faction) > 1.2f) // ¿Agrandar el area con varios niveles?
+            else if (info.AreaMilitaryAdvantage(info.waypoints["allyBase"], 25, faction) > 1.2f) // ¿Agrandar el area con varios niveles?
             {
                 // Todas las unidades usables reciben la orden de defender la zona de delante de la base
+                Node dest;
+                if (faction == Faction.A)
+                    dest = info.waypoints["upFront"]; // El cruce de caminos delante de la base
+                else
+                    dest = info.waypoints["downFront"]; // El mismo cruce pero de la otra base
+
+                Debug.Log("Asignada a la unidad " + unit + " la orden Defender zona con destino Front " + dest);
             }
             else
             {
+                Node dest;
+                if (faction == Faction.A)
+                    dest = info.waypoints["allyBase"];
+                else
+                    dest = info.waypoints["enemyBase"];
+
+                Debug.Log("Asignada a la unidad " + unit + " la orden Defender zona con destino base " + dest);
                 // Todas las unidades usables reciben la orden de defender la zona de la base
             }
         }

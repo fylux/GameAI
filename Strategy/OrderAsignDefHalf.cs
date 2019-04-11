@@ -16,7 +16,7 @@ public class OrderAsignDefHalf : OrderAsign {
                 // Si NO lo supera, darle la orden GoTo hacia el punto de curación (o alguna orden enfocada a irse, curarse, y volver
                 // Si SI lo supera, se ignorará esta orden
             }
-            else if (info.AreaMilitaryAdvantage(Map.NodeFromPosition(info.allyBase.position), 25, faction) > 1.2f) // ¿Agrandar el area con varios niveles?
+            else if (info.AreaMilitaryAdvantage(info.waypoints["allyBase"], 25, faction) > 1.2f) // ¿Agrandar el area con varios niveles?
             {
                 // Todas las unidades usables reciben la orden de defender la zona de delante de la base
             }

@@ -7,7 +7,7 @@ public class Console : MonoBehaviour {
     Text consoleTextObj;
 
     static Text consoleText;
-    const int maxLines = 2;
+    const int maxLines = 5;
     static int nLines;
 
 	void Start () {

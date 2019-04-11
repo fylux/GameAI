@@ -9,7 +9,7 @@ public enum UnitT
 public abstract class AgentUnit : AgentNPC {
     Location path_target;
 
-    public Strategy strategy;
+    public StrategyT strategy;
     public Faction faction = Faction.A;
     public GameObject SelectCircle;
 

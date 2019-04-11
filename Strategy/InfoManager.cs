@@ -7,6 +7,7 @@ using UnityEngine;
 public class InfoManager : MonoBehaviour {
 
     public LayerMask unitsMask;
+    public LayerMask healingMask;
 
     public GameObject mid, top, bottom;
     public Dictionary<string, Node> waypoints = new Dictionary<string, Node>();
@@ -173,7 +174,7 @@ public class InfoManager : MonoBehaviour {
     }
 
     // Obtiene el numero de uniades aliadas que siguen esa estrategia en un area
-    public int StrategyFollowersArea(Node tile, Strategy strat) {
+    public int StrategyFollowersArea(Node tile, StrategyT strat) {
         return GetUnitsArea(tile).Count(unit => unit.strategy == strat && unit.faction == faction); ;
     }
 
@@ -299,6 +300,22 @@ public class InfoManager : MonoBehaviour {
         }
 
         return (float)result / (melees + rangeds + scouts + artills);
+    }
+
+    public List<Body> GetHealingPoints(Node tile, float areaSize)
+    {
+        List<Body> healingPoints = new List<Body>();
+
+        int found = Physics.OverlapSphereNonAlloc(tile.worldPosition, areaSize, hits, healingMask);
+
+        for (int i = 0; i < found; i++)
+        {
+            Body body = hits[i].GetComponent<Body>();
+                healingPoints.Add(body);
+        }
+
+        return healingPoints;
+
     }
 
     //Funciones que trabajan con influencia:

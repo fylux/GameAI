@@ -25,7 +25,7 @@ public class GoTo : BaseTask {
         PathfindingManager.RequestPath(agent.position, target, agent.Cost, ProcessPath);
     }
 
-    private void ProcessPath(Vector3[] newPath, bool pathSuccessful) {
+    private void ProcessPath(Vector3[] newPath, List<Node> nodesPath, bool pathSuccessful) {
         if (pathSuccessful) {
             pathF.SetPath(newPath);
         }

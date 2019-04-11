@@ -15,7 +15,7 @@ public class AStar : Pathfinding {
 
     // AStar() : base() {}
 
-    public IEnumerator FindPath(Vector3 startPos, Vector3 targetPos, Dictionary<NodeT, float> cost, Action<Vector3[], bool> FinishedProcessing) {
+    public IEnumerator FindPath(Vector3 startPos, Vector3 targetPos, Dictionary<NodeT, float> cost, Action<Vector3[], List<Node>, bool> FinishedProcessing) {
         prev = new Dictionary<Node, Node>();
         bool pathSuccess = false;
 
@@ -61,15 +61,22 @@ public class AStar : Pathfinding {
                             openSet.UpdateItem(neighbour);
                     }
 				}
-			}
+            }
 		}
 		yield return null;
 
-        Vector3[] waypoints = pathSuccess ? RetracePath() : new Vector3[0];
-        FinishedProcessing(waypoints, pathSuccess);
+        List<Vector3> waypoints = new List<Vector3>();
+        List<Node> nodesPath = new List<Node>();
+        if (pathSuccess) {
+            nodesPath = RetracePath();
+            waypoints = PathUtil.SimplifyPath(nodesPath);
+            waypoints.Add(targetPos);
+        }
+
+        FinishedProcessing(waypoints.ToArray(), nodesPath, pathSuccess);
     }
     
-    Vector3[] RetracePath() {
+   List<Node> RetracePath() {
         List<Node> path = new List<Node>();
         //StartNode is not added since we are already on it
         for (Node currentNode = targetNode; currentNode != startNode; currentNode = prev[currentNode]) {
@@ -77,8 +84,6 @@ public class AStar : Pathfinding {
         }
         path.Reverse();
 
-        List<Vector3> waypoints = PathUtil.SimplifyPath(path);
-        waypoints.Add(targetPos);
-		return waypoints.ToArray();
+        return path;
 	}
 }

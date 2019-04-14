@@ -243,13 +243,13 @@ public class InfoManager : MonoBehaviour {
     public Dictionary<StrategyT, float> GetStrategyPriority(AgentUnit unit) {
         return new Dictionary<StrategyT, float> {
             { StrategyT.ATK_BASE,
-                Util.HorizontalDistance(unit.position, enemyBase.position) },
+                Util.HorizontalDistance(unit.position, waypoints["enemyBase"].worldPosition) },
             { StrategyT.ATK_HALF,
                 new List<String>{"mid","mid"}.Min(waypoint => Util.HorizontalDistance(unit.position, waypoints[waypoint].worldPosition)) },
             { StrategyT.DEF_HALF,
                 new List<String>{"mid","mid"}.Min(waypoint => Util.HorizontalDistance(unit.position, waypoints[waypoint].worldPosition)) },
             { StrategyT.DEF_BASE,
-                Util.HorizontalDistance(unit.position, allyBase.position) }
+                Util.HorizontalDistance(unit.position, waypoints["allyBase"].worldPosition) }
         };
     }
 }

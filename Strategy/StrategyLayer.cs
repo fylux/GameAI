@@ -2,7 +2,7 @@
 using UnityEngine;
 
 public enum StrategyT {
-    DEF_BASE, DEF_HALF, ATK_HALF, ATK_BASE
+    DEF_BASE, DEF_HALF, ATK_BASE, ATK_HALF
 };
 
 public class StrategyLayer : MonoBehaviour {
@@ -210,7 +210,8 @@ public class StrategyLayer : MonoBehaviour {
     float WeightAtkbase() {
         Debug.Log("START ATKBASE");
         HashSet<AgentUnit> baseEnemies = info.UnitsNearBase(enemFac, enemFac, 20); //Cogemos los enemigos cercanos a la base enemiga
-        baseEnemies.UnionWith(info.GetUnitsFactionArea(info.waypoints["enemyBase"], 50, faction)); // Añadimos los aliados en territorio enemigo
+        baseEnemies.UnionWith(info.GetUnitsFactionArea(info.waypoints["enemyBase"], 45, faction)); // Añadimos los aliados en territorio enemigo
+
         float result = Mathf.Max(Mathf.Min(info.MilitaryAdvantage(baseEnemies, faction) - 1, 0.4f), -0.4f);
         Debug.Log("Gracias a la ventaja de las fuerzas aliadas en territorio enemigo frente a las enemigas en la base enemigo, tenemos un peso actual de " + result);
 
@@ -219,10 +220,10 @@ public class StrategyLayer : MonoBehaviour {
         result += Mathf.Max(Mathf.Min(info.MilitaryAdvantage(units, faction) - 1, 0.2f), -0.2f);
         Debug.Log("Teniendo en cuenta todas las unidades vivas, ese peso es ahora " + result);
 
-        HashSet<AgentUnit> unitsInOtherHalf = info.UnitsNearBase(enemFac, faction, 45); //Unidades de un bando en territorio del otro
-        unitsInOtherHalf.UnionWith(info.UnitsNearBase(faction, enemFac, 45));
-        float allyAdv = info.AreaMilitaryAdvantage(info.waypoints["enemyBase"], 45, faction);
-        float enemAdv = info.AreaMilitaryAdvantage(info.waypoints["allyBase"], 45, enemFac);
+        HashSet<AgentUnit> unitsInOtherHalf = info.UnitsNearBase(enemFac, faction, 40); //Unidades de un bando en territorio del otro
+        unitsInOtherHalf.UnionWith(info.UnitsNearBase(faction, enemFac, 40));
+        float allyAdv = info.AreaMilitaryAdvantage(info.waypoints["enemyBase"], 40, faction);
+        float enemAdv = info.AreaMilitaryAdvantage(info.waypoints["allyBase"], 40, enemFac);
 
         result += Mathf.Max(Mathf.Min(allyAdv - enemAdv, 0.4f), -0.4f);
         Debug.Log("Finalmente, comparandola ventaja atacante aliada con la enemiga, el peso de ATKBASE es de " + result);

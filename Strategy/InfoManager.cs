@@ -10,9 +10,9 @@ public class InfoManager : MonoBehaviour {
     public LayerMask unitsMask;
     public LayerMask healingMask;
 
+    public GameObject mid, top, bottom;
     public Dictionary<string, Node> waypoints = new Dictionary<string, Node>();
-    public Body allyBase, enemyBase;
-    public HashSet<AgentUnit> allies, enemies;
+
 
     [SerializeField]
     Faction faction;
@@ -22,6 +22,8 @@ public class InfoManager : MonoBehaviour {
 
     Collider[] hits = new Collider[40];
 
+    public HashSet<AgentUnit> allies;
+    public HashSet<AgentUnit> enemies;
 
     public void Initialize()
     { // Equivalente al Start. Se necesita coordinacion entre los Starts de StrategyLayer e InfoManager
@@ -31,9 +33,15 @@ public class InfoManager : MonoBehaviour {
         GameObject top = GameObject.Find("Top");
         GameObject bottom = GameObject.Find("Bottom");
 
+        GameObject allyBase = GameObject.Find("BaseAliada");
+        GameObject enemyBase = GameObject.Find("BaseEnemiga");
+
         waypoints.Add("mid", Map.NodeFromPosition(mid.transform.position));
         waypoints.Add("top", Map.NodeFromPosition(top.transform.position));
         waypoints.Add("bottom", Map.NodeFromPosition(bottom.transform.position));
+
+        waypoints.Add("downFront", Map.NodeFromPosition(GameObject.Find("DownFront").transform.position));
+        waypoints.Add("upFront", Map.NodeFromPosition(GameObject.Find("UpFront").transform.position));
 
         waypoints.Add("upMid", Map.NodeFromPosition(mid.transform.Find("UpMid").transform.position));
         waypoints.Add("downMid", Map.NodeFromPosition(mid.transform.Find("DownMid").transform.position));
@@ -44,11 +52,14 @@ public class InfoManager : MonoBehaviour {
         waypoints.Add("upBottom", Map.NodeFromPosition(bottom.transform.Find("UpBottom").transform.position));
         waypoints.Add("downBottom", Map.NodeFromPosition(bottom.transform.Find("DownBottom").transform.position));
 
-       /* foreach (KeyValuePair<string, GameObject> entry in waypoints)
-        {
-            waypointNode.Add(entry.Value, Map.NodeFromPosition(entry.Value.transform.position));
-            Debug.Log("Añadido el waypoint " + entry.Value + " en la posicion " + Map.NodeFromPosition(entry.Value.transform.position));
-        }*/
+        waypoints.Add("allyBase", Map.NodeFromPosition(allyBase.transform.position));
+        waypoints.Add("enemyBase", Map.NodeFromPosition(enemyBase.transform.position));
+
+        /* foreach (KeyValuePair<string, GameObject> entry in waypoints)
+         {
+             waypointNode.Add(entry.Value, Map.NodeFromPosition(entry.Value.transform.position));
+             Debug.Log("Añadido el waypoint " + entry.Value + " en la posicion " + Map.NodeFromPosition(entry.Value.transform.position));
+         }*/
 
 
         allies = new HashSet<AgentUnit>(Map.unitList.Where(agent => agent.faction == faction));
@@ -56,10 +67,12 @@ public class InfoManager : MonoBehaviour {
         enemies.ExceptWith(allies);
     }
 
-    private void OnDrawGizmosSelected() {
+    // Para comprobar tamaños de areas con el mapa del juego
+   /* private void OnDrawGizmosSelected()
+    {
         Gizmos.color = Color.yellow;
         Gizmos.DrawSphere(enemyBase.position, sphereSize);
-    }
+    }*/
 
     void Update () {
         //Node nodo = map.NodeFromPosition(position);
@@ -77,6 +90,7 @@ public class InfoManager : MonoBehaviour {
     */
     //Actualmente, layerMask 9 para unidades
     public HashSet<AgentUnit> GetUnitsArea(Node tile, float areaSize) {
+        //Debug.Log("Obteniendo unidades desde el punto " + tile + " con un area de " + areaSize);
         int nFound = Physics.OverlapSphereNonAlloc(tile.worldPosition, areaSize, hits, unitsMask);
         return new HashSet<AgentUnit>(hits.Take(nFound).Select(hit => hit.GetComponent<AgentUnit>()));
     }
@@ -86,7 +100,8 @@ public class InfoManager : MonoBehaviour {
     }
 
     public HashSet<AgentUnit> GetUnitsFactionArea(Node tile, float areaSize, Faction fact) {
-        return new HashSet<AgentUnit>(GetUnitsArea(tile, areaSize).Select(hit => hit.GetComponent<AgentUnit>()).Where(unit => unit.faction == fact));
+        int nFound = Physics.OverlapSphereNonAlloc(tile.worldPosition, areaSize, hits, unitsMask);
+        return new HashSet<AgentUnit>(hits.Take(nFound).Select(hit => hit.GetComponent<AgentUnit>()).Where(unit => unit.faction == fact));
     }
 
     public HashSet<AgentUnit> GetUnitsFactionArea(Node tile, Faction fact) {
@@ -95,25 +110,26 @@ public class InfoManager : MonoBehaviour {
 
     //CUIDADO: Puede devolver null si no hay unidades en ese rango
     public AgentUnit SelectClosestUnit(Node tile, float areaSize, Faction fact) {
-        return GetUnitsFactionArea(tile, areaSize, fact).OrderBy(unit => Util.NodeDistance(tile, Map.NodeFromPosition(unit.position))).FirstOrDefault();
+        HashSet<AgentUnit> units = GetUnitsFactionArea(tile, areaSize, fact);
+        return units.OrderBy(unit => Util.NodeDistance(tile, Map.NodeFromPosition(unit.position))).First();
     }
 
     public AgentUnit SelectClosestUnit(Node tile, float areaSize) {
-        return GetUnitsArea(tile, areaSize).OrderBy(unit => Util.NodeDistance(tile, Map.NodeFromPosition(unit.position))).FirstOrDefault();
+        HashSet<AgentUnit> units = GetUnitsArea(tile, areaSize);
+        return units.OrderBy(unit => Util.NodeDistance(tile, Map.NodeFromPosition(unit.position))).First();
     }
 
-    // Obtiene el numero de uniades aliadas que siguen esa estrategia en un area
+    // Obtiene el numero de unidades aliadas que siguen esa estrategia en un area
     public int StrategyFollowersArea(Node tile, StrategyT strat) {
         return GetUnitsArea(tile).Count(unit => unit.strategy == strat && unit.faction == faction); ;
     }
 
     public HashSet<AgentUnit> UnitsNearBase(Faction baseFaction, Faction unitsFaction, float areaSize) {
         Node nodo;
-
         if (baseFaction == Faction.A)
-            nodo = Map.NodeFromPosition(allyBase.position);
+            nodo = waypoints["allyBase"]; 
         else
-            nodo = Map.NodeFromPosition(enemyBase.position);
+            nodo = waypoints["enemyBase"];
 
         return GetUnitsFactionArea(nodo, areaSize, unitsFaction); 
     }
@@ -129,8 +145,17 @@ public class InfoManager : MonoBehaviour {
         Vector2 number = new Vector2(0, 0);
         Vector2 HP = new Vector2(0.00000000001f, 0.0000000001f); // Para evitar divisiones por cero
         Vector2 ATK = new Vector2(0.0000000001f, 0.0000000001f);
+        Vector2 melee = new Vector2(0, 0);
+        Vector2 ranged = new Vector2(0, 0);
+        Vector2 scouts = new Vector2(0, 0);
+        Vector2 artill = new Vector2(0, 0);
 
-        Dictionary<UnitT, Vector2> unitGroups = Enum.GetValues(typeof(UnitT)).Cast<UnitT>().ToDictionary(u => u, u => new Vector2(0, 0));
+        Dictionary<UnitT, Vector2> unitGroups = new Dictionary<UnitT, Vector2>() {
+            {UnitT.MELEE, new Vector2(0, 0) },
+            {UnitT.RANGED, new Vector2(0, 0) },
+            {UnitT.SCOUT, new Vector2(0, 0) },
+            {UnitT.ARTIL, new Vector2(0, 0) }
+        };
 
         foreach (AgentUnit unit in units) {
             int index = (int)unit.faction;
@@ -213,9 +238,14 @@ public class InfoManager : MonoBehaviour {
         return GetAreaInfluence(fac, node, areaSize);
     }
 
-    /*public float GetWaypointInfluence(Vector3 position, Faction faction) {
+
+    public float GetBaseInfluence(Body bs, Faction faction) {
+        return GetAreaInfluence(faction, Map.NodeFromPosition(bs.position));
+    }
+
+    public float GetWaypointInfluence(Vector3 position, Faction faction) {
         return GetAreaInfluence(faction, Map.NodeFromPosition(position));
-    }*/
+    }
 
 
     public List<Node> GetNodesInArea(Node node, float areaSize) {
@@ -238,18 +268,5 @@ public class InfoManager : MonoBehaviour {
         }
 
         return nodes;
-    }
-
-    public Dictionary<StrategyT, float> GetStrategyPriority(AgentUnit unit) {
-        return new Dictionary<StrategyT, float> {
-            { StrategyT.ATK_BASE,
-                Util.HorizontalDistance(unit.position, waypoints["enemyBase"].worldPosition) },
-            { StrategyT.ATK_HALF,
-                new List<String>{"mid","mid"}.Min(waypoint => Util.HorizontalDistance(unit.position, waypoints[waypoint].worldPosition)) },
-            { StrategyT.DEF_HALF,
-                new List<String>{"mid","mid"}.Min(waypoint => Util.HorizontalDistance(unit.position, waypoints[waypoint].worldPosition)) },
-            { StrategyT.DEF_BASE,
-                Util.HorizontalDistance(unit.position, waypoints["allyBase"].worldPosition) }
-        };
     }
 }

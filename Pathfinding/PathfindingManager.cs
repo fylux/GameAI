@@ -7,9 +7,9 @@ struct PathRequest {
     public Vector3 pathStart;
     public Vector3 pathEnd;
     public Dictionary<NodeT, float> cost;
-    public Action<Vector3[], bool> callback;
+    public Action<Vector3[], List<Node>, bool> callback;
 
-    public PathRequest(Vector3 pathStart, Vector3 pathEnd, Dictionary<NodeT, float> cost, Action<Vector3[], bool> callback) {
+    public PathRequest(Vector3 pathStart, Vector3 pathEnd, Dictionary<NodeT, float> cost, Action<Vector3[], List<Node>, bool> callback) {
         this.pathStart = pathStart;
         this.pathEnd = pathEnd;
         this.cost = cost;
@@ -32,7 +32,7 @@ public class PathfindingManager : MonoBehaviour {
         pathfinding = new AStar();
     }
 
-    public static void RequestPath(Vector3 pathStart, Vector3 pathEnd, Dictionary<NodeT, float> cost, Action<Vector3[], bool> callback) {
+    public static void RequestPath(Vector3 pathStart, Vector3 pathEnd, Dictionary<NodeT, float> cost, Action<Vector3[], List<Node>, bool> callback) {
         PathRequest newRequest = new PathRequest(pathStart, pathEnd, cost, callback);
         instance.requestQueue.Enqueue(newRequest);
         instance.ProcessNext();
@@ -46,8 +46,8 @@ public class PathfindingManager : MonoBehaviour {
         }
     }
 
-    public void FinishedProcessingPath(Vector3[] path, bool success) {
-        currentRequest.callback(path, success);
+    public void FinishedProcessingPath(Vector3[] path, List<Node> nodesPath, bool success) {
+        currentRequest.callback(path, nodesPath, success);
         searchingPath = false;
         ProcessNext();
     }

@@ -1,21 +1,20 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public enum UnitT
-{
+public enum UnitT {
     MELEE, RANGED, SCOUT, ARTIL
 };
 
 public abstract class AgentUnit : AgentNPC {
     Location path_target;
 
-    public Strategy strategy;
-
+    public StrategyT strategy;
     public Faction faction = Faction.A;
-
     public GameObject SelectCircle;
 
-    
+    public MilitarComponent militar = new MilitarComponent();
+
+
     protected Dictionary<NodeT, float> cost = new Dictionary<NodeT, float>() { //Coste por defecto, para casos de prueba
             { NodeT.ROAD, 1 },
             { NodeT.GRASS, 1.5f },
@@ -24,11 +23,12 @@ public abstract class AgentUnit : AgentNPC {
             { NodeT.MOUNTAIN, Mathf.Infinity}
         };
 
-    protected Dictionary<UnitT, float> atk = new Dictionary<UnitT, float>() { //Coste por defecto, para casos de prueba
-            { UnitT.MELEE, 1 },
-            { UnitT.RANGED, 1 },
-            { UnitT.SCOUT, 1 },
-            { UnitT.ARTIL, 1 }
+    public static float[,] atkTable = new float[4, 4] {
+            //Melee Ranged  Scout   Artill
+            {1,     1.5f,   2 ,     1 	},
+            {1, 	0.8f, 	1.5f, 	0.5f},
+            {0.75f,	1.25f, 	1, 		0.5f},
+            { 0.8f, 1.25f, 	1.5f, 	1	}
         };
 
 
@@ -36,8 +36,10 @@ public abstract class AgentUnit : AgentNPC {
     protected void Start() {
         base.Start();
         path_target = null;
-        health = maxHealth;
+        militar.SetAgent(this);
     }
+
+    abstract public UnitT GetUnitType();
 
     override
     protected void ApplyActuator()
@@ -108,45 +110,8 @@ public abstract class AgentUnit : AgentNPC {
         });
     }
 
-    [SerializeField]
-    const int maxHealth = 10;
-    public int health = 10;
-    public int attack = 6;
-    public int defense = 3;
-    
-
-    public void Attack(AgentUnit unit) {
-        float damage;
-        if (Random.Range(0,100) > 99f) {
-            damage = attack * 5;
-        }
-        else {
-            damage = attack * Random.Range(0.8f, 1.2f) /** factorTable*/;
-        }
-        unit.ReceiveAttack((int)Mathf.Round(damage));
-    }
-
-    public float ReceiveAttack(int amount) {
-        int damage = Mathf.Max(0, amount - defense);
-        Console.Log("Unit caused "+damage+" damage");
-        health = health - damage;
-        if (health < 0) {
-            Console.Log("Unit died");
-            this.gameObject.SetActive(false);
-        }
-        //Request to update selection text
-        return damage;
-    }
-
     public Dictionary<NodeT, float> Cost {
         get { return cost; }
-    }
-
-    public float MaxLife {
-        get { return maxHealth; }
-    }
-    public float Life {
-        get { return health; }
     }
 
     public float GetDropOff(float locationDistance) {

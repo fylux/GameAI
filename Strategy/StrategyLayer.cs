@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public enum Strategy {
+public enum StrategyT {
     DEF_BASE, DEF_HALF, ATK_BASE, ATK_HALF
 };
 
 public class StrategyLayer : MonoBehaviour {
 
-    Dictionary<Strategy, float> weights = new Dictionary<Strategy, float>() { { Strategy.DEF_BASE, 0 },
-                                                                              { Strategy.DEF_HALF, 0 },
-                                                                              { Strategy.ATK_BASE, 0 },
-                                                                              { Strategy.ATK_HALF, 0 } };
+    Dictionary<StrategyT, float> weights = new Dictionary<StrategyT, float>() { { StrategyT.DEF_BASE, 0 },
+                                                                              { StrategyT.DEF_HALF, 0 },
+                                                                              { StrategyT.ATK_BASE, 0 },
+                                                                              { StrategyT.ATK_HALF, 0 } };
 
     Dictionary<string, List<Node>> waypointArea;
 
@@ -47,8 +47,8 @@ public class StrategyLayer : MonoBehaviour {
     void Update () {
         if (Time.frameCount % 60 == 0)
         {
-            Dictionary<Strategy,float> newWeights = UpdateWeights();
-            foreach (KeyValuePair<Strategy, float> entry in weights)
+            Dictionary<StrategyT,float> newWeights = UpdateWeights();
+            foreach (KeyValuePair<StrategyT, float> entry in newWeights)
             {
                 Debug.Log("El valor de la estrategia " + entry.Key + " es de " + entry.Value);
                 if (Mathf.Abs(entry.Value - weights[entry.Key]) >= 0.15) //TODO: Decidir valor real. ¿Lo hacemos así o pedimos cambio estable?
@@ -58,12 +58,12 @@ public class StrategyLayer : MonoBehaviour {
             
 	}
 
-    Dictionary<Strategy, float> UpdateWeights() {
-        return new Dictionary<Strategy, float>(){
-            { Strategy.DEF_BASE, WeightDefbase() },
-            { Strategy.DEF_HALF, WeightDefhalf() },
-            { Strategy.ATK_HALF, WeightAtkhalf() },
-            { Strategy.ATK_BASE, WeightAtkbase() }
+    Dictionary<StrategyT, float> UpdateWeights() {
+        return new Dictionary<StrategyT, float>(){
+            { StrategyT.DEF_BASE, WeightDefbase() },
+            { StrategyT.DEF_HALF, WeightDefhalf() },
+            { StrategyT.ATK_HALF, WeightAtkhalf() },
+            { StrategyT.ATK_BASE, WeightAtkbase() }
         };
     }
 
@@ -152,8 +152,8 @@ public class StrategyLayer : MonoBehaviour {
 
     float WeightAllyInfluenceWaypoint(string waypoint)
     {
-        float allyInfl = info.GetAreaInfluence(faction, waypointArea[mapSide+waypoint]);
-        float enemyInfl = info.GetAreaInfluence(enemFac, waypointArea[mapSide + waypoint]);
+        float allyInfl = info.GetNodesInfluence(faction, waypointArea[mapSide+waypoint]);
+        float enemyInfl = info.GetNodesInfluence(enemFac, waypointArea[mapSide + waypoint]);
 
         Debug.Log("En el waypoint " + waypoint + " hay una influencia aliada de " + allyInfl + " y una influencia enemiga de " + enemyInfl);
         Debug.Log("Por tanto el waypoint " + waypoint + " contribuye al peso debido a influencias enemigas en -" + Mathf.Min(0.2f, Mathf.Max((enemyInfl - allyInfl),0)));
@@ -210,20 +210,19 @@ public class StrategyLayer : MonoBehaviour {
     float WeightAtkbase() {
         Debug.Log("START ATKBASE");
         HashSet<AgentUnit> baseEnemies = info.UnitsNearBase(enemFac, enemFac, 20); //Cogemos los enemigos cercanos a la base enemiga
-        baseEnemies.UnionWith(info.GetUnitsFactionArea(Map.NodeFromPosition(info.enemyBase.position), 50, faction)); // Añadimos los aliados en territorio enemigo
+        baseEnemies.UnionWith(info.GetUnitsFactionArea(info.waypoints["enemyBase"], 50, faction)); // Añadimos los aliados en territorio enemigo
         float result = Mathf.Max(Mathf.Min(info.MilitaryAdvantage(baseEnemies, faction) - 1, 0.4f), -0.4f);
         Debug.Log("Gracias a la ventaja de las fuerzas aliadas en territorio enemigo frente a las enemigas en la base enemigo, tenemos un peso actual de " + result);
+
         HashSet<AgentUnit> units = new HashSet<AgentUnit>(info.allies);
         units.UnionWith(info.enemies); // Tenemos ahora un hashset con todas las unidades vivas
-
         result += Mathf.Max(Mathf.Min(info.MilitaryAdvantage(units, faction) - 1, 0.2f), -0.2f);
         Debug.Log("Teniendo en cuenta todas las unidades vivas, ese peso es ahora " + result);
 
         HashSet<AgentUnit> unitsInOtherHalf = info.UnitsNearBase(enemFac, faction, 45); //Unidades de un bando en territorio del otro
         unitsInOtherHalf.UnionWith(info.UnitsNearBase(faction, enemFac, 45));
-
-        float allyAdv = info.AreaMilitaryAdvantage(Map.NodeFromPosition(info.enemyBase.position), 45, faction);
-        float enemAdv = info.AreaMilitaryAdvantage(Map.NodeFromPosition(info.allyBase.position), 45, enemFac);
+        float allyAdv = info.AreaMilitaryAdvantage(info.waypoints["enemyBase"], 45, faction);
+        float enemAdv = info.AreaMilitaryAdvantage(info.waypoints["allyBase"], 45, enemFac);
 
         result += Mathf.Max(Mathf.Min(allyAdv - enemAdv, 0.4f), -0.4f);
         Debug.Log("Finalmente, comparandola ventaja atacante aliada con la enemiga, el peso de ATKBASE es de " + result);

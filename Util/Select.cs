@@ -24,12 +24,15 @@ public class Select : MonoBehaviour {
     [SerializeField]
     Text selectionText;
 
+    //MilitaryResourcesAllocator militaryResourceAllocator = new MilitaryResourcesAllocator();
 
     void Update() {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
         if (Input.GetButtonDown("Fire1")) {
+            //militaryResourceAllocator.AllocateResources();
+
             if (Physics.Raycast(ray, out hit, Mathf.Infinity, unitLayer)) {
                 FinishSelection();
                 AddUnit(hit.transform.gameObject.GetComponent<AgentUnit>());
@@ -108,7 +111,7 @@ public class Select : MonoBehaviour {
             else if (unit is Artillery) prefix = "[A]";
             else if (unit is Scout)     prefix = "[S]";
             else                        prefix = "[U]";
-            selectionText.text += prefix +" " +unit.name + " " + unit.Life + "/" + unit.MaxLife + "\n";
+            selectionText.text += prefix +" " +unit.name + " " + unit.militar.Life + "/" + unit.militar.MaxLife + "\n";
         }
     }
 

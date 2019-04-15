@@ -4,13 +4,29 @@ using UnityEngine;
 
 public class OrderAsignDefBase : OrderAsign {
 
-	override
+    private void Start()
+    {
+        usableUnits = Map.unitList;
+    }
+
+    private void Update()
+    {
+        if (Time.frameCount % 60 == 0)
+        {
+            Debug.Log("APLICANDO ESTRATEGIA --> ORDENES");
+            ApplyStrategy();
+        }
+    }
+
+
+    override
     public void ApplyStrategy()
     {
         foreach (AgentUnit unit in usableUnits)
         {
+            Debug.Log("El waypoint del allyBase es " + info.waypoints["allyBase"]); // ¿NOT SET?
             List<Body> healPts;
-            if (unit.militar.health <= unit.militar.MaxLife * 0.3 && (healPts = info.GetHealingPoints(Map.NodeFromPosition(unit.position), 20)).Count > 0)
+            if (unit.militar.health <= unit.militar.MaxLife * 0.3 && (healPts = info.GetHealingPoints(Map.NodeFromPosition(unit.position), 60)).Count > 0)
             {
                 foreach (Body hp in healPts)
                 {

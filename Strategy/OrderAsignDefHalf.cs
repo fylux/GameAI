@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class OrderAsignDefHalf : OrderAsign {
 
-	override
+
+    
+    override
     public void ApplyStrategy()
     {
         foreach (AgentUnit unit in usableUnits)

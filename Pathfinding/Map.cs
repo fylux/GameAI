@@ -8,7 +8,7 @@ public class Map {
     public static Node[,] grid = null;
     static Vector2 gridSize;
 
-    public static HashSet<AgentUnit> unitList;
+    public static List<AgentUnit> unitList;
 
 
     //This is called from load map
@@ -18,7 +18,7 @@ public class Map {
         gridSize = _gridSize;
         mapX = grid.GetLength(0);
         mapY = grid.GetLength(1);
-        unitList = new HashSet<AgentUnit>();
+        unitList = new List<AgentUnit>();
         
         foreach (GameObject npc in GameObject.FindGameObjectsWithTag("NPC")) {
             unitList.Add(npc.GetComponent<AgentUnit>());

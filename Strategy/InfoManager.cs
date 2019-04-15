@@ -33,8 +33,8 @@ public class InfoManager : MonoBehaviour {
         GameObject top = GameObject.Find("Top");
         GameObject bottom = GameObject.Find("Bottom");
 
-        Body allyBase = GameObject.Find("BaseAliada").GetComponent<Body>();
-        Body enemyBase = GameObject.Find("BaseEnemiga").GetComponent<Body>();
+        GameObject allyBase = GameObject.Find("BaseAliada");
+        GameObject enemyBase = GameObject.Find("BaseEnemiga");
 
         waypoints.Add("mid", Map.NodeFromPosition(mid.transform.position));
         waypoints.Add("top", Map.NodeFromPosition(top.transform.position));
@@ -52,8 +52,8 @@ public class InfoManager : MonoBehaviour {
         waypoints.Add("upBottom", Map.NodeFromPosition(bottom.transform.Find("UpBottom").transform.position));
         waypoints.Add("downBottom", Map.NodeFromPosition(bottom.transform.Find("DownBottom").transform.position));
 
-        waypoints.Add("allyBase", Map.NodeFromPosition(allyBase.position));
-        waypoints.Add("enemyBase", Map.NodeFromPosition(enemyBase.position));
+        waypoints.Add("allyBase", Map.NodeFromPosition(allyBase.transform.position));
+        waypoints.Add("enemyBase", Map.NodeFromPosition(enemyBase.transform.position));
 
         /* foreach (KeyValuePair<string, GameObject> entry in waypoints)
          {
@@ -126,7 +126,6 @@ public class InfoManager : MonoBehaviour {
 
     public HashSet<AgentUnit> UnitsNearBase(Faction baseFaction, Faction unitsFaction, float areaSize) {
         Node nodo;
-
         if (baseFaction == Faction.A)
             nodo = waypoints["allyBase"]; 
         else

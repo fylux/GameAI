@@ -2,7 +2,7 @@
 using UnityEngine;
 
 public enum StrategyT {
-    DEF_BASE, DEF_HALF, ATK_HALF, ATK_BASE
+    DEF_BASE, DEF_HALF, ATK_BASE, ATK_HALF
 };
 
 public class StrategyLayer : MonoBehaviour {

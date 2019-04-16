@@ -193,14 +193,15 @@ public class StrategyLayer : MonoBehaviour {
         Debug.Log("La proximidad de unidades enemigas en su territorio contribuye a ATKHALF en " + result);
 
         // Para calcular la diferencia de fuerza en los waypoints, mismo sistema que en DEFHALF
-        float area = 20;
-        float inflM = Mathf.Max(Mathf.Min(info.AreaMilitaryAdvantage(info.waypoints["mid"], area, faction) - 1, 0.5f), -0.35f);
-        float inflT = Mathf.Max(Mathf.Min(info.AreaMilitaryAdvantage(info.waypoints["top"], area, faction) - 1, 0.35f), -0.25f);
-        float inflB = Mathf.Max(Mathf.Min(info.AreaMilitaryAdvantage(info.waypoints["bottom"], area, faction) - 1, 0.35f), -0.25f);
-        Debug.Log("En mid, la ventaja militar de los aliados es de " + inflM);
-        Debug.Log("En top, la ventaja militar de los aliados es de " + inflT);
-        Debug.Log("En bottom, la ventaja militar de los aliados es de " + inflB);
-        result += Mathf.Max(inflM, Mathf.Max(inflT, inflB));
+       // float area = 20;
+        float inflM = Mathf.Max(Mathf.Min(info.AreaMilitaryAdvantage(info.waypoints["enemyBase"], 45, faction) - 1, 0.5f), -0.5f);
+        /*  float inflT = Mathf.Max(Mathf.Min(info.AreaMilitaryAdvantage(info.waypoints["top"], area, faction) - 1, 0.35f), -0.25f);
+          float inflB = Mathf.Max(Mathf.Min(info.AreaMilitaryAdvantage(info.waypoints["bottom"], area, faction) - 1, 0.35f), -0.25f);
+          Debug.Log("En mid, la ventaja militar de los aliados es de " + inflM);
+          Debug.Log("En top, la ventaja militar de los aliados es de " + inflT);
+          Debug.Log("En bottom, la ventaja militar de los aliados es de " + inflB);
+          result += Mathf.Max(inflM, Mathf.Max(inflT, inflB));*/
+        result += inflM;
 
         Debug.Log("El peso dado a ATKHALF es de " + result);
 

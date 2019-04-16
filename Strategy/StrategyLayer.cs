@@ -7,7 +7,7 @@ public enum StrategyT {
 
 public class StrategyLayer : MonoBehaviour {
 
-    Dictionary<StrategyT, float> weights = new Dictionary<StrategyT, float>() { { StrategyT.DEF_BASE, 0 },
+    Dictionary<StrategyT, float> importance = new Dictionary<StrategyT, float>() { { StrategyT.DEF_BASE, 0 },
                                                                               { StrategyT.DEF_HALF, 0 },
                                                                               { StrategyT.ATK_BASE, 0 },
                                                                               { StrategyT.ATK_HALF, 0 } };
@@ -47,27 +47,27 @@ public class StrategyLayer : MonoBehaviour {
     void Update () {
         if (Time.frameCount % 60 == 0)
         {
-            Dictionary<StrategyT,float> newWeights = UpdateWeights();
+            Dictionary<StrategyT,float> newWeights = UpdateImportance();
             foreach (KeyValuePair<StrategyT, float> entry in newWeights)
             {
                 Debug.Log("El valor de la estrategia " + entry.Key + " es de " + entry.Value);
-                if (Mathf.Abs(entry.Value - weights[entry.Key]) >= 0.15) //TODO: Decidir valor real. ¿Lo hacemos así o pedimos cambio estable?
-                    weights = newWeights;
+                if (Mathf.Abs(entry.Value - importance[entry.Key]) >= 0.15) //TODO: Decidir valor real. ¿Lo hacemos así o pedimos cambio estable?
+                    importance = newWeights;
             }
         }
             
 	}
 
-    Dictionary<StrategyT, float> UpdateWeights() {
+    Dictionary<StrategyT, float> UpdateImportance() {
         return new Dictionary<StrategyT, float>(){
-            { StrategyT.DEF_BASE, WeightDefbase() },
-            { StrategyT.DEF_HALF, WeightDefhalf() },
-            { StrategyT.ATK_HALF, WeightAtkhalf() },
-            { StrategyT.ATK_BASE, WeightAtkbase() }
+            { StrategyT.DEF_BASE, Mathf.Clamp(ImportanceDefbase(), 0, 1) },
+            { StrategyT.DEF_HALF, Mathf.Clamp(ImportanceDefhalf(), 0, 1) },
+            { StrategyT.ATK_HALF, Mathf.Clamp(ImportanceAtkhalf(), 0, 1) },
+            { StrategyT.ATK_BASE, Mathf.Clamp(ImportanceAtkbase(), 0, 1) }
         };
     }
 
-    float WeightDefbase()
+    float ImportanceDefbase()
     {
         // Desde el centro de la base, un radio de 50 cubre todo el territorio relevante
         // 40 sería un "casi llegando a la base"
@@ -99,22 +99,22 @@ public class StrategyLayer : MonoBehaviour {
         return result;
     }
 
-    float WeightDefhalf() {
+    float ImportanceDefhalf() {
         Debug.Log("START DEFHALF");
         float[] result = new float[3]; //0 = mid, 1 = top, 2 = bottom
         // Separamos los tres waypoints para asegurarnos de tratar el caso de cada waypoint por separado y no mezclar resultados
 
         // Comprobamos el numero de unidades enemigas cerca de cada waypoint. A más, más interesante será tomar esta estrategia
         // El waypoint central cuenta más, ya que es el más importante
-        result[0] = WeightUnitsNearWaypoint("mid", 0.5f, 0.4f);
-        result[1] = WeightUnitsNearWaypoint("top", 0.4f, 0.3f);
-        result[2] = WeightUnitsNearWaypoint("bottom", 0.4f, 0.3f);
+        result[0] = ImportanceUnitsNearWaypoint("mid", 0.5f, 0.4f);
+        result[1] = ImportanceUnitsNearWaypoint("top", 0.4f, 0.3f);
+        result[2] = ImportanceUnitsNearWaypoint("bottom", 0.4f, 0.3f);
 
         // Ahora comprobamos la influencia aliada cerca del waypoint (pero no exactamente en el waypoint). Si el enemigo tiene mucha más influencia,
         // habría quizá que reconsiderar que el camino es peligroso
-        result[0] -= WeightAllyInfluenceWaypoint("Mid"); 
-        result[1] -= WeightAllyInfluenceWaypoint("Top");
-        result[2] -= WeightAllyInfluenceWaypoint("Bottom");
+        result[0] -= ImportanceAllyInfluenceWaypoint("Mid"); 
+        result[1] -= ImportanceAllyInfluenceWaypoint("Top");
+        result[2] -= ImportanceAllyInfluenceWaypoint("Bottom");
 
         float area = 20;
         // En el mejor caso para nosotros, tendremos un +0.5 en mid, que significa que al menos doblamos en fuerza al enemigo. En el peor, -0.35,
@@ -139,7 +139,7 @@ public class StrategyLayer : MonoBehaviour {
         return maxWeight;
     }
 
-    float WeightUnitsNearWaypoint(string waypoint, float nearMult, float farMult)
+    float ImportanceUnitsNearWaypoint(string waypoint, float nearMult, float farMult)
     {
         HashSet<AgentUnit> near = info.GetUnitsFactionArea(info.waypoints[waypoint], 8, enemFac);
         HashSet<AgentUnit> far = info.GetUnitsFactionArea(info.waypoints[waypoint], 15, enemFac);
@@ -150,7 +150,7 @@ public class StrategyLayer : MonoBehaviour {
         return result;
     }
 
-    float WeightAllyInfluenceWaypoint(string waypoint)
+    float ImportanceAllyInfluenceWaypoint(string waypoint)
     {
         float allyInfl = info.GetNodesInfluence(faction, waypointArea[mapSide+waypoint]);
         float enemyInfl = info.GetNodesInfluence(enemFac, waypointArea[mapSide + waypoint]);
@@ -161,7 +161,7 @@ public class StrategyLayer : MonoBehaviour {
         return Mathf.Min(0.2f, Mathf.Max((enemyInfl - allyInfl), 0)); // Preferimos que la influencia en nuestro lado sea nuestra
     }
 
-    float WeightAtkhalf() {
+    float ImportanceAtkhalf() {
         // Desde el centro de la base, un radio de 50 cubre todo el territorio relevante
         // 40 sería un "casi llegando a la base"
         // 25 sería que están en la misma base
@@ -208,7 +208,7 @@ public class StrategyLayer : MonoBehaviour {
         return result;
     }
 
-    float WeightAtkbase() {
+    float ImportanceAtkbase() {
         Debug.Log("START ATKBASE");
         HashSet<AgentUnit> baseEnemies = info.UnitsNearBase(enemFac, enemFac, 20); //Cogemos los enemigos cercanos a la base enemiga
         baseEnemies.UnionWith(info.GetUnitsFactionArea(info.waypoints["enemyBase"], 45, faction)); // Añadimos los aliados en territorio enemigo

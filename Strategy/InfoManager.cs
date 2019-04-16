@@ -64,7 +64,7 @@ public class InfoManager : MonoBehaviour {
 
     private void OnDrawGizmosSelected() {
         Gizmos.color = Color.yellow;
-        Gizmos.DrawSphere(enemyBase.position, sphereSize);
+        Gizmos.DrawSphere(waypoints["enemyBase"].worldPosition, sphereSize);
     }
 
     void Update () {

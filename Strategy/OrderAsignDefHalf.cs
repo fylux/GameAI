@@ -11,12 +11,20 @@ public class OrderAsignDefHalf : OrderAsign {
     {
         foreach (AgentUnit unit in usableUnits)
         {
-            if (unit.militar.health <= unit.militar.MaxLife * 0.3)
+            Debug.Log("El waypoint del allyBase es " + info.waypoints["allyBase"]); // ¿NOT SET?
+            List<Body> healPts;
+            if (unit.militar.health <= unit.militar.MaxLife * 0.3 && (healPts = info.GetHealingPoints(Map.NodeFromPosition(unit.position), 60)).Count > 0)
             {
-                // Comprobar los puntos de curación en un rango (AÑADIRLO A LAS CONDICIONES DEL IF)
-                // En caso de haber alguno, comprueba si en algún punto del camino la influencia supera cierto umbral
-                // Si NO lo supera, darle la orden GoTo hacia el punto de curación (o alguna orden enfocada a irse, curarse, y volver
-                // Si SI lo supera, se ignorará esta orden
+                foreach (Body hp in healPts)
+                {
+                    Debug.Log("La unidad " + unit + " tiene un healing point cercano: " + hp);
+                }
+                Body closerPoint = Util.GetCloserBody(healPts, Map.NodeFromPosition(unit.position));
+
+                if (closerPoint != null)
+                {
+                    Debug.Log("Asignada a la unidad " + unit + " la orden GoTo con destino el healPoint" + closerPoint);
+                }
             }
             else if (info.AreaMilitaryAdvantage(info.waypoints["allyBase"], 25, faction) > 1.2f) // ¿Agrandar el area con varios niveles?
             {

@@ -28,8 +28,8 @@ public class InfoManager : MonoBehaviour {
         GameObject top = GameObject.Find("Top");
         GameObject bottom = GameObject.Find("Bottom");
 
-        GameObject allyBase = GameObject.Find("BaseAliada");
-        GameObject enemyBase = GameObject.Find("BaseEnemiga");
+        GameObject allyBase = GameObject.Find("AllyBase");
+        GameObject enemyBase = GameObject.Find("EnemyBase");
 
         waypoints.Add("mid", Map.NodeFromPosition(mid.transform.position));
         waypoints.Add("top", Map.NodeFromPosition(top.transform.position));
@@ -62,10 +62,10 @@ public class InfoManager : MonoBehaviour {
         enemies.ExceptWith(allies);
     }
 
-    private void OnDrawGizmosSelected() {
+  /*  private void OnDrawGizmosSelected() {
         Gizmos.color = Color.yellow;
         Gizmos.DrawSphere(waypoints["enemyBase"].worldPosition, sphereSize);
-    }
+    }*/
 
     void Update () {
         //Node nodo = map.NodeFromPosition(position);
@@ -116,7 +116,7 @@ public class InfoManager : MonoBehaviour {
     public HashSet<AgentUnit> UnitsNearBase(Faction baseFaction, Faction unitsFaction, float areaSize) {
         Node nodo;
 
-        if (baseFaction == Faction.A)
+        if (baseFaction == faction)
             nodo = waypoints["allyBase"];
         else
             nodo = waypoints["enemyBase"];

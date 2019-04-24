@@ -152,6 +152,7 @@ public class StrategyLayer : MonoBehaviour {
 
     float ImportanceAllyInfluenceWaypoint(string waypoint)
     {
+        Debug.Log("Vamos a buscar el waypoint" + mapSide + waypoint);
         float allyInfl = info.GetNodesInfluence(faction, waypointArea[mapSide+waypoint]);
         float enemyInfl = info.GetNodesInfluence(enemFac, waypointArea[mapSide + waypoint]);
 
@@ -210,7 +211,7 @@ public class StrategyLayer : MonoBehaviour {
 
     float ImportanceAtkbase() {
         Debug.Log("START ATKBASE");
-        HashSet<AgentUnit> baseEnemies = info.UnitsNearBase(enemFac, enemFac, 20); //Cogemos los enemigos cercanos a la base enemiga
+        HashSet<AgentUnit> baseEnemies = info.UnitsNearBase(enemFac, enemFac, 25); //Cogemos los enemigos cercanos a la base enemiga
         baseEnemies.UnionWith(info.GetUnitsFactionArea(info.waypoints["enemyBase"], 45, faction)); // Añadimos los aliados en territorio enemigo
 
         float result = Mathf.Clamp(info.MilitaryAdvantage(baseEnemies, faction) - 1, -0.4f, 0.4f);

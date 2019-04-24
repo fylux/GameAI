@@ -25,7 +25,7 @@ public class OrderAsignDefBase : OrderAsign {
         foreach (AgentUnit unit in usableUnits)
         {
             Debug.Log("El waypoint del allyBase es " + info.waypoints["allyBase"]); // ¿NOT SET?
-            List<Body> healPts;
+           /* List<Body> healPts;
             if (unit.militar.health <= unit.militar.MaxLife * 0.3 && (healPts = info.GetHealingPoints(Map.NodeFromPosition(unit.position), 60)).Count > 0)
             {
                 foreach (Body hp in healPts)
@@ -38,8 +38,8 @@ public class OrderAsignDefBase : OrderAsign {
                 {
                     Debug.Log("Asignada a la unidad " + unit + " la orden GoTo con destino el healPoint" + closerPoint);
                 }
-            }
-            else if (info.AreaMilitaryAdvantage(info.waypoints["allyBase"], 25, faction) > 1.2f) // ¿Agrandar el area con varios niveles?
+            }*/
+            if (info.AreaMilitaryAdvantage(info.waypoints["allyBase"], 25, faction) > 1.2f) // ¿Agrandar el area con varios niveles?
             {
                 // Todas las unidades usables reciben la orden de defender la zona de delante de la base
                 Node dest;

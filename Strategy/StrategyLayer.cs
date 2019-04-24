@@ -15,7 +15,7 @@ public class StrategyLayer : MonoBehaviour {
     Dictionary<string, List<Node>> waypointArea;
 
 
-    string chosenWaypoint = "mid";
+    static public string chosenWaypoint = "mid";
 
     InfoManager info;
 

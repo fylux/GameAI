@@ -50,12 +50,6 @@ public class InfoManager : MonoBehaviour {
         waypoints.Add("allyBase", Map.NodeFromPosition(allyBase.transform.position));
         waypoints.Add("enemyBase", Map.NodeFromPosition(enemyBase.transform.position));
 
-        /* foreach (KeyValuePair<string, GameObject> entry in waypoints)
-         {
-             waypointNode.Add(entry.Value, Map.NodeFromPosition(entry.Value.transform.position));
-             Debug.Log("Añadido el waypoint " + entry.Value + " en la posicion " + Map.NodeFromPosition(entry.Value.transform.position));
-         }*/
-
 
         allies = new HashSet<AgentUnit>(Map.unitList.Where(agent => agent.faction == faction));
         enemies = new HashSet<AgentUnit>(Map.unitList);
@@ -246,14 +240,14 @@ public class InfoManager : MonoBehaviour {
         return nodes;
     }
 
-    public Dictionary<StrategyT, float> GetStrategyPriority(AgentUnit unit) {
+    public Dictionary<StrategyT, float> GetStrategyPriority(AgentUnit unit, Faction faction) {
         return new Dictionary<StrategyT, float> {
             { StrategyT.ATK_BASE,
                 Util.HorizontalDistance(unit.position, waypoints["enemyBase"].worldPosition) },
             { StrategyT.ATK_HALF,
-                new List<String>{"mid","mid"}.Min(waypoint => Util.HorizontalDistance(unit.position, waypoints[waypoint].worldPosition)) },
+                Util.HorizontalDistance(unit.position, waypoints[faction == Faction.A ? "upFront" : "downFront"].worldPosition) }, //¿COrrecto?
             { StrategyT.DEF_HALF,
-                new List<String>{"mid","mid"}.Min(waypoint => Util.HorizontalDistance(unit.position, waypoints[waypoint].worldPosition)) },
+                Util.HorizontalDistance(unit.position, waypoints[StrategyLayer.chosenWaypoint].worldPosition) },
             { StrategyT.DEF_BASE,
                 Util.HorizontalDistance(unit.position, waypoints["allyBase"].worldPosition) }
         };

@@ -111,7 +111,7 @@ public class Select : MonoBehaviour {
             else if (unit is Artillery) prefix = "[A]";
             else if (unit is Scout)     prefix = "[S]";
             else                        prefix = "[U]";
-            selectionText.text += prefix +" " +unit.name + " " + unit.militar.Life + "/" + unit.militar.MaxLife + "\n";
+            selectionText.text += prefix +" " +unit.name + " " + unit.militar.health + "/" + unit.militar.maxHealth + "\n";
         }
     }
 

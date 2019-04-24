@@ -13,7 +13,7 @@ public class OrderAsignDefHalf : OrderAsign {
         {
             Debug.Log("El waypoint del allyBase es " + info.waypoints["allyBase"]); // ¿NOT SET?
             List<Body> healPts;
-            if (unit.militar.health <= unit.militar.MaxLife * 0.3 && (healPts = info.GetHealingPoints(Map.NodeFromPosition(unit.position), 60)).Count > 0)
+            if (unit.militar.health <= unit.militar.maxHealth * 0.3 && (healPts = info.GetHealingPoints(Map.NodeFromPosition(unit.position), 60)).Count > 0)
             {
                 foreach (Body hp in healPts)
                 {

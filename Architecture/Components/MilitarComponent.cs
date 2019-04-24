@@ -5,7 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class MilitarComponent : UnitComponent {
 
-    const int maxHealth = 10;
+    public int maxHealth = 10;
     public int health = 10;
     public int attack = 6;
     public int defense = 3;
@@ -35,14 +35,6 @@ public class MilitarComponent : UnitComponent {
         }
         //Request to update selection text
         return damage;
-    }
-
-
-    public float MaxLife {
-        get { return maxHealth; }
-    }
-    public float Life {
-        get { return health; }
     }
 
 }

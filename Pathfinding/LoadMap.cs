@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 
 
@@ -76,35 +77,20 @@ public class LoadMap : MonoBehaviour {
                 }
 
                 int x1 = x, y1 = y;
-                bool ok = true;
                 NodeT type = tiles[x, y];
 
-                ok = true;
-                while (ok && x1 + 1 < mapX) {
-                    ok = true;
+                while (x1 + 1 < mapX && Enumerable.Range(y, y1 - y + 1).All(i => tiles[x1 + 1, i] == type && !used[x1 + 1, y])) {
                     for (int i = y; i <= y1; ++i) {
-                        ok = ok && tiles[x1 + 1, i] == type;
+                        used[x1 + 1, i] = true;
                     }
-                    if (ok) {
-                        for (int i = y; i <= y1; ++i) {
-                            used[x1 + 1, i] = true;
-                        }
-                        x1++;
-                    }
+                    x1++;
                 }
 
-                ok = true;
-                while (ok && y1 + 1 < mapX) {
-                    ok = true;
+                while (y1 + 1 < mapY && Enumerable.Range(x, x1-x + 1).All(i => tiles[i, y1 + 1] == type && !used[i, y1 + 1])) {
                     for (int i = x; i <= x1; ++i) {
-                        ok = ok && tiles[i, y1 + 1] == type;
+                        used[i, y1 + 1] = true;
                     }
-                    if (ok) {
-                        for (int i = x; i <= x1; ++i) {
-                            used[i, y1 + 1] = true;
-                        }
-                        y1++;
-                    }
+                    y1++;
                 }
 
                 int rows = x1 - x + 1;

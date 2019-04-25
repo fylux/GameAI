@@ -29,7 +29,10 @@ public class MilitaryResourcesAllocator : MonoBehaviour{
 
     public void AllocateResources() {
 
+        Debug.Log("ALLOCATING RESOURCES");
+
         int nTotalAvailableUnits = Map.unitList.Count;
+
 
         foreach (StrategyT strategy in weights.Keys.ToList()) {
             if (weights[strategy] < 0.2) {

@@ -78,8 +78,10 @@ public class MilitaryResourcesAllocator : MonoBehaviour{
         //it is more affine
 
         Dictionary<AgentUnit, Dictionary<StrategyT, float>> strategyAffinity = availableUnits.ToDictionary(u => u, u => info.GetStrategyPriority(u, faction));
-        foreach (StrategyT strategy in weights.Keys) {
-            if (nUnitsAllocToStrategy[strategy] > 0) {
+        while (weights.Keys.Any(s => nUnitsAllocToStrategy[s] > 0))
+        {
+            foreach (StrategyT strategy in weights.Keys.Where(s => nUnitsAllocToStrategy[s] > 0))
+            {
                 AgentUnit mostAffineUnit = strategyAffinity.OrderBy(unit => unit.Value[strategy]).First().Key;
 
                 unitsAssignedToStrategy[strategy].Add(mostAffineUnit);

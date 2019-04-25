@@ -28,15 +28,15 @@ public class MilitaryResourcesAllocator : MonoBehaviour{
     }
 
     public void AllocateResources() {
+        HashSet<AgentUnit> availableUnits = new HashSet<AgentUnit>(Map.unitList.Where(unit => unit.faction == faction));
+        int nTotalAvailableUnits = availableUnits.Count;
 
-        int nTotalAvailableUnits = Map.unitList.Count;
-
-        foreach (StrategyT strategy in weights.Keys.ToList()) {
+        /*foreach (StrategyT strategy in weights.Keys) {
             if (weights[strategy] < 0.2) {
                 weights.Remove(strategy);
             }
             //weight.Value *= weighting
-        }
+        }*/
 
         if (weights.Count == 0) {
             Debug.LogError("No strategy has enough importance");
@@ -44,14 +44,12 @@ public class MilitaryResourcesAllocator : MonoBehaviour{
 
         //Normalize
         float sum = weights.Sum(w => w.Value);
-        foreach (StrategyT strategy in weights.Keys.ToList()) {
+        foreach (StrategyT strategy in weights.Keys) {
             weights[strategy] /= sum;
-
         }
 
         Dictionary<StrategyT, HashSet<AgentUnit>> unitsAssignedToStrategy = new Dictionary<StrategyT, HashSet<AgentUnit>>();
-        HashSet<AgentUnit> availableUnits = new HashSet<AgentUnit>(Map.unitList);
-
+        
         //Map to number of units
         //If there are remaining units due to rounding errors are assigned to the most important strategy
         Dictionary<StrategyT, int> nUnitsAllocToStrategy = weights.ToDictionary(w => w.Key, w => (int)w.Value * nTotalAvailableUnits);
@@ -75,8 +73,8 @@ public class MilitaryResourcesAllocator : MonoBehaviour{
         //it is more affine
 
         Dictionary<AgentUnit, Dictionary<StrategyT, float>> strategyAffinity = availableUnits.ToDictionary(u => u, u => info.GetStrategyPriority(u, faction));
-        foreach (StrategyT strategy in weights.Keys) {
-            if (nUnitsAllocToStrategy[strategy] > 0) {
+        while (weights.Keys.Any(s => nUnitsAllocToStrategy[s] > 0)) {
+            foreach (StrategyT strategy in weights.Keys.Where(s => nUnitsAllocToStrategy[s] > 0)) {
                 AgentUnit mostAffineUnit = strategyAffinity.OrderBy(unit => unit.Value[strategy]).First().Key;
 
                 unitsAssignedToStrategy[strategy].Add(mostAffineUnit);
@@ -85,6 +83,7 @@ public class MilitaryResourcesAllocator : MonoBehaviour{
                 nUnitsAllocToStrategy[strategy]--;
             }
         }
+        
 
         //Asign units randomly
         /*HashSet<AgentUnit> assignedUnits = new HashSet<AgentUnit>();

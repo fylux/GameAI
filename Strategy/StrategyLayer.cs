@@ -13,11 +13,12 @@ public class StrategyLayer : MonoBehaviour {
                                                                               { StrategyT.ATK_HALF, 0 } };
 
     Dictionary<string, List<Node>> waypointArea;
-
+   
 
     static public string chosenWaypoint = "mid";
 
     InfoManager info;
+    MilitaryResourcesAllocator milit;
 
     [SerializeField]
     Faction faction;
@@ -44,19 +45,28 @@ public class StrategyLayer : MonoBehaviour {
         waypointArea = new Dictionary<string, List<Node>>() { { mapSide+"Mid", info.GetNodesInArea(info.waypoints[mapSide + "Mid"], 5) },
                                                               { mapSide+"Top", info.GetNodesInArea(info.waypoints[mapSide + "Top"], 5) },
                                                               { mapSide+"Bottom", info.GetNodesInArea(info.waypoints[mapSide + "Bottom"], 5) }};
+
+        milit = GetComponent<MilitaryResourcesAllocator>();
     }
 
     // Update is called once per frame
     void Update () {
         if (Time.frameCount % 60 == 0)
         {
+            bool changed = false;
+
             Dictionary<StrategyT,float> newWeights = UpdateImportance();
             foreach (KeyValuePair<StrategyT, float> entry in newWeights)
             {
                 Debug.Log("El valor de la estrategia " + entry.Key + " es de " + entry.Value);
                 if (Mathf.Abs(entry.Value - importance[entry.Key]) >= 0.15) //TODO: Decidir valor real. ¿Lo hacemos así o pedimos cambio estable?
+                {
                     importance = newWeights;
+                    changed = true;
+                }
             }
+            if (changed)
+                milit.AllocateResources();
         }
             
 	}

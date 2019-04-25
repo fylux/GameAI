@@ -31,7 +31,7 @@ public class MilitaryResourcesAllocator : MonoBehaviour{
         HashSet<AgentUnit> availableUnits = new HashSet<AgentUnit>(Map.unitList.Where(unit => unit.faction == faction));
         int nTotalAvailableUnits = availableUnits.Count;
 
-        /*foreach (StrategyT strategy in weights.Keys) {
+        /*foreach (StrategyT strategy in weights.Keys.ToList()) {
             if (weights[strategy] < 0.2) {
                 weights.Remove(strategy);
             }

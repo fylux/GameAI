@@ -56,7 +56,7 @@ public class InfoManager : MonoBehaviour {
         enemies.ExceptWith(allies);
     }
 
-  /*  private void OnDrawGizmosSelected() {
+   /* private void OnDrawGizmosSelected() {
         Gizmos.color = Color.yellow;
         Gizmos.DrawSphere(waypoints["enemyBase"].worldPosition, sphereSize);
     }*/

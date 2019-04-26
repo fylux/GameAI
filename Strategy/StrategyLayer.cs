@@ -12,6 +12,12 @@ public class StrategyLayer : MonoBehaviour {
                                                                               { StrategyT.ATK_BASE, 0 },
                                                                               { StrategyT.ATK_HALF, 0 } };
 
+    Dictionary<StrategyT, OrderAsign> orders = new Dictionary<StrategyT, OrderAsign>() {
+                                                                              { StrategyT.DEF_BASE, new OrderAsignDefBase() },
+                                                                              { StrategyT.DEF_HALF, new OrderAsignDefHalf() },
+                                                                              { StrategyT.ATK_BASE, new OrderAsignDefBase() },
+                                                                              { StrategyT.ATK_HALF, new OrderAsignDefBase() } };
+
     Dictionary<string, List<Node>> waypointArea;
    
 
@@ -66,7 +72,14 @@ public class StrategyLayer : MonoBehaviour {
                 }
             }
             if (changed)
+            {
                 milit.AllocateResources();
+                foreach (AgentUnit unit in info.allies)
+                {
+                    // Coger la estrategia de la unidad y añadir la unidad a la OrderAssign (diccionario) de esa estrategia
+                }
+            }
+                
         }
             
 	}

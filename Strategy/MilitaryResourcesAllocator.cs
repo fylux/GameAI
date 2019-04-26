@@ -5,6 +5,14 @@ using UnityEngine;
 
 public class MilitaryResourcesAllocator : MonoBehaviour {
 
+   /* Dictionary<StrategyT, HashSet<AgentUnit>> strategyUnits = new Dictionary<StrategyT, HashSet<AgentUnit>>()
+    {
+        { StrategyT.ATK_BASE, new HashSet<AgentUnit>() },
+        { StrategyT.ATK_HALF, new HashSet<AgentUnit>() },
+        { StrategyT.DEF_BASE, new HashSet<AgentUnit>() },
+        { StrategyT.DEF_HALF, new HashSet<AgentUnit>() }
+    };*/
+
     Dictionary<StrategyT, float> weights; //let's better call it priority or interest, weight is another thing
     Dictionary<StrategyT, Color> strategyColor = new Dictionary<StrategyT, Color>() {
             { StrategyT.ATK_BASE, Color.magenta},
@@ -28,6 +36,7 @@ public class MilitaryResourcesAllocator : MonoBehaviour {
     }
 
     public void AllocateResources() {
+      //  ClearUnitSets(); // Vaciamos los sets que contienen las unidades de cada estrategia
         HashSet<AgentUnit> availableUnits = new HashSet<AgentUnit>(Map.unitList.Where(unit => unit.faction == faction));
         int nTotalAvailableUnits = availableUnits.Count;
         Debug.Log("Total units " + nTotalAvailableUnits);
@@ -81,7 +90,7 @@ public class MilitaryResourcesAllocator : MonoBehaviour {
         Dictionary<AgentUnit, Dictionary<StrategyT, float>> strategyAffinity = availableUnits.ToDictionary(u => u, u => info.GetStrategyPriority(u, faction));
         while (weights.Keys.Any(s => nUnitsAllocToStrategy[s] > 0)) {
             foreach (StrategyT strategy in weights.Keys.Where(s => nUnitsAllocToStrategy[s] > 0)) {
-                AgentUnit mostAffineUnit = strategyAffinity.OrderBy(unit => unit.Value[strategy]).Last().Key;
+                AgentUnit mostAffineUnit = strategyAffinity.OrderBy(unit => unit.Value[strategy]).First().Key;
 
                 unitsAssignedToStrategy[strategy].Add(mostAffineUnit);
                 strategyAffinity.Remove(mostAffineUnit);
@@ -116,7 +125,33 @@ public class MilitaryResourcesAllocator : MonoBehaviour {
         }
     }
 
+   /* void ClearUnitSets()
+    {
+        foreach (KeyValuePair<StrategyT,HashSet<AgentUnit>> tuple in strategyUnits)
+        {
+            tuple.Value.Clear();
+        }
+    }
 
+    void CheckUnitsStrategy()
+    {
+        Debug.Log("Unidades --> ");
+        Debug.Log("Defbase tiene " + strategyUnits[StrategyT.DEF_BASE].Count);
+        Debug.Log("Defhalf tiene " + strategyUnits[StrategyT.DEF_HALF].Count);
+        Debug.Log("Atkhalf tiene " + strategyUnits[StrategyT.ATK_HALF].Count);
+        Debug.Log("Atkbase tiene " + strategyUnits[StrategyT.ATK_BASE].Count);
+
+
+        foreach (KeyValuePair<StrategyT, HashSet<AgentUnit>> tuple in strategyUnits)
+        {
+            foreach (AgentUnit unit in tuple.Value)
+            {
+                Debug.Log("La estrategia " + tuple.Key + " tiene a la unidad " + unit);
+            }
+            
+        }
+    }
+    */
     public void SetWeights(Dictionary<StrategyT, float> weights) {
         this.weights = weights;
     }

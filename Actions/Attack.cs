@@ -10,7 +10,7 @@ public class Attack : Task {
 
 	public Attack(AgentUnit agent, AgentUnit targetEnemy, Action<bool> callback) : base(agent,callback) {
         this.targetEnemy = targetEnemy;
-        follow = new Follow(agent, targetEnemy, (_) => { });
+        follow = new Follow(agent, targetEnemy, (_) => { }, 2f);
         timeLastAttack = Time.fixedTime;
     }
 

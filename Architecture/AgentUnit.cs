@@ -98,16 +98,16 @@ public abstract class AgentUnit : AgentNPC {
         if (task != null)
             task.Terminate();
 
-        /*task = new Attack(this, enemy, (bool sucess) => {
+        task = new Attack(this, enemy, (bool sucess) => {
             Debug.Log("Task finished");
             task.Terminate();
             task = null;
-        });*/
-        task = new DefendZone(this, position, 6f, (bool sucess) => {
+        });
+        /*task = new DefendZone(this, position, 6f, (bool sucess) => {
             Debug.Log("Defend finished");
             task.Terminate();
             task = null;
-        });
+        });*/
     }
 
     public void SetTask(Task new_task) {

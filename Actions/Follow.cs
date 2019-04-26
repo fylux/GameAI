@@ -11,22 +11,34 @@ public class Follow : Task {
     GoTo goTo;
     bool inRange;
     float timeStamp;
+    float secondsLookahead;
 
-	public Follow(AgentUnit agent, AgentUnit target, Action<bool> callback) : base(agent,callback) {
+	public Follow(AgentUnit agent, AgentUnit target, Action<bool> callback, float secondsLookahead) : base(agent,callback) {
         this.target = target;
         this.lastTargetPosition = target.position;
-        this.goTo = new GoTo(agent, target.position, (_) => {});
+        this.goTo = new GoTo(agent, GetFutureTargetPosition(), (_) => {});
+        this.secondsLookahead = secondsLookahead;
         inRange = false;
         timeStamp = Time.fixedTime;
     }
 
     bool ReconsiderPath() {
-        if (Util.HorizontalDistance(lastTargetPosition, target.position) > 0.2) {
-            goTo.SetNewTarget(target.position);
-            lastTargetPosition = target.position;
+        if (Util.HorizontalDistance(lastTargetPosition, GetFutureTargetPosition()) > 0.2) {
+            goTo.SetNewTarget(GetFutureTargetPosition());
+            lastTargetPosition = GetFutureTargetPosition();
             return true;
         }
         return false;
+    }
+
+    Vector3 GetFutureTargetPosition() {
+        float lookAhead = Util.HorizontalDistance(agent.position, target.position) / 2f ;
+        Debug.Log("look: " + lookAhead); 
+        //Only predict if it is not too close
+        if (Util.HorizontalDistance(agent.position, target.position) > 4f)
+            return target.position + target.velocity * lookAhead;
+        else
+            return target.position;
     }
 
     public override Steering Apply() {

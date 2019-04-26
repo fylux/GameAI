@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class OrderAsign : MonoBehaviour {
+public abstract class OrderAsign {
 
     public HashSet<AgentUnit> usableUnits;
 

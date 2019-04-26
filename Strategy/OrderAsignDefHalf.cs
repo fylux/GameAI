@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class OrderAsignDefHalf : OrderAsign {
-
-
-    
+ 
     override
     public void ApplyStrategy()
     {

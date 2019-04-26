@@ -73,10 +73,25 @@ public class StrategyLayer : MonoBehaviour {
             }
             if (changed)
             {
+                Debug.Log("HAN CAMBIADO LOS VALORES DE ESTRATEGIA, REASIGNANDO TROPAS");
                 milit.AllocateResources();
+
+                foreach (KeyValuePair<StrategyT, OrderAsign> tuple in orders)
+                {
+                    tuple.Value.usableUnits = new HashSet<AgentUnit>();
+                }
+
                 foreach (AgentUnit unit in info.allies)
                 {
                     // Coger la estrategia de la unidad y añadir la unidad a la OrderAssign (diccionario) de esa estrategia
+                    // Debug.Log("Añadiendo la unidad " + unit + " a las usableUnits de " + unit.strategy);
+                    orders[unit.strategy].usableUnits.Add(unit);
+                }
+                foreach (KeyValuePair<StrategyT, OrderAsign> tuple in orders)
+                {
+                    Debug.Log("Miembros recibiendo ordenes de la estrategia " + tuple.Key);
+                    foreach (AgentUnit unit in tuple.Value.usableUnits)
+                        Debug.Log("------> " + unit);
                 }
             }
                 

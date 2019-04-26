@@ -2,7 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class OrderAsignDefBase : OrderAsign {
+public class OrderAsignAtkBase : OrderAsign {
+
+    private void Start()
+    {
+        usableUnits = Map.unitList;
+    }
+
+    private void Update()
+    {
+        if (Time.frameCount % 60 == 0)
+        {
+            Debug.Log("APLICANDO ESTRATEGIA --> ORDENES");
+            ApplyStrategy();
+        }
+    }
+
 
     override
     public void ApplyStrategy()

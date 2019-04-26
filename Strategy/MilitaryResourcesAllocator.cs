@@ -121,6 +121,7 @@ public class MilitaryResourcesAllocator : MonoBehaviour {
 
             foreach (AgentUnit unit in unitsAssignedToStrategy[strategy]) {
                 unit.GetComponent<Renderer>().material.color = strategyColor[strategy];
+                unit.strategy = strategy;
             }
         }
     }

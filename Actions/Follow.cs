@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //Considerar variacion basada en pursue sin pathfinding en vez de GoTo
-public class Follow : BaseTask {
+public class Follow : Task {
 
     AgentUnit target;
     Vector3 lastTargetPosition;

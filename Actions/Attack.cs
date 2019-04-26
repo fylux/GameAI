@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-public class Attack : BaseTask {
+public class Attack : Task {
 
     AgentUnit targetEnemy;
     bool killedEnemy = true;

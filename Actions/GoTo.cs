@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class GoTo : BaseTask {
+public class GoTo : Task {
 
     GameObject empty;
     PathFollowing pathF;

@@ -110,6 +110,22 @@ public abstract class AgentUnit : AgentNPC {
         });
     }
 
+    public void SetTask(Task new_task) {
+        if (task != null)
+            task.Terminate();
+
+        //Apart from the callback logic we need to Terminate it and set it to null
+        var callback = new_task.GetCallback();
+        callback += (bool success) => {
+                task.Terminate();
+                task = null;
+            };
+        new_task.SetCallback(callback);
+
+        task = new_task;
+    }
+
+
     public Dictionary<NodeT, float> Cost {
         get { return cost; }
     }

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DefendZone : BaseTask {
+public class DefendZone : Task {
 
     Vector3 center;
     float rangeRadius;

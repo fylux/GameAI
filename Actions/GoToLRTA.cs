@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class GoToLRTA : BaseTask {
+public class GoToLRTA : Task {
 
     GameObject empty;
     PathFollowing pathF;

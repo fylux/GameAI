@@ -240,12 +240,39 @@ public class InfoManager : MonoBehaviour {
         return nodes;
     }
 
+    public List<HashSet<AgentUnit>> GetClusters(Faction faction) {
+        List<HashSet<AgentUnit>> clusters = new List<HashSet<AgentUnit>>();
+
+        var enemies = new HashSet<AgentUnit>(Map.unitList.Where(unit => unit.faction == faction));
+        while (enemies.Count > 0) {
+            HashSet<AgentUnit> cluster = new HashSet<AgentUnit>();
+            Stack<AgentUnit> neighbours = new Stack<AgentUnit>();
+            neighbours.Push(enemies.First());
+            cluster.Add(enemies.First());
+            enemies.Remove(enemies.First());
+
+            while (neighbours.Count > 0) {
+                AgentUnit currentEnemy = neighbours.Pop();
+                var nearEnemies = Physics.OverlapSphere(currentEnemy.position, 5f, unitsMask).Select(coll => coll.GetComponent<AgentUnit>()).Intersect(enemies);
+                foreach (AgentUnit nearEnemy in nearEnemies) {
+                    Debug.DrawLine(currentEnemy.position, nearEnemy.position);
+                    neighbours.Push(nearEnemy);
+                    enemies.Remove(nearEnemy);
+                    cluster.Add(nearEnemy);
+                }
+            }
+            var clusterCenter = cluster.Aggregate(new Vector3(0, 0, 0), (center, unit) => center + unit.position) / cluster.Count;
+            clusters.Add(cluster);
+        }
+        return clusters;
+    }
+
     public Dictionary<StrategyT, float> GetStrategyPriority(AgentUnit unit, Faction faction) {
         return new Dictionary<StrategyT, float> {
             { StrategyT.ATK_BASE,
                 Util.HorizontalDistance(unit.position, waypoints["enemyBase"].worldPosition) },
             { StrategyT.ATK_HALF,
-                Util.HorizontalDistance(unit.position, waypoints[faction == Faction.A ? "upFront" : "downFront"].worldPosition) }, //¿COrrecto?
+                Util.HorizontalDistance(unit.position, waypoints[faction == Faction.A ? "upFront" : "downFront"].worldPosition) }, //¿Correcto?
             { StrategyT.DEF_HALF,
                 Util.HorizontalDistance(unit.position, waypoints[StrategyLayer.chosenWaypoint].worldPosition) },
             { StrategyT.DEF_BASE,

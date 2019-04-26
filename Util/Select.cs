@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Select : MonoBehaviour {
 
     [SerializeField]
-    public LayerMask unitLayer;
+    public LayerMask unitMask;
 
     [SerializeField]
-    LayerMask terrainLayer;
+    LayerMask terrainMask;
 
     [SerializeField]
     GameObject prefabSelectBox;
@@ -24,20 +25,17 @@ public class Select : MonoBehaviour {
     [SerializeField]
     Text selectionText;
 
-    //MilitaryResourcesAllocator militaryResourceAllocator = new MilitaryResourcesAllocator();
 
     void Update() {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
         if (Input.GetButtonDown("Fire1")) {
-            //militaryResourceAllocator.AllocateResources();
-
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity, unitLayer)) {
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, unitMask)) {
                 FinishSelection();
                 AddUnit(hit.transform.gameObject.GetComponent<AgentUnit>());
             }
-            else if (Physics.Raycast(ray, out hit, Mathf.Infinity, terrainLayer)) {
+            else if (Physics.Raycast(ray, out hit, Mathf.Infinity, terrainMask)) {
                 FinishSelection();
 
                 upper_left = hit.point + new Vector3(0, 1f, 0);
@@ -48,7 +46,7 @@ public class Select : MonoBehaviour {
 
         //Resize selectBox
         if (Input.GetButton("Fire1") && selectBox != null) {
-            Physics.Raycast(ray, out hit, Mathf.Infinity, terrainLayer);
+            Physics.Raycast(ray, out hit, Mathf.Infinity, terrainMask);
             lower_right = hit.point + new Vector3(0, 1f, 0);
             Vector3 z = lower_right - upper_left;
             selectBox.transform.localScale = new Vector3(Mathf.Abs(z.x), 1, Mathf.Abs(z.z)) / 10f;
@@ -61,13 +59,13 @@ public class Select : MonoBehaviour {
         }
 
         if (Input.GetButtonUp("Fire2") && selectedUnits.Count > 0) {
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity, unitLayer)) {
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, unitMask)) {
                 Console.Log(selectedUnits.Count + " Units going to attack target");
                 foreach (AgentUnit unit in selectedUnits) {
                     unit.AttackEnemy(hit.transform.GetComponent<AgentUnit>());
                 }
             }
-            else if (Physics.Raycast(ray, out hit, Mathf.Infinity, terrainLayer)) {
+            else if (Physics.Raycast(ray, out hit, Mathf.Infinity, terrainMask)) {
                 GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
                 cube.transform.position = hit.point;
                 cube.transform.localScale = new Vector3(0.4f, 0.1f, 0.4f);

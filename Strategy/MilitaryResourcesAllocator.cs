@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class MilitaryResourcesAllocator : MonoBehaviour {
+public class MilitaryResourcesAllocator {
 
     /* Dictionary<StrategyT, HashSet<AgentUnit>> strategyUnits = new Dictionary<StrategyT, HashSet<AgentUnit>>()
      {
@@ -33,8 +33,9 @@ public class MilitaryResourcesAllocator : MonoBehaviour {
     InfoManager info;
     public Faction faction;
 
-    void Start() {
-        info = GetComponent<InfoManager>();
+    public MilitaryResourcesAllocator(Faction faction) {
+        info = InfoManager.instance;
+        this.faction = faction;
 
         priority = new Dictionary<StrategyT, float>() {
             { StrategyT.ATK_BASE, 0.5f},
@@ -52,11 +53,15 @@ public class MilitaryResourcesAllocator : MonoBehaviour {
     }
 
 
-    public void AllocateResources() {
+    public Dictionary<StrategyT, HashSet<AgentUnit>> AllocateResources() {
         //  ClearUnitSets(); // Vaciamos los sets que contienen las unidades de cada estrategia
         HashSet<AgentUnit> availableUnits = new HashSet<AgentUnit>(Map.unitList.Where(unit => unit.faction == faction));
         int nTotalAvailableUnits = availableUnits.Count;
-        Debug.Log("Total units " + nTotalAvailableUnits);
+
+        //All strategies must have a set, even if it is empty
+        Dictionary<StrategyT, HashSet<AgentUnit>> unitsAssignedToStrategy = priority.Keys.ToDictionary(strategy => strategy, _ => new HashSet<AgentUnit>());
+
+        Debug.Log("Total units " + availableUnits.Count);
 
         weigthStrategies();
         normalizeStrategies();
@@ -67,7 +72,6 @@ public class MilitaryResourcesAllocator : MonoBehaviour {
             Debug.Log("No strategy has enough importance");
         }
 
-        Dictionary<StrategyT, HashSet<AgentUnit>> unitsAssignedToStrategy = new Dictionary<StrategyT, HashSet<AgentUnit>>();
 
         //Map to number of units
         //If there are remaining units due to rounding errors are assigned to the most important strategy
@@ -151,6 +155,8 @@ public class MilitaryResourcesAllocator : MonoBehaviour {
                 unit.strategy = strategy;
             }
         }
+
+        return unitsAssignedToStrategy;
     }
 
     public void weigthStrategies() {

@@ -19,6 +19,11 @@ public class InfoManager : MonoBehaviour {
 
     Collider[] hits = new Collider[40];
 
+    public static InfoManager instance;
+
+    public void Awake() {
+        instance = this;
+    }
 
     public void Initialize()
     { // Equivalente al Start. Se necesita coordinacion entre los Starts de StrategyLayer e InfoManager

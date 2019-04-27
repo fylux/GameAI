@@ -5,45 +5,30 @@ public enum StrategyT {
     DEF_BASE, DEF_HALF, ATK_BASE, ATK_HALF
 };
 
-public class StrategyLayer : MonoBehaviour {
+public class StrategyLayer {
 
-    Dictionary<StrategyT, float> importance = new Dictionary<StrategyT, float>() { { StrategyT.DEF_BASE, 0 },
+    Dictionary<StrategyT, float> priority = new Dictionary<StrategyT, float>() { { StrategyT.DEF_BASE, 0 },
                                                                               { StrategyT.DEF_HALF, 0 },
                                                                               { StrategyT.ATK_BASE, 0 },
                                                                               { StrategyT.ATK_HALF, 0 } };
 
-    Dictionary<StrategyT, OrderAsign> orders = new Dictionary<StrategyT, OrderAsign>() {
-                                                                              { StrategyT.DEF_BASE, new OrderAsignDefBase() },
-                                                                              { StrategyT.DEF_HALF, new OrderAsignDefHalf() },
-                                                                              { StrategyT.ATK_BASE, new OrderAsignDefBase() },
-                                                                              { StrategyT.ATK_HALF, new OrderAsignDefBase() } };
-
     Dictionary<string, List<Node>> waypointArea;
-   
+
 
     static public string chosenWaypoint = "mid";
-
-    InfoManager info;
-    MilitaryResourcesAllocator milit;
-
-    [SerializeField]
-    Faction faction;
-
     string mapSide;
-    Faction enemFac;
+    InfoManager info;
+    Faction faction, enemyFac;
 
-    void Start()
-    {
-        info = GetComponent<InfoManager>();
+    public StrategyLayer(Faction faction) {
+        this.faction = faction;
+        info = InfoManager.instance;
         info.Initialize();
-        if (faction == Faction.A)
-        {
-            enemFac = Faction.B;
+        if (faction == Faction.A) {
+            enemyFac = Faction.B;
             mapSide = "up";
-        }
-        else
-        {
-            enemFac = Faction.A;
+        } else {
+            enemyFac = Faction.A;
             mapSide = "down";
         }
         // Dado que, más adelante, tendremos que consultar la influencia en el área alrededor de estos waypoints a cada segundo, vamos a tener guardados
@@ -51,75 +36,48 @@ public class StrategyLayer : MonoBehaviour {
         waypointArea = new Dictionary<string, List<Node>>() { { mapSide+"Mid", info.GetNodesInArea(info.waypoints[mapSide + "Mid"], 5) },
                                                               { mapSide+"Top", info.GetNodesInArea(info.waypoints[mapSide + "Top"], 5) },
                                                               { mapSide+"Bottom", info.GetNodesInArea(info.waypoints[mapSide + "Bottom"], 5) }};
-
-        milit = GetComponent<MilitaryResourcesAllocator>();
     }
 
-    // Update is called once per frame
-    void Update () {
-        if (Time.frameCount % 60 == 0)
-        {
-            bool changed = false;
+    public bool Apply() {
+        bool changed = false;
 
-            Dictionary<StrategyT,float> newWeights = UpdateImportance();
-            foreach (KeyValuePair<StrategyT, float> entry in newWeights)
+        Dictionary<StrategyT, float> newPriority = ComputePriority();
+        foreach (StrategyT strategy in newPriority.Keys) {
+            Debug.Log("El valor de la estrategia " + strategy + " es de " + newPriority[strategy]);
+            if (Mathf.Abs(newPriority[strategy] - priority[strategy]) >= 0.15) //TODO: Decidir valor real. ¿Lo hacemos así o pedimos cambio estable?
             {
-                Debug.Log("El valor de la estrategia " + entry.Key + " es de " + entry.Value);
-                if (Mathf.Abs(entry.Value - importance[entry.Key]) >= 0.15) //TODO: Decidir valor real. ¿Lo hacemos así o pedimos cambio estable?
-                {
-                    importance = newWeights;
-                    changed = true;
-                }
+                priority = newPriority;
+                changed = true;
             }
-            if (changed)
-            {
-                Debug.Log("HAN CAMBIADO LOS VALORES DE ESTRATEGIA, REASIGNANDO TROPAS");
-                milit.AllocateResources();
-
-                foreach (KeyValuePair<StrategyT, OrderAsign> tuple in orders)
-                {
-                    tuple.Value.usableUnits = new HashSet<AgentUnit>();
-                }
-
-                foreach (AgentUnit unit in info.allies)
-                {
-                    // Coger la estrategia de la unidad y añadir la unidad a la OrderAssign (diccionario) de esa estrategia
-                    // Debug.Log("Añadiendo la unidad " + unit + " a las usableUnits de " + unit.strategy);
-                    orders[unit.strategy].usableUnits.Add(unit);
-                }
-                foreach (KeyValuePair<StrategyT, OrderAsign> tuple in orders)
-                {
-                    Debug.Log("Miembros recibiendo ordenes de la estrategia " + tuple.Key);
-                    foreach (AgentUnit unit in tuple.Value.usableUnits)
-                        Debug.Log("------> " + unit);
-                }
-            }
-                
         }
-            
-	}
 
-    Dictionary<StrategyT, float> UpdateImportance() {
-        float defbase = Mathf.Clamp(ImportanceDefbase(), 0, 1);
-        float defhalf = Mathf.Clamp(ImportanceDefhalf(), 0, 1);
+        return changed;
+    }
+
+    public Dictionary<StrategyT, float> GetPriority() {
+        return priority;
+    }
+
+    Dictionary<StrategyT, float> ComputePriority() {
+        float defbase = Mathf.Clamp(PriorityDefbase(), 0, 1);
+        float defhalf = Mathf.Clamp(PriorityDefhalf(), 0, 1);
 
         return new Dictionary<StrategyT, float>(){
             { StrategyT.DEF_BASE, defbase },
             { StrategyT.DEF_HALF, defhalf },
             { StrategyT.ATK_HALF, 1 - (Mathf.Max(defbase,defhalf)) },
-            { StrategyT.ATK_BASE, Mathf.Clamp(ImportanceAtkbase(), 0, 1) }
+            { StrategyT.ATK_BASE, Mathf.Clamp(PriorityAtkbase(), 0, 1) }
         };
     }
 
-    float ImportanceDefbase()
-    {
+    float PriorityDefbase() {
         // Desde el centro de la base, un radio de 50 cubre todo el territorio relevante
         // 40 sería un "casi llegando a la base"
         // 25 sería que están en la misma base
         Debug.Log("START DEFBASE");
-        HashSet<AgentUnit> near = info.UnitsNearBase(faction, enemFac, 25);
-        HashSet<AgentUnit> mid = info.UnitsNearBase(faction, enemFac, 40);
-        HashSet<AgentUnit> far = info.UnitsNearBase(faction, enemFac, 50);
+        HashSet<AgentUnit> near = info.UnitsNearBase(faction, enemyFac, 25);
+        HashSet<AgentUnit> mid = info.UnitsNearBase(faction, enemyFac, 40);
+        HashSet<AgentUnit> far = info.UnitsNearBase(faction, enemyFac, 50);
 
         far.ExceptWith(mid);
         far.ExceptWith(near);
@@ -128,7 +86,7 @@ public class StrategyLayer : MonoBehaviour {
 
         float result = 0;
 
-        foreach(AgentUnit unit in near) {
+        foreach (AgentUnit unit in near) {
             result += ((float)1 / 20) * 0.8f; // ¿Deberiamos considerar el "peor caso" antes, o no tiene sentido?
         }
         foreach (AgentUnit unit in mid) {
@@ -148,22 +106,22 @@ public class StrategyLayer : MonoBehaviour {
         return result;
     }
 
-    float ImportanceDefhalf() {
+    float PriorityDefhalf() {
         Debug.Log("START DEFHALF");
         float[] result = new float[3]; //0 = mid, 1 = top, 2 = bottom
         // Separamos los tres waypoints para asegurarnos de tratar el caso de cada waypoint por separado y no mezclar resultados
 
         // Comprobamos el numero de unidades enemigas cerca de cada waypoint. A más, más interesante será tomar esta estrategia
         // El waypoint central cuenta más, ya que es el más importante
-        result[0] = ImportanceUnitsNearWaypoint("mid", 0.4f, 0.3f);
-        result[1] = ImportanceUnitsNearWaypoint("top", 0.3f, 0.2f);
-        result[2] = ImportanceUnitsNearWaypoint("bottom", 0.3f, 0.2f);
+        result[0] = PriorityUnitsNearWaypoint("mid", 0.4f, 0.3f);
+        result[1] = PriorityUnitsNearWaypoint("top", 0.3f, 0.2f);
+        result[2] = PriorityUnitsNearWaypoint("bottom", 0.3f, 0.2f);
 
         // Ahora comprobamos la influencia aliada cerca del waypoint (pero no exactamente en el waypoint). Si el enemigo tiene mucha más influencia,
         // habría quizá que reconsiderar que el camino es peligroso
-        result[0] -= ImportanceAllyInfluenceWaypoint("Mid"); 
-        result[1] -= ImportanceAllyInfluenceWaypoint("Top");
-        result[2] -= ImportanceAllyInfluenceWaypoint("Bottom");
+        result[0] -= PriorityAllyInfluenceWaypoint("Mid");
+        result[1] -= PriorityAllyInfluenceWaypoint("Top");
+        result[2] -= PriorityAllyInfluenceWaypoint("Bottom");
 
         float area = 20;
         // En el mejor caso para nosotros, tendremos un +0.5 en mid, que significa que al menos doblamos en fuerza al enemigo. En el peor, -0.35,
@@ -196,10 +154,9 @@ public class StrategyLayer : MonoBehaviour {
         return maxWeight;
     }
 
-    float ImportanceUnitsNearWaypoint(string waypoint, float nearMult, float farMult)
-    {
-        HashSet<AgentUnit> near = info.GetUnitsFactionArea(info.waypoints[waypoint], 8, enemFac);
-        HashSet<AgentUnit> far = info.GetUnitsFactionArea(info.waypoints[waypoint], 15, enemFac);
+    float PriorityUnitsNearWaypoint(string waypoint, float nearMult, float farMult) {
+        HashSet<AgentUnit> near = info.GetUnitsFactionArea(info.waypoints[waypoint], 8, enemyFac);
+        HashSet<AgentUnit> far = info.GetUnitsFactionArea(info.waypoints[waypoint], 15, enemyFac);
 
         far.ExceptWith(near);
         float result = (nearMult / 20) * near.Count + (farMult / 20) * far.Count;
@@ -207,26 +164,25 @@ public class StrategyLayer : MonoBehaviour {
         return result;
     }
 
-    float ImportanceAllyInfluenceWaypoint(string waypoint)
-    {
+    float PriorityAllyInfluenceWaypoint(string waypoint) {
         Debug.Log("Vamos a buscar el waypoint" + mapSide + waypoint);
-        float allyInfl = info.GetNodesInfluence(faction, waypointArea[mapSide+waypoint]);
-        float enemyInfl = info.GetNodesInfluence(enemFac, waypointArea[mapSide + waypoint]);
+        float allyInfl = info.GetNodesInfluence(faction, waypointArea[mapSide + waypoint]);
+        float enemyInfl = info.GetNodesInfluence(enemyFac, waypointArea[mapSide + waypoint]);
 
         Debug.Log("En el waypoint " + waypoint + " hay una influencia aliada de " + allyInfl + " y una influencia enemiga de " + enemyInfl);
-        Debug.Log("Por tanto el waypoint " + waypoint + " contribuye al peso debido a influencias enemigas en -" + Mathf.Min(0.2f, Mathf.Max((enemyInfl - allyInfl),0)));
+        Debug.Log("Por tanto el waypoint " + waypoint + " contribuye al peso debido a influencias enemigas en -" + Mathf.Min(0.2f, Mathf.Max((enemyInfl - allyInfl), 0)));
 
         return Mathf.Min(0.2f, Mathf.Max((enemyInfl - allyInfl), 0)); // Preferimos que la influencia en nuestro lado sea nuestra
     }
 
-    float ImportanceAtkhalf() {
+    float PriorityAtkhalf() {
         // Desde el centro de la base, un radio de 50 cubre todo el territorio relevante
         // 40 sería un "casi llegando a la base"
         // 25 sería que están en la misma base
         Debug.Log("START ATKHALF");
-        HashSet<AgentUnit> near = info.UnitsNearBase(enemFac, enemFac, 25);
-        HashSet<AgentUnit> mid = info.UnitsNearBase(enemFac, enemFac, 40);
-        HashSet<AgentUnit> far = info.UnitsNearBase(enemFac, enemFac, 50);
+        HashSet<AgentUnit> near = info.UnitsNearBase(enemyFac, enemyFac, 25);
+        HashSet<AgentUnit> mid = info.UnitsNearBase(enemyFac, enemyFac, 40);
+        HashSet<AgentUnit> far = info.UnitsNearBase(enemyFac, enemyFac, 50);
 
         far.ExceptWith(mid);
         far.ExceptWith(near);
@@ -235,23 +191,20 @@ public class StrategyLayer : MonoBehaviour {
 
         float result = 0;
 
-        foreach (AgentUnit unit in near)
-        {
+        foreach (AgentUnit unit in near) {
             result += ((float)1 / 20); // ¿Deberiamos considerar el "peor caso" antes, o no tiene sentido?
         }
-        foreach (AgentUnit unit in mid)
-        {
+        foreach (AgentUnit unit in mid) {
             result += ((float)1 / 20) * 0.75f;
         }
-        foreach (AgentUnit unit in far)
-        {
+        foreach (AgentUnit unit in far) {
             result += ((float)1 / 20) * 0.5f;
         }
 
         Debug.Log("La proximidad de unidades enemigas en su territorio contribuye a ATKHALF en " + result);
 
         // Para calcular la diferencia de fuerza en los waypoints, mismo sistema que en DEFHALF
-       // float area = 20;
+        // float area = 20;
         float inflM = Mathf.Clamp(info.AreaMilitaryAdvantage(info.waypoints["enemyBase"], 45, faction) - 1, -0.5f, 0.5f);
         /*  float inflT = Mathf.Max(Mathf.Min(info.AreaMilitaryAdvantage(info.waypoints["top"], area, faction) - 1, 0.35f), -0.25f);
           float inflB = Mathf.Max(Mathf.Min(info.AreaMilitaryAdvantage(info.waypoints["bottom"], area, faction) - 1, 0.35f), -0.25f);
@@ -266,9 +219,9 @@ public class StrategyLayer : MonoBehaviour {
         return result;
     }
 
-    float ImportanceAtkbase() {
+    float PriorityAtkbase() {
         Debug.Log("START ATKBASE");
-        HashSet<AgentUnit> baseEnemies = info.UnitsNearBase(enemFac, enemFac, 25); //Cogemos los enemigos cercanos a la base enemiga
+        HashSet<AgentUnit> baseEnemies = info.UnitsNearBase(enemyFac, enemyFac, 25); //Cogemos los enemigos cercanos a la base enemiga
         baseEnemies.UnionWith(info.GetUnitsFactionArea(info.waypoints["enemyBase"], 45, faction)); // Añadimos los aliados en territorio enemigo
 
         float result = Mathf.Clamp(info.MilitaryAdvantage(baseEnemies, faction) - 1, -0.4f, 0.4f);
@@ -279,15 +232,15 @@ public class StrategyLayer : MonoBehaviour {
         result += Mathf.Clamp(info.MilitaryAdvantage(units, faction) - 1, -0.2f, 0.2f);
         Debug.Log("Teniendo en cuenta todas las unidades vivas, ese peso es ahora " + result);
 
-        HashSet<AgentUnit> unitsInOtherHalf = info.UnitsNearBase(enemFac, faction, 40); //Unidades de un bando en territorio del otro
-        unitsInOtherHalf.UnionWith(info.UnitsNearBase(faction, enemFac, 40));
+        HashSet<AgentUnit> unitsInOtherHalf = info.UnitsNearBase(enemyFac, faction, 40); //Unidades de un bando en territorio del otro
+        unitsInOtherHalf.UnionWith(info.UnitsNearBase(faction, enemyFac, 40));
         float allyAdv = info.AreaMilitaryAdvantage(info.waypoints["enemyBase"], 40, faction);
-        float enemAdv = info.AreaMilitaryAdvantage(info.waypoints["allyBase"], 40, enemFac);
+        float enemAdv = info.AreaMilitaryAdvantage(info.waypoints["allyBase"], 40, enemyFac);
 
         result += Mathf.Clamp(allyAdv - enemAdv, -0.4f, 0.4f);
         Debug.Log("Finalmente, comparandola ventaja atacante aliada con la enemiga, el peso de ATKBASE es de " + result);
 
         return result;
-  
+
     }
 }

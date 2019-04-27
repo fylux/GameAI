@@ -10,14 +10,14 @@ public class Follow : Task {
     Vector3 lastTargetPosition;
     GoTo goTo;
     bool inRange;
+    float rangeDistance;
     float timeStamp;
-    float secondsLookahead;
 
-	public Follow(AgentUnit agent, AgentUnit target, Action<bool> callback, float secondsLookahead) : base(agent,callback) {
+	public Follow(AgentUnit agent, AgentUnit target, Action<bool> callback, float rangeDistnace) : base(agent,callback) {
         this.target = target;
         this.lastTargetPosition = target.position;
         this.goTo = new GoTo(agent, GetFutureTargetPosition(), (_) => {});
-        this.secondsLookahead = secondsLookahead;
+        this.rangeDistance = rangeDistnace;
         inRange = false;
         timeStamp = Time.fixedTime;
     }
@@ -33,10 +33,10 @@ public class Follow : Task {
 
     Vector3 GetFutureTargetPosition() {
         float lookAhead = Util.HorizontalDistance(agent.position, target.position) / 2f ;
-        Debug.Log("look: " + lookAhead); 
-        //Only predict if it is not too close
-        if (Util.HorizontalDistance(agent.position, target.position) > 4f)
-            return target.position + target.velocity * lookAhead;
+        Vector3 futurePosition = target.position + target.velocity * lookAhead;
+        //Only predict if it is not too close and the prediction is a walkable place
+        if (Util.HorizontalDistance(agent.position, target.position) > 4f && Map.NodeFromPosition(futurePosition).isWalkable())
+            return futurePosition;
         else
             return target.position;
     }
@@ -49,7 +49,7 @@ public class Follow : Task {
         float realDistance = Util.HorizontalDistance(agent.position, target.position);
 
         // If has reached range or fixed time reconsider path
-        if ( (!inRange && distanceToTarget < 1.4f) || Time.fixedTime - timeStamp > 2) {
+        if ( (!inRange && distanceToTarget < rangeDistance*0.9) || Time.fixedTime - timeStamp > 2) {
             timeStamp = Time.fixedTime;
             bool changed_path = ReconsiderPath();
             //If the path has not changed and we are on range
@@ -61,7 +61,7 @@ public class Follow : Task {
             }
         }
         //If the enemy it goes out of range
-        else if (inRange && realDistance > 1.6f) {
+        else if (inRange && realDistance > rangeDistance*1.1) {
             Debug.Log("Enemy goes out of range");
             inRange = false;
             ReconsiderPath();

@@ -64,19 +64,22 @@ public class AgentNPC : Agent {
     virtual
     public Steering PathSteering() { return new Steering(); }
 
-    /*
-    private void OnMouseEnter() {
-        Renderer rend = GetComponent<Renderer>();
-        rend.material.color = new Color(1, 0, 0);
+    public void SetTask(Task new_task) {
+        if (task != null)
+            task.Terminate();
+
+        //Apart from the callback logic we need to Terminate it and set it to null
+        var callback = new_task.GetCallback();
+        callback += (bool success) => {
+            task.Terminate();
+            task = null;
+        };
+        new_task.SetCallback(callback);
+
+        task = new_task;
     }
 
-    private void OnMouseOver() {
-        Renderer rend = GetComponent<Renderer>();
-        rend.material.color += new Color(-.5f, 0, -.5f) * Time.deltaTime;
+    public Task GetTask() {
+        return task;
     }
-
-    private void OnMouseExit() {
-        Renderer rend = GetComponent<Renderer>();
-        rend.material.color = Color.white;
-    }*/
 }

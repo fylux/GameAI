@@ -22,16 +22,20 @@ public class MilitarComponent : UnitComponent {
         } else {
             damage = attack * Random.Range(0.8f, 1.2f) /** factorTable*/;
         }
-        unit.militar.ReceiveAttack((int)Mathf.Round(damage));
+        unit.militar.ReceiveAttack(agent, (int)Mathf.Round(damage));
     }
 
-    public float ReceiveAttack(int amount) {
+    public float ReceiveAttack(AgentUnit enemy, int amount) {
         int damage = Mathf.Max(0, amount - defense);
         Console.Log("Unit caused " + damage + " damage");
-        health = health - damage;
+        health -= damage;
         if (health < 0) {
             Console.Log("Unit died");
             agent.gameObject.SetActive(false);
+        }
+        else if (agent.GetTask() is DefendZone) { //To change the target if needed
+            DefendZone task = (DefendZone)agent.GetTask();
+            task.ReceiveAttack(enemy);
         }
         //Request to update selection text
         return damage;

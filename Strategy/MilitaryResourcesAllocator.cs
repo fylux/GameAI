@@ -13,7 +13,16 @@ public class MilitaryResourcesAllocator : MonoBehaviour {
          { StrategyT.DEF_HALF, new HashSet<AgentUnit>() }
      };*/
 
-    Dictionary<StrategyT, float> weights; //let's better call it priority or interest, weight is another thing
+    Dictionary<StrategyT, float> importanceWeigth;
+    Dictionary<StrategyT, float> priority;
+    Dictionary<StrategyT, float> offensiveWeight = new Dictionary<StrategyT, float>() {
+            { StrategyT.ATK_BASE, 0.2f},
+            { StrategyT.ATK_HALF, 0.5f},
+            { StrategyT.DEF_BASE, -0.5f},
+            { StrategyT.DEF_HALF, -0.2f}
+        };
+    float offensiveFactor;
+
     Dictionary<StrategyT, Color> strategyColor = new Dictionary<StrategyT, Color>() {
             { StrategyT.ATK_BASE, Color.magenta},
             { StrategyT.ATK_HALF, Color.red},
@@ -27,55 +36,56 @@ public class MilitaryResourcesAllocator : MonoBehaviour {
     void Start() {
         info = GetComponent<InfoManager>();
 
-        weights = new Dictionary<StrategyT, float>() {
+        priority = new Dictionary<StrategyT, float>() {
             { StrategyT.ATK_BASE, 0.5f},
             { StrategyT.ATK_HALF, 0.5f},
             { StrategyT.DEF_BASE, 0.8f},
             { StrategyT.DEF_HALF, 0.2f}
         };
+
+        importanceWeigth = new Dictionary<StrategyT, float>() {
+            { StrategyT.ATK_BASE, 1},
+            { StrategyT.ATK_HALF, 1},
+            { StrategyT.DEF_BASE, 1},
+            { StrategyT.DEF_HALF, 1}
+        };
     }
+
 
     public void AllocateResources() {
         //  ClearUnitSets(); // Vaciamos los sets que contienen las unidades de cada estrategia
         HashSet<AgentUnit> availableUnits = new HashSet<AgentUnit>(Map.unitList.Where(unit => unit.faction == faction));
         int nTotalAvailableUnits = availableUnits.Count;
         Debug.Log("Total units " + nTotalAvailableUnits);
-        /*foreach (StrategyT strategy in weights.Keys.ToList()) {
-            if (weights[strategy] < 0.2) {
-                weights.Remove(strategy);
-            }
-            //weight.Value *= weighting
-        }*/
 
-        if (weights.Count == 0) {
-            Debug.LogError("No strategy has enough importance");
-        }
+        weigthStrategies();
+        normalizeStrategies();
+        pruneStrategies();
+        normalizeStrategies();
 
-        //Normalize
-        float sum = weights.Sum(w => w.Value);
-        foreach (StrategyT strategy in weights.Keys.ToList()) {
-            weights[strategy] /= sum;
+        if (priority.Count == 0) {
+            Debug.Log("No strategy has enough importance");
         }
 
         Dictionary<StrategyT, HashSet<AgentUnit>> unitsAssignedToStrategy = new Dictionary<StrategyT, HashSet<AgentUnit>>();
 
         //Map to number of units
         //If there are remaining units due to rounding errors are assigned to the most important strategy
-        Dictionary<StrategyT, int> nUnitsAllocToStrategy = weights.ToDictionary(w => w.Key, w => Mathf.FloorToInt(w.Value * nTotalAvailableUnits));
+        Dictionary<StrategyT, int> nUnitsAllocToStrategy = priority.ToDictionary(w => w.Key, w => Mathf.FloorToInt(w.Value * nTotalAvailableUnits));
 
-        StrategyT mostImportantStrategy = weights.OrderBy(strategy => strategy.Value).Last().Key;
+        StrategyT mostImportantStrategy = priority.OrderBy(strategy => strategy.Value).Last().Key;
         Debug.Log("most important:" + mostImportantStrategy);
         nUnitsAllocToStrategy[mostImportantStrategy] += nTotalAvailableUnits - nUnitsAllocToStrategy.Sum(w => w.Value);
         Debug.Assert(nUnitsAllocToStrategy.Sum(w => w.Value) == nTotalAvailableUnits);
 
         foreach (var z in nUnitsAllocToStrategy) {
-            Debug.Log(z.Key + " " + z.Value + "; weight: " + weights[z.Key]);
+            Debug.Log(z.Key + " " + z.Value + "; weight: " + priority[z.Key]);
         }
 
         Dictionary<AgentUnit, Dictionary<StrategyT, float>> strategyAffinity = availableUnits.ToDictionary(u => u, u => info.GetStrategyPriority(u, faction));
 
         //Assign units with the same strategy
-        foreach (StrategyT strategy in weights.Keys) {
+        foreach (StrategyT strategy in priority.Keys) {
             var selectedUnits = availableUnits.Where(u => u.strategy == strategy)
                                                 .OrderBy(u => strategyAffinity[u][strategy])
                                                 .Take(nUnitsAllocToStrategy[strategy]);
@@ -91,13 +101,9 @@ public class MilitaryResourcesAllocator : MonoBehaviour {
 
         Debug.Assert(nUnitsAllocToStrategy.Sum(w => w.Value) == availableUnits.Count);
 
-        //For each strategy 
-        //Foreach unit get how many units have assigned strategy (from previous iteration or from units_strategy?)
-        //Sort units by their maximun "affinity" so in every iteration we assign a unit to the required strategy to which
-        //it is more affine
-
-        while (weights.Keys.Any(s => nUnitsAllocToStrategy[s] > 0)) {
-            var remainingStrategies = new HashSet<StrategyT>(weights.Keys.Where(s => nUnitsAllocToStrategy[s] > 0));
+        //Assign units to strategies based on affinity
+        while (priority.Keys.Any(s => nUnitsAllocToStrategy[s] > 0)) {
+            var remainingStrategies = new HashSet<StrategyT>(priority.Keys.Where(s => nUnitsAllocToStrategy[s] > 0));
             var mostAffineUnit = strategyAffinity.OrderBy(unit => unit.Value.Where(s => remainingStrategies.Contains(s.Key)).Min(s => s.Value)).First().Key;
             var strategy = strategyAffinity[mostAffineUnit].Where(s => remainingStrategies.Contains(s.Key)).OrderBy(s => s.Value).First().Key;
 
@@ -108,6 +114,7 @@ public class MilitaryResourcesAllocator : MonoBehaviour {
             availableUnits.Remove(mostAffineUnit);
             nUnitsAllocToStrategy[strategy]--;
             /*
+            //ROUND ROBIN
             foreach (StrategyT strategy in weights.Keys.Where(s => nUnitsAllocToStrategy[s] > 0)) {
                 AgentUnit mostAffineUnit = strategyAffinity.OrderBy(unit => unit.Value[strategy]).First().Key;
                 Debug.Log("Most affine unit for " + strategy + " is " + mostAffineUnit.name + ", affinity: " + strategyAffinity[mostAffineUnit][strategy]);
@@ -136,7 +143,7 @@ public class MilitaryResourcesAllocator : MonoBehaviour {
 
         Debug.Assert(availableUnits.Count == 0);
 
-        foreach (StrategyT strategy in weights.Keys) {
+        foreach (StrategyT strategy in priority.Keys) {
             Console.Log("Strategy: " + strategy.ToString() + " = " + unitsAssignedToStrategy[strategy].Count + " units");
 
             foreach (AgentUnit unit in unitsAssignedToStrategy[strategy]) {
@@ -145,6 +152,29 @@ public class MilitaryResourcesAllocator : MonoBehaviour {
             }
         }
     }
+
+    public void weigthStrategies() {
+        foreach (StrategyT strategy in priority.Keys.ToList()) {
+            priority[strategy] *= importanceWeigth[strategy] + offensiveWeight[strategy] * offensiveFactor;
+        }
+    }
+
+    public void normalizeStrategies() {
+        float sum = priority.Sum(w => w.Value);
+        foreach (StrategyT strategy in priority.Keys.ToList()) {
+            priority[strategy] /= sum;
+        }
+    }
+    
+    //Here we can remove strategies that do not have enough importance or do not fulfill the requirements to be considered
+    public void pruneStrategies() {
+        foreach (StrategyT strategy in priority.Keys.ToList()) {
+            if (priority[strategy] < 0.2) {
+                priority.Remove(strategy);
+            }
+        }
+    }
+
 
     /* void ClearUnitSets()
      {
@@ -173,11 +203,19 @@ public class MilitaryResourcesAllocator : MonoBehaviour {
          }
      }
      */
-    public void SetWeights(Dictionary<StrategyT, float> weights) {
-        this.weights = weights;
+    public void SetPriority(Dictionary<StrategyT, float> priority) {
+        this.priority = priority;
+    }
+
+    public void SetImportanceWeights(Dictionary<StrategyT, float> weights) {
+        this.importanceWeigth = weights;
     }
 
     public void SetFaction(Faction faction) {
         this.faction = faction;
+    }
+
+    public void SetOffensiveFactor(float offensiveFactor) {
+        this.offensiveFactor = offensiveFactor;
     }
 }

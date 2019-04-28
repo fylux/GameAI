@@ -11,6 +11,7 @@ public abstract class AgentUnit : AgentNPC {
     public StrategyT strategy;
     public Faction faction = Faction.A;
     public GameObject SelectCircle;
+    public float attackRange = 5f;
 
     public MilitarComponent militar = new MilitarComponent();
 
@@ -87,11 +88,24 @@ public abstract class AgentUnit : AgentNPC {
         if (task != null)
             task.Terminate();
 
-        task = new GoTo(this, targetPosition, (bool sucess) => {
-            Debug.Log("Task finished");
-            task.Terminate();
-            task = null;
-        });
+        if (faction == Faction.A) {
+            Debug.Log("Aggresive");
+            task = new GoToAggresive(this, targetPosition, 7f, (bool sucess) => {
+                Debug.Log("Aggresive terminate");
+                task.Terminate();
+                task = null;
+            });
+        }
+        else {
+            Debug.Log("Passive");
+            task = new GoTo(this, targetPosition, (bool sucess) => {
+                Debug.Log("Passive finished");
+                task.Terminate();
+                task = null;
+            });
+        }
+
+
     }
 
     public void AttackEnemy(AgentUnit enemy) {

@@ -10,6 +10,8 @@ public class MilitarComponent : UnitComponent {
     public int attack = 6;
     public int defense = 3;
 
+    [SerializeField]
+    GameObject projectile;
 
     public MilitarComponent() {
         health = maxHealth;
@@ -22,6 +24,17 @@ public class MilitarComponent : UnitComponent {
         } else {
             damage = attack * Random.Range(0.8f, 1.2f) /** factorTable*/;
         }
+
+        if (projectile != null) {
+            var newProjectile = GameObject.Instantiate(projectile);
+            newProjectile.transform.position = agent.position;
+            newProjectile.GetComponent<Projectile>().SetTarget(unit);
+        }
+        else {
+            Debug.Log("Falta el prefab del projectil para atacar");
+        }
+
+
         unit.militar.ReceiveAttack(agent, (int)Mathf.Round(damage));
     }
 

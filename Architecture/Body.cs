@@ -35,6 +35,25 @@ public class Body : MonoBehaviour {
         transform.eulerAngles = new Vector3(0, orientation, 0);
     }
 
+    /* //Version that works with colliders
+    protected void Update() {
+        //position += velocity * Time.deltaTime;
+        orientation += rotation * Time.deltaTime;
+
+        var rigidbody = GetComponent<Rigidbody>();
+        rigidbody.velocity = velocity;
+        rigidbody.isKinematic = false;
+
+        ApplyActuator();
+
+        CheckStopMoving();
+
+        //transform.position = position;
+        position = transform.position;
+        transform.eulerAngles = new Vector3(0, orientation, 0);
+    }
+    */
+
     protected virtual void ApplyActuator() { //Aqui el Actuator limita las velocidades para que no superen el maximo
         velocity.y = 0;
 

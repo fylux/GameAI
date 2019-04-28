@@ -15,11 +15,11 @@ public class StrategyManager : MonoBehaviour {
     MilitaryResourcesAllocator militaryResourceAllocator;
     InfoManager info;
 
-    Dictionary<StrategyT, OrderAsign> strategySchedulers = new Dictionary<StrategyT, OrderAsign>() {
-                                                                              { StrategyT.DEF_BASE, new OrderAsignDefBase() },
-                                                                              { StrategyT.DEF_HALF, new OrderAsignDefHalf() },
-                                                                              { StrategyT.ATK_BASE, new OrderAsignDefBase() },
-                                                                              { StrategyT.ATK_HALF, new OrderAsignDefBase() } };
+    Dictionary<StrategyT, SchedulerStrategy> strategySchedulers = new Dictionary<StrategyT, SchedulerStrategy>() {
+                                                                              { StrategyT.DEF_BASE, new SchedulerDefBase() },
+                                                                              { StrategyT.DEF_HALF, new SchedulerDefHalf() },
+                                                                              { StrategyT.ATK_BASE, new SchedulerDefBase() },
+                                                                              { StrategyT.ATK_HALF, new SchedulerDefBase() } };
 
     // Use this for initialization
     void Start () {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class OrderAsignDefHalf : OrderAsign {
+public class SchedulerDefHalf : SchedulerStrategy {
  
     override
     public void ApplyStrategy()

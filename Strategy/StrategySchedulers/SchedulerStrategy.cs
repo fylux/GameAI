@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class OrderAsign {
+public abstract class SchedulerStrategy {
 
     public HashSet<AgentUnit> usableUnits = new HashSet<AgentUnit>();
 

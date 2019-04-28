@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class OrderAsignDefBase : OrderAsign {
+public class SchedulerDefBase : SchedulerStrategy {
 
     
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class OrderAsignAtkBase : OrderAsign {
+public class SchedulerAtkHalf : SchedulerStrategy {
 
     private void Start()
     {

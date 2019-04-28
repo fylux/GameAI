@@ -29,16 +29,21 @@ public class MilitarComponent : UnitComponent {
         int damage = Mathf.Max(0, amount - defense);
         Console.Log("Unit caused " + damage + " damage");
         health -= damage;
-        if (health < 0) {
+        if (IsDead()) {
             Console.Log("Unit died");
             agent.gameObject.SetActive(false);
+
+            //Update list of units removing this one
+            GameObject.Destroy(agent.gameObject);
         }
-        else if (agent.GetTask() is DefendZone) { //To change the target if needed
-            DefendZone task = (DefendZone)agent.GetTask();
-            task.ReceiveAttack(enemy);
+        else if (agent.GetTask() is HostileTask) { //To change the target if needed
+            ((HostileTask)agent.GetTask()).ReceiveAttack(enemy);
         }
         //Request to update selection text
         return damage;
     }
 
+    public bool IsDead() {
+        return health <= 0;
+    }
 }

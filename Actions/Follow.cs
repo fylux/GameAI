@@ -10,14 +10,12 @@ public class Follow : Task {
     Vector3 lastTargetPosition;
     GoTo goTo;
     bool inRange;
-    float rangeDistance;
     float timeStamp;
 
-	public Follow(AgentUnit agent, AgentUnit target, Action<bool> callback, float rangeDistnace) : base(agent,callback) {
+	public Follow(AgentUnit agent, AgentUnit target, Action<bool> callback) : base(agent,callback) {
         this.target = target;
         this.lastTargetPosition = target.position;
         this.goTo = new GoTo(agent, GetFutureTargetPosition(), (_) => {});
-        this.rangeDistance = rangeDistnace;
         inRange = false;
         timeStamp = Time.fixedTime;
     }
@@ -49,11 +47,11 @@ public class Follow : Task {
         float realDistance = Util.HorizontalDistance(agent.position, target.position);
 
         // If has reached range or fixed time reconsider path
-        if ( (!inRange && distanceToTarget < rangeDistance*0.9) || Time.fixedTime - timeStamp > 2) {
+        if ( (!inRange && distanceToTarget < agent.attackRange * 0.9) || Time.fixedTime - timeStamp > 2) {
             timeStamp = Time.fixedTime;
             bool changed_path = ReconsiderPath();
             //If the path has not changed and we are on range
-            if (!changed_path && distanceToTarget < 1.4f) {
+            if (!changed_path && distanceToTarget < agent.attackRange * 0.9) {
                 Debug.Log("Enemy in attack range");
                 inRange = true;
                 goTo.FinishPath();
@@ -61,7 +59,7 @@ public class Follow : Task {
             }
         }
         //If the enemy it goes out of range
-        else if (inRange && realDistance > rangeDistance*1.1) {
+        else if (inRange && realDistance > agent.attackRange * 1.1) {
             Debug.Log("Enemy goes out of range");
             inRange = false;
             ReconsiderPath();
@@ -78,6 +76,7 @@ public class Follow : Task {
         return inRange;
     }
 
+    //Should I consider then the unit that we are following died?
     protected override bool IsFinished() {
         return false;
     }

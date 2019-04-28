@@ -10,20 +10,28 @@ public class Attack : Task {
 
 	public Attack(AgentUnit agent, AgentUnit targetEnemy, Action<bool> callback) : base(agent,callback) {
         this.targetEnemy = targetEnemy;
-        follow = new Follow(agent, targetEnemy, (_) => { }, 2f /*AttackRange*/);
+        follow = new Follow(agent, targetEnemy, (_) => { });
         timeLastAttack = Time.fixedTime;
     }
 
 
     public override Steering Apply() {
-        if (IsFinished())
+        Steering st = new Steering();
+
+        if (IsFinished()) {
             callback(true);
+            return st;
+        }
 
-        Steering st = follow.Apply();
 
-        if (follow.IsInRange() && (Time.fixedTime - timeLastAttack > 1)) {
-            agent.militar.Attack(targetEnemy);
-            timeLastAttack = Time.fixedTime;
+        if (follow.IsInRange()) {
+            if (Time.fixedTime - timeLastAttack > 1) {
+                agent.militar.Attack(targetEnemy);
+                timeLastAttack = Time.fixedTime;
+            }
+        }
+        else {
+            st = follow.Apply();
         }
 
         return st;
@@ -32,11 +40,12 @@ public class Attack : Task {
 
     //Cuando la unidad enemiga muere devolver true
     protected override bool IsFinished() {
-        return false;
+        return targetEnemy.militar.IsDead();
     }
 
     override
     public void Terminate() {
+        Debug.Log("End of attack");
         follow.Terminate();
     }
 }

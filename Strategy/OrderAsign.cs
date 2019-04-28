@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class OrderAsign {
 
-    public HashSet<AgentUnit> usableUnits;
+    public HashSet<AgentUnit> usableUnits = new HashSet<AgentUnit>();
 
     protected InfoManager info;
 

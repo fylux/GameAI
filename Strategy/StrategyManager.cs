@@ -36,7 +36,7 @@ public class StrategyManager : MonoBehaviour {
             if (strategyLayer.Apply()) { 
                 Debug.Log("HAN CAMBIADO LOS VALORES DE ESTRATEGIA, REASIGNANDO TROPAS");
                 //Layer 2
-                militaryResourceAllocator.SetPriority(strategyLayer.GetPriority()); 
+               // militaryResourceAllocator.SetPriority(strategyLayer.GetPriority()); DESACTIVAR MIENTRAS ESTEMOS HACIENDO PRUEBAS
                 Dictionary<StrategyT, HashSet<AgentUnit>> unitsToStrategy = militaryResourceAllocator.AllocateResources();
 
                 foreach (var strategy in unitsToStrategy.Keys) {
@@ -47,11 +47,11 @@ public class StrategyManager : MonoBehaviour {
 
         //Layer 3
         foreach (StrategyT strategy in strategySchedulers.Keys) {
-            Debug.Log("Miembros recibiendo ordenes de la estrategia " + strategy);
+          /*  Debug.Log("Miembros recibiendo ordenes de la estrategia " + strategy);
             foreach (AgentUnit unit in strategySchedulers[strategy].usableUnits)
                 Debug.Log("------> " + unit);
-
-            //strategySchedulers[strategy].ApplyStrategy();
+            */
+            strategySchedulers[strategy].ApplyStrategy();
         }
 
         //Layer 4

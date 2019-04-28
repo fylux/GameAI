@@ -4,49 +4,32 @@ using UnityEngine;
 
 public class OrderAsignDefBase : OrderAsign {
 
+    
+
     override
     public void ApplyStrategy()
     {
+        Vector3 allyBase = InfoManager.instance.waypoints["allyBase"].worldPosition;
+
         foreach (AgentUnit unit in usableUnits)
         {
-            Debug.Log("El waypoint del allyBase es " + info.waypoints["allyBase"]); // ¿NOT SET?
-           /* List<Body> healPts;
-            if (unit.militar.health <= unit.militar.MaxLife * 0.3 && (healPts = info.GetHealingPoints(Map.NodeFromPosition(unit.position), 60)).Count > 0)
+            if (Util.HorizontalDistance(allyBase, unit.position) > 15) // El 15 es un numero pendiente de ajuste
             {
-                foreach (Body hp in healPts)
+                if (!(unit.GetTask() is GoTo))
                 {
-                    Debug.Log("La unidad " + unit + " tiene un healing point cercano: " + hp);
+                    Debug.Log("Dandole a " + unit + " la orden de MOVERSE A LA BASE");
+                    unit.SetTask(new GoTo(unit, allyBase, (bool success) =>
+                    {
+                        Debug.Log("Dandole a " + unit + " la orden de DEFENDER LA ZONA");
+                        unit.SetTask(new DefendZone(unit, allyBase, 15, (_) => { }));
+                    }));
                 }
-                Body closerPoint = Util.GetCloserBody(healPts, Map.NodeFromPosition(unit.position));
-
-                if (closerPoint != null)
-                {
-                    Debug.Log("Asignada a la unidad " + unit + " la orden GoTo con destino el healPoint" + closerPoint);
-                }
-            }*/
-            if (info.AreaMilitaryAdvantage(info.waypoints["allyBase"], 25, faction) > 1.2f) // ¿Agrandar el area con varios niveles?
-            {
-                // Todas las unidades usables reciben la orden de defender la zona de delante de la base
-                Node dest;
-                if (faction == Faction.A)
-                    dest = info.waypoints["upFront"]; // El cruce de caminos delante de la base
-                else
-                    dest = info.waypoints["downFront"]; // El mismo cruce pero de la otra base
-
-                Debug.Log("Asignada a la unidad " + unit + " la orden Defender zona con destino Front " + dest);
             }
-            else
+            else if (!(unit.GetTask() is DefendZone))
             {
-                Node dest;
-                if (faction == Faction.A)
-                    dest = info.waypoints["allyBase"];
-                else
-                    dest = info.waypoints["enemyBase"];
-
-                Debug.Log("Asignada a la unidad " + unit + " la orden Defender zona con destino base " + dest);
-                // Todas las unidades usables reciben la orden de defender la zona de la base
+                Debug.Log("Dandole a " + unit + " la orden de DEFENDER LA ZONA");
+                unit.SetTask(new DefendZone(unit, allyBase, 15, (_) => { }));
             }
         }
-
     }
 }

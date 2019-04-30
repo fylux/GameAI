@@ -14,9 +14,11 @@ public abstract class SchedulerStrategy {
 
     protected Node allyBase, enemyBase; 
 
-    public void SetBases(Node allyB, Node enemyB)
+    public void Initialize(Node allyB, Node enemyB)
     {
+        Debug.Log("Actualizando el valor de las bases de " + this + " y son allyBase: " + allyB + " y enemyBase: " + enemyB);
         allyBase = allyB;
         enemyBase = enemyB;
+        info = InfoManager.instance;
     }
 }

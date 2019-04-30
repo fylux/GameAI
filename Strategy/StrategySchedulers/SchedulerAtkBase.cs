@@ -15,7 +15,6 @@ public class SchedulerAtkBase : SchedulerStrategy
     override
     public void ApplyStrategy()
     {
-
         HashSet<AgentUnit> alliesAtk = info.GetUnitsFactionArea(enemyBase, 45, faction);
         HashSet<AgentUnit> enemiesDef = info.GetUnitsFactionArea(enemyBase, 25, Util.EnemyFactionOf(faction));
         alliesAtk.UnionWith(enemiesDef);

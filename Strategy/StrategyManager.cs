@@ -18,18 +18,18 @@ public class StrategyManager : MonoBehaviour {
     Dictionary<StrategyT, SchedulerStrategy> strategySchedulers = new Dictionary<StrategyT, SchedulerStrategy>() {
                                                                               { StrategyT.DEF_BASE, new SchedulerDefBase() },
                                                                               { StrategyT.DEF_HALF, new SchedulerDefHalf() },
-                                                                              { StrategyT.ATK_BASE, new SchedulerDefBase() },
+                                                                              { StrategyT.ATK_BASE, new SchedulerAtkBase() },
                                                                               { StrategyT.ATK_HALF, new SchedulerDefBase() } };
 
     // Use this for initialization
     void Start () {
         info = InfoManager.instance;
-        strategyLayer = new StrategyLayer(faction);
         info.Initialize();
+        strategyLayer = new StrategyLayer(faction);
 
         foreach (KeyValuePair<StrategyT, SchedulerStrategy> tuple in strategySchedulers)
         {
-            tuple.Value.SetBases(info.waypoints["allyBase"], info.waypoints["enemyBase"]);
+            tuple.Value.Initialize(info.waypoints["allyBase"], info.waypoints["enemyBase"]);
         }
 
         militaryResourceAllocator = new MilitaryResourcesAllocator(faction);

@@ -39,6 +39,7 @@ public class StrategyLayer {
     }
 
     public bool Apply() {
+        Debug.Log("Starting apply");
         bool changed = false;
 
         Dictionary<StrategyT, float> newPriority = ComputePriority();

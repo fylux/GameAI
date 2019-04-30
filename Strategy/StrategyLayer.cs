@@ -23,7 +23,7 @@ public class StrategyLayer {
     public StrategyLayer(Faction faction) {
         this.faction = faction;
         info = InfoManager.instance;
-        info.Initialize();
+
         if (faction == Faction.A) {
             enemyFac = Faction.B;
             mapSide = "up";

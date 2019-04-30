@@ -5,6 +5,13 @@ using UnityEngine;
 
 public class MilitaryResourcesAllocator {
 
+    /* Dictionary<StrategyT, HashSet<AgentUnit>> strategyUnits = new Dictionary<StrategyT, HashSet<AgentUnit>>()
+     {
+         { StrategyT.ATK_BASE, new HashSet<AgentUnit>() },
+         { StrategyT.ATK_HALF, new HashSet<AgentUnit>() },
+         { StrategyT.DEF_BASE, new HashSet<AgentUnit>() },
+         { StrategyT.DEF_HALF, new HashSet<AgentUnit>() }
+     };*/
 
     Dictionary<StrategyT, float> importanceWeigth;
     Dictionary<StrategyT, float> priority;
@@ -31,10 +38,10 @@ public class MilitaryResourcesAllocator {
         this.faction = faction;
 
         priority = new Dictionary<StrategyT, float>() {
-            { StrategyT.ATK_BASE, 0.5f},
-            { StrategyT.ATK_HALF, 0.5f},
-            { StrategyT.DEF_BASE, 0.8f},
-            { StrategyT.DEF_HALF, 0.2f}
+            { StrategyT.ATK_BASE, 1},
+            { StrategyT.ATK_HALF, 0.0f},
+            { StrategyT.DEF_BASE, 0.0f},
+            { StrategyT.DEF_HALF, 0.0f}
         };
 
         importanceWeigth = new Dictionary<StrategyT, float>() {
@@ -47,6 +54,7 @@ public class MilitaryResourcesAllocator {
 
 
     public Dictionary<StrategyT, HashSet<AgentUnit>> AllocateResources() {
+        //  ClearUnitSets(); // Vaciamos los sets que contienen las unidades de cada estrategia
         HashSet<AgentUnit> availableUnits = new HashSet<AgentUnit>(Map.unitList.Where(unit => unit.faction == faction));
         int nTotalAvailableUnits = availableUnits.Count;
 
@@ -174,6 +182,33 @@ public class MilitaryResourcesAllocator {
     }
 
 
+    /* void ClearUnitSets()
+     {
+         foreach (KeyValuePair<StrategyT,HashSet<AgentUnit>> tuple in strategyUnits)
+         {
+             tuple.Value.Clear();
+         }
+     }
+
+     void CheckUnitsStrategy()
+     {
+         Debug.Log("Unidades --> ");
+         Debug.Log("Defbase tiene " + strategyUnits[StrategyT.DEF_BASE].Count);
+         Debug.Log("Defhalf tiene " + strategyUnits[StrategyT.DEF_HALF].Count);
+         Debug.Log("Atkhalf tiene " + strategyUnits[StrategyT.ATK_HALF].Count);
+         Debug.Log("Atkbase tiene " + strategyUnits[StrategyT.ATK_BASE].Count);
+
+
+         foreach (KeyValuePair<StrategyT, HashSet<AgentUnit>> tuple in strategyUnits)
+         {
+             foreach (AgentUnit unit in tuple.Value)
+             {
+                 Debug.Log("La estrategia " + tuple.Key + " tiene a la unidad " + unit);
+             }
+
+         }
+     }
+     */
     public void SetPriority(Dictionary<StrategyT, float> priority) {
         this.priority = priority;
     }

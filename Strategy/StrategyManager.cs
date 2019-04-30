@@ -25,6 +25,13 @@ public class StrategyManager : MonoBehaviour {
     void Start () {
         info = InfoManager.instance;
         strategyLayer = new StrategyLayer(faction);
+        info.Initialize();
+
+        foreach (KeyValuePair<StrategyT, SchedulerStrategy> tuple in strategySchedulers)
+        {
+            tuple.Value.SetBases(info.waypoints["allyBase"], info.waypoints["enemyBase"]);
+        }
+
         militaryResourceAllocator = new MilitaryResourcesAllocator(faction);
         militaryResourceAllocator.SetOffensiveFactor(offensiveFactor);
 	}

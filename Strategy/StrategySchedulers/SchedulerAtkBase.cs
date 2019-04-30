@@ -15,18 +15,32 @@ public class SchedulerAtkBase : SchedulerStrategy
     override
     public void ApplyStrategy()
     {
-        HashSet<AgentUnit> alliesAtk = info.GetUnitsFactionArea(enemyBase, 45, faction);
-        HashSet<AgentUnit> enemiesDef = info.GetUnitsFactionArea(enemyBase, 25, Util.EnemyFactionOf(faction));
-        alliesAtk.UnionWith(enemiesDef);
-        if (info.MilitaryAdvantage(alliesAtk,faction) >= 0.85)
+        if (usableUnits.Count > 0)
         {
-            RegroupAndAttack();
+            HashSet<AgentUnit> alliesAtk = info.GetUnitsFactionArea(enemyBase, 45, faction);
+            HashSet<AgentUnit> enemiesDef = info.GetUnitsFactionArea(enemyBase, 25, Util.EnemyFactionOf(faction));
+            alliesAtk.UnionWith(enemiesDef);
+            if (info.MilitaryAdvantage(alliesAtk, faction) >= 0.85)
+            {
+                RegroupAndAttack();
+            }
+            else
+            {
+                Debug.Log("Vamos a ir avanzando que somos flojitos");
+                foreach (AgentUnit unit in usableUnits)
+                {
+                    if (!(unit.GetTask() is GoTo))
+                    {
+                        Debug.Log("Dandole a " + unit + " la orden de MOVERSE AL FRONT");
+                        unit.SetTask(new GoTo(unit, info.waypoints["enemyFront"].worldPosition, (bool success) =>
+                        {
+                            Debug.Log("Dandole a " + unit + " la orden de DEFENDER LA ZONA");
+                            unit.SetTask(new DefendZone(unit, info.waypoints["enemyFront"].worldPosition, 15, (_) => { }));
+                        }));
+                    }
+                }
+            }
         }
-        else
-        {
-            Debug.Log("Somos muy debiles");
-        }
-
     }
 
     public void RegroupAndAttack()

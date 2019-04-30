@@ -40,8 +40,8 @@ public class InfoManager : MonoBehaviour {
         waypoints.Add("top", Map.NodeFromPosition(top.transform.position));
         waypoints.Add("bottom", Map.NodeFromPosition(bottom.transform.position));
 
-        waypoints.Add("downFront", Map.NodeFromPosition(GameObject.Find("DownFront").transform.position));
-        waypoints.Add("upFront", Map.NodeFromPosition(GameObject.Find("UpFront").transform.position));
+        waypoints.Add("allyFront", Map.NodeFromPosition(GameObject.Find("AllyFront").transform.position));
+        waypoints.Add("enemyFront", Map.NodeFromPosition(GameObject.Find("EnemyFront").transform.position));
 
         waypoints.Add("upMid", Map.NodeFromPosition(mid.transform.Find("UpMid").transform.position));
         waypoints.Add("downMid", Map.NodeFromPosition(mid.transform.Find("DownMid").transform.position));
@@ -174,7 +174,7 @@ public class InfoManager : MonoBehaviour {
             adv += AgentUnit.atkTable[(int)UnitT.MELEE, (int)UnitT.MELEE] * nUnits;
             nTotalUnits += nUnits;
         }
-        Debug.Assert(nTotalUnits > 0);
+        if (nTotalUnits == 0) return Mathf.Infinity;
         return adv / nTotalUnits;
     }
 
@@ -277,7 +277,7 @@ public class InfoManager : MonoBehaviour {
             { StrategyT.ATK_BASE,
                 Util.HorizontalDistance(unit.position, waypoints["enemyBase"].worldPosition) },
             { StrategyT.ATK_HALF,
-                Util.HorizontalDistance(unit.position, waypoints[faction == Faction.A ? "upFront" : "downFront"].worldPosition) }, //¿Correcto?
+                Util.HorizontalDistance(unit.position, waypoints[faction == Faction.A ? "enemyFront" : "allyFront"].worldPosition) }, //¿Correcto?
             { StrategyT.DEF_HALF,
                 Util.HorizontalDistance(unit.position, waypoints[StrategyLayer.chosenWaypoint].worldPosition) },
             { StrategyT.DEF_BASE,

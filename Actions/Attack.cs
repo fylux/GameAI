@@ -40,7 +40,7 @@ public class Attack : Task {
 
     //Cuando la unidad enemiga muere devolver true
     protected override bool IsFinished() {
-        return targetEnemy.militar.IsDead();
+        return targetEnemy == null || targetEnemy.militar.IsDead();
     }
 
     override

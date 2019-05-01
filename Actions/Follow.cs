@@ -40,8 +40,11 @@ public class Follow : Task {
     }
 
     public override Steering Apply() {
-        if (IsFinished())
+        Steering st = new Steering();
+        if (IsFinished()) {
             callback(true);
+            return st;
+        }
 
         float distanceToTarget = Util.HorizontalDistance(agent.position, lastTargetPosition);
         float realDistance = Util.HorizontalDistance(agent.position, target.position);
@@ -66,9 +69,8 @@ public class Follow : Task {
         }
 
         if (!inRange)
-            return goTo.Apply();
-        else
-            return new Steering();
+            st = goTo.Apply();
+        return st;
     }
 
 
@@ -78,7 +80,7 @@ public class Follow : Task {
 
     //Should I consider then the unit that we are following died?
     protected override bool IsFinished() {
-        return false;
+        return target == null;
     }
 
     override

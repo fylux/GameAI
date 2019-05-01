@@ -46,8 +46,8 @@ public static class InfoManager {
             { "bottom", faction == Faction.A ? "downBottom" : "upBottom"},
             { "mid", faction == Faction.A ? "downMid" : "upMid" },
             { "top", faction == Faction.A ? "downTop" : "upTop"},
-            { "base", faction == Faction.A ? "downBase" : "topBase"},
-            { "front", faction == Faction.A ? "downFront" : "topFront"}
+            { "base", faction == Faction.A ? "downBase" : "upBase"},
+            { "front", faction == Faction.A ? "downFront" : "upFront"}
         };
         Debug.Assert(z.ContainsKey(waypoint));
         return waypoints[waypoint];

@@ -22,7 +22,7 @@ public class MilitarComponent : UnitComponent {
         if (Random.Range(0, 100) > 99f) {
             damage = attack * 5;
         } else {
-            damage = attack * Random.Range(0.8f, 1.2f) /** factorTable*/;
+            damage = attack * Random.Range(0.8f, 1.2f) * AgentUnit.atkTable[agent.GetType()][unit.GetType()];
         }
 
         if (projectile != null) {

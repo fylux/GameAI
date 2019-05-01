@@ -6,7 +6,7 @@ public enum UnitT {
 };
 
 public abstract class AgentUnit : AgentNPC {
-    Location path_target;
+    //Location path_target;
 
     public StrategyT strategy;
     public Faction faction = Faction.A;
@@ -16,7 +16,7 @@ public abstract class AgentUnit : AgentNPC {
     public MilitarComponent militar = new MilitarComponent();
 
 
-    protected Dictionary<NodeT, float> cost = new Dictionary<NodeT, float>() { //Coste por defecto, para casos de prueba
+    protected abstract Dictionary<NodeT, float> cost = new Dictionary<NodeT, float>() { //Coste por defecto, para casos de prueba
             { NodeT.ROAD, 1 },
             { NodeT.GRASS, 1.5f },
             { NodeT.FOREST, 2 },
@@ -26,17 +26,17 @@ public abstract class AgentUnit : AgentNPC {
 
     public static float[,] atkTable = new float[4, 4] {
             //Melee Ranged  Scout   Artill
-            {1,     1.5f,   2 ,     1 	},
-            {1, 	0.8f, 	1.5f, 	0.5f},
-            {0.75f,	1.25f, 	1, 		0.5f},
-            { 0.8f, 1.25f, 	1.5f, 	1	}
+            {1,     1.5f,   2 ,     1 	}, //Melee
+            {1, 	0.8f, 	1.5f, 	0.5f}, //Ranged
+            {0.75f,	1.25f, 	1, 		0.5f}, //Scout
+            { 0.8f, 1.25f, 	1.5f, 	1	}  //Artill
         };
 
 
     new
     protected void Start() {
         base.Start();
-        path_target = null;
+        //path_target = null;
         militar.SetAgent(this);
     }
 
@@ -63,13 +63,13 @@ public abstract class AgentUnit : AgentNPC {
         Debug.DrawRay(position, velocity.normalized * 2, Color.green);
     }
 
-    override
+    /*override
     public Steering PathSteering() {
         if (path_target == null)
             return new Steering();
 
         return Seek.GetSteering(path_target.position, this, 5, visibleRays);   
-    }
+    }*/
 
     public void SetFormation(Vector3 position, float orientation) {
         /*GoTo go = gameObject.GetComponent<GoTo>();

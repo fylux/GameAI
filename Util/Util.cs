@@ -42,8 +42,7 @@ public static class Util {
         return selected;
     }
 
-    public static Faction EnemyFactionOf(Faction faction)
-    {
+    public static Faction OppositeFaction(Faction faction) {
         if (faction == Faction.A)
             return Faction.B;
         if (faction == Faction.B)

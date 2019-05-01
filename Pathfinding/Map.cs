@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -9,6 +10,8 @@ public class Map {
     static Vector2 gridSize;
 
     public static HashSet<AgentUnit> unitList;
+
+    public static LayerMask unitsMask, healingMask, terrainMask, influenceMask;
 
 
     //This is called from load map
@@ -23,6 +26,19 @@ public class Map {
         foreach (GameObject npc in GameObject.FindGameObjectsWithTag("NPC")) {
             unitList.Add(npc.GetComponent<AgentUnit>());
         }
+
+        unitsMask = LayerMask.GetMask("Unit");
+        healingMask = LayerMask.GetMask("Healing");
+        terrainMask = LayerMask.GetMask("Terrain");
+        influenceMask = LayerMask.GetMask("Influence");
+    }
+
+    public static HashSet<AgentUnit> GetAllies(Faction faction) {
+        return new HashSet<AgentUnit>(Map.unitList.Where(agent => agent.faction == faction));
+    }
+
+    public static HashSet<AgentUnit> GetEnemies(Faction faction) {
+        return new HashSet<AgentUnit>(Map.unitList.Where(agent => agent.faction == Util.OppositeFaction(faction)));
     }
 
     public static int GetMaxSize() {

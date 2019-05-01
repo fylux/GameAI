@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -30,11 +29,9 @@ public class MilitaryResourcesAllocator {
             { StrategyT.DEF_HALF,Color.cyan}
         };
 
-    InfoManager info;
     public Faction faction;
 
     public MilitaryResourcesAllocator(Faction faction) {
-        info = InfoManager.instance;
         this.faction = faction;
 
         priority = new Dictionary<StrategyT, float>() {
@@ -63,10 +60,10 @@ public class MilitaryResourcesAllocator {
 
         Debug.Log("Total units " + availableUnits.Count);
 
-        weigthStrategies();
-        normalizeStrategies();
-        pruneStrategies();
-        normalizeStrategies();
+        WeigthStrategies();
+        NormalizeStrategies();
+        PruneStrategies();
+        NormalizeStrategies();
 
         if (priority.Count == 0) {
             Debug.Log("No strategy has enough importance");
@@ -86,7 +83,7 @@ public class MilitaryResourcesAllocator {
             Debug.Log(z.Key + " " + z.Value + "; weight: " + priority[z.Key]);
         }
 
-        Dictionary<AgentUnit, Dictionary<StrategyT, float>> strategyAffinity = availableUnits.ToDictionary(u => u, u => info.GetStrategyPriority(u, faction));
+        Dictionary<AgentUnit, Dictionary<StrategyT, float>> strategyAffinity = availableUnits.ToDictionary(u => u, u => InfoManager.GetStrategyPriority(u, faction));
 
         //Assign units with the same strategy
         foreach (StrategyT strategy in priority.Keys) {
@@ -159,13 +156,13 @@ public class MilitaryResourcesAllocator {
         return unitsAssignedToStrategy;
     }
 
-    public void weigthStrategies() {
+    public void WeigthStrategies() {
         foreach (StrategyT strategy in priority.Keys.ToList()) {
             priority[strategy] *= importanceWeigth[strategy] + offensiveWeight[strategy] * offensiveFactor;
         }
     }
 
-    public void normalizeStrategies() {
+    public void NormalizeStrategies() {
         float sum = priority.Sum(w => w.Value);
         foreach (StrategyT strategy in priority.Keys.ToList()) {
             priority[strategy] /= sum;
@@ -173,7 +170,7 @@ public class MilitaryResourcesAllocator {
     }
     
     //Here we can remove strategies that do not have enough importance or do not fulfill the requirements to be considered
-    public void pruneStrategies() {
+    public void PruneStrategies() {
         foreach (StrategyT strategy in priority.Keys.ToList()) {
             if (priority[strategy] < 0.2) {
                 priority.Remove(strategy);

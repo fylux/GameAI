@@ -24,9 +24,9 @@ public class SchedulerAtkHalf : SchedulerStrategy {
     {
         foreach (AgentUnit unit in usableUnits)
         {
-            Debug.Log("El waypoint del allyBase es " + info.waypoints["allyBase"]); // ¿NOT SET?
+            Debug.Log("El waypoint del allyBase es " + InfoManager.GetWaypoint("base", allyFaction).worldPosition); // ¿NOT SET?
            /* List<Body> healPts;
-            if (unit.militar.health <= unit.militar.MaxLife * 0.3 && (healPts = info.GetHealingPoints(Map.NodeFromPosition(unit.position), 60)).Count > 0)
+            if (unit.militar.health <= unit.militar.MaxLife * 0.3 && (healPts = InfoManager.GetHealingPoints(Map.NodeFromPosition(unit.position), 60)).Count > 0)
             {
                 foreach (Body hp in healPts)
                 {
@@ -39,25 +39,15 @@ public class SchedulerAtkHalf : SchedulerStrategy {
                     Debug.Log("Asignada a la unidad " + unit + " la orden GoTo con destino el healPoint" + closerPoint);
                 }
             }*/
-            if (info.AreaMilitaryAdvantage(info.waypoints["allyBase"], 25, faction) > 1.2f) // ¿Agrandar el area con varios niveles?
+            if (InfoManager.AreaMilitaryAdvantage(InfoManager.waypoints["allyBase"], 25, allyFaction) > 1.2f) // ¿Agrandar el area con varios niveles?
             {
                 // Todas las unidades usables reciben la orden de defender la zona de delante de la base
-                Node dest;
-                if (faction == Faction.A)
-                    dest = info.waypoints["upFront"]; // El cruce de caminos delante de la base
-                else
-                    dest = info.waypoints["downFront"]; // El mismo cruce pero de la otra base
-
+                Node dest = InfoManager.GetWaypoint("front", enemyFaction);
                 Debug.Log("Asignada a la unidad " + unit + " la orden Defender zona con destino Front " + dest);
             }
             else
             {
-                Node dest;
-                if (faction == Faction.A)
-                    dest = info.waypoints["allyBase"];
-                else
-                    dest = info.waypoints["enemyBase"];
-
+                Node dest = InfoManager.GetWaypoint("base", enemyFaction);
                 Debug.Log("Asignada a la unidad " + unit + " la orden Defender zona con destino base " + dest);
                 // Todas las unidades usables reciben la orden de defender la zona de la base
             }

@@ -8,7 +8,7 @@ public class StrategyManager : MonoBehaviour {
     [SerializeField]
     Faction faction;
 
-    public bool test; //borrar
+    public bool test; //TESTGGG para permitir las pruebas con cambios de estrategia
 
     [SerializeField]
     float offensiveFactor;
@@ -39,7 +39,7 @@ public class StrategyManager : MonoBehaviour {
         if (Time.frameCount % 60 == 0) {
             //Layer1
             if (strategyLayer.Apply() || test == true) {
-                test = false;
+                test = false; // TESTGGG todo lo relacionado con la variable test se eliminará
                 Debug.Log("HAN CAMBIADO LOS VALORES DE ESTRATEGIA, REASIGNANDO TROPAS");
                 //Layer 2
                // militaryResourceAllocator.SetPriority(strategyLayer.GetPriority()); DESACTIVAR MIENTRAS ESTEMOS HACIENDO PRUEBAS

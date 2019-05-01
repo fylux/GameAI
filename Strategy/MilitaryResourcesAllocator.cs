@@ -13,7 +13,7 @@ public class MilitaryResourcesAllocator {
      };*/
 
     Dictionary<StrategyT, float> importanceWeigth;
-    public Dictionary<StrategyT, float> priority;
+    public Dictionary<StrategyT, float> priority; //TESTGGG cambiar la visibilidad a privado
     Dictionary<StrategyT, float> offensiveWeight = new Dictionary<StrategyT, float>() {
             { StrategyT.ATK_BASE, 0.2f},
             { StrategyT.ATK_HALF, 0.5f},

@@ -17,7 +17,7 @@ public abstract class SchedulerStrategy {
         this.enemyFaction = Util.OppositeFaction(allyFaction);
         
         allyBase = InfoManager.GetWaypoint("base", allyFaction);
-        enemyBase = InfoManager.GetWaypoint("base", Util.OppositeFaction(enemyFaction));
+        enemyBase = InfoManager.GetWaypoint("base", enemyFaction);
 
         Debug.Log("Actualizando el valor de las bases de " + this + " y son allyBase: " + allyBase + " y enemyBase: " + enemyBase);
     }

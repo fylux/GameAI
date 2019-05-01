@@ -111,9 +111,9 @@ public class StrategyLayer {
 
         // Ahora comprobamos la influencia aliada cerca del waypoint (pero no exactamente en el waypoint). Si el enemigo tiene mucha más influencia,
         // habría quizá que reconsiderar que el camino es peligroso
-        result[0] -= PriorityAllyInfluenceWaypoint("Mid");
-        result[1] -= PriorityAllyInfluenceWaypoint("Top");
-        result[2] -= PriorityAllyInfluenceWaypoint("Bottom");
+        result[0] -= PriorityAllyInfluenceWaypoint("mid");
+        result[1] -= PriorityAllyInfluenceWaypoint("top");
+        result[2] -= PriorityAllyInfluenceWaypoint("bottom");
 
         float area = 20;
         // En el mejor caso para nosotros, tendremos un +0.5 en mid, que significa que al menos doblamos en fuerza al enemigo. En el peor, -0.35,

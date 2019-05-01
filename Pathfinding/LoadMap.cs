@@ -25,6 +25,12 @@ public class LoadMap : MonoBehaviour {
     Vector3 offset;
 
 
+    /*private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawSphere(InfoManager.GetWaypoint("base",Faction.B).worldPosition, 45);
+    }*/
+
     void Awake() {
         this.transform.position = Vector3.zero;
         Debug.Log("Loading map from "+Application.dataPath + "/" + fileNameToLoad);

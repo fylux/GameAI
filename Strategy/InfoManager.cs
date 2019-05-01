@@ -38,7 +38,6 @@ public static class InfoManager {
 
         waypoints.Add("upBase", Map.NodeFromPosition(upBase.transform.position));
         waypoints.Add("downBase", Map.NodeFromPosition(downBase.transform.position));
-
     }
 
     public static Node GetWaypoint(String waypoint, Faction faction) {
@@ -50,8 +49,9 @@ public static class InfoManager {
             { "front", faction == Faction.A ? "downFront" : "upFront"}
         };
         Debug.Assert(z.ContainsKey(waypoint));
-        return waypoints[waypoint];
+        return waypoints[z[waypoint]];
     }
+ 
 
     /*
      Obtiene la lista de unidades en un area

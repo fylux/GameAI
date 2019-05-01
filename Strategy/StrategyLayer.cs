@@ -87,8 +87,9 @@ public class StrategyLayer {
             result += ((float)1 / 20) * 0.3f;
         }
 
-        HashSet<AgentUnit> units = new HashSet<AgentUnit>(Map.GetAllies(allyFaction));
-        units.UnionWith(Map.GetEnemies(allyFaction)); // Tenemos ahora un hashset con todas las unidades vivas
+        /*HashSet<AgentUnit> units = new HashSet<AgentUnit>(Map.GetAllies(allyFaction));
+        units.UnionWith(Map.GetEnemies(allyFaction)); // Tenemos ahora un hashset con todas las unidades vivas*/
+        HashSet<AgentUnit> units = Map.unitList;
         result += Mathf.Clamp(InfoManager.MilitaryAdvantage(units, allyFaction) - 1, -0.2f, 0.2f);
         Debug.Log("Teniendo en cuenta todas las unidades vivas, ese peso es ahora " + result);
 
@@ -136,8 +137,9 @@ public class StrategyLayer {
         else if (result[1] >= result[2]) chosenWaypoint = "top";
         else chosenWaypoint = "bottom";
 
-        HashSet<AgentUnit> units = new HashSet<AgentUnit>(Map.GetAllies(allyFaction));
-        units.UnionWith(Map.GetEnemies(allyFaction)); // Tenemos ahora un hashset con todas las unidades vivas
+        /*HashSet<AgentUnit> units = new HashSet<AgentUnit>(Map.GetAllies(allyFaction));
+        units.UnionWith(Map.GetEnemies(allyFaction)); // Tenemos ahora un hashset con todas las unidades vivas*/
+        HashSet<AgentUnit> units = Map.unitList;
         maxWeight += Mathf.Clamp(InfoManager.MilitaryAdvantage(units, allyFaction) - 1, -0.2f, 0.2f);
 
         Debug.Log("El peso dado a DEFHALF es de " + maxWeight);
@@ -218,8 +220,9 @@ public class StrategyLayer {
         float result = Mathf.Clamp(InfoManager.MilitaryAdvantage(baseEnemies, allyFaction) - 1, -0.4f, 0.4f);
         Debug.Log("Gracias a la ventaja de las fuerzas aliadas en territorio enemigo frente a las enemigas en la base enemigo, tenemos un peso actual de " + result);
 
-        HashSet<AgentUnit> units = new HashSet<AgentUnit>(Map.GetAllies(allyFaction));
-        units.UnionWith(Map.GetEnemies(allyFaction)); // Tenemos ahora un hashset con todas las unidades vivas
+        /*HashSet<AgentUnit> units = new HashSet<AgentUnit>(Map.GetAllies(allyFaction));
+        units.UnionWith(Map.GetEnemies(allyFaction)); // Tenemos ahora un hashset con todas las unidades vivas*/
+        HashSet<AgentUnit> units = Map.unitList;
         result += Mathf.Clamp(InfoManager.MilitaryAdvantage(units, allyFaction) - 1, -0.2f, 0.2f);
         Debug.Log("Teniendo en cuenta todas las unidades vivas, ese peso es ahora " + result);
 

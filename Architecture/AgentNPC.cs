@@ -52,8 +52,6 @@ public class AgentNPC : Agent {
         Debug.DrawRay(position, velocity.normalized * 2, Color.green);
     }
 
-
-
     public void RemoveSteering(SteeringBehaviour steer) {
         if (steers.Contains(steer)) {
             steers.Remove(steer);
@@ -65,18 +63,21 @@ public class AgentNPC : Agent {
     public Steering PathSteering() { return new Steering(); }
 
     public void SetTask(Task new_task) {
-        if (task != null)
-            task.Terminate();
+        ResetTask();
 
         //Apart from the callback logic we need to Terminate it and set it to null
         var callback = new_task.GetCallback();
-        callback += (bool success) => {
-            task.Terminate();
-            task = null;
-        };
+        callback += (_) => { ResetTask(); };
         new_task.SetCallback(callback);
 
         task = new_task;
+    }
+
+    public void ResetTask() {
+        if (task != null) {
+            task.Terminate();
+            task = null;
+        }   
     }
 
     public Task GetTask() {

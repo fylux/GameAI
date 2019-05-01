@@ -149,7 +149,11 @@ public class MilitaryResourcesAllocator {
 
             foreach (AgentUnit unit in unitsAssignedToStrategy[strategy]) {
                 unit.GetComponent<Renderer>().material.color = strategyColor[strategy];
+                if (unit.strategy != strategy) {
+                    unit.ResetTask();
+                }
                 unit.strategy = strategy;
+
             }
         }
 

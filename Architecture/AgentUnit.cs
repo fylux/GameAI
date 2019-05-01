@@ -16,7 +16,7 @@ public abstract class AgentUnit : AgentNPC {
     public MilitarComponent militar = new MilitarComponent();
 
 
-    protected abstract Dictionary<NodeT, float> cost = new Dictionary<NodeT, float>() { //Coste por defecto, para casos de prueba
+    protected Dictionary<NodeT, float> cost = new Dictionary<NodeT, float>() { //Coste por defecto, para casos de prueba
             { NodeT.ROAD, 1 },
             { NodeT.GRASS, 1.5f },
             { NodeT.FOREST, 2 },
@@ -32,6 +32,7 @@ public abstract class AgentUnit : AgentNPC {
             { 0.8f, 1.25f, 	1.5f, 	1	}  //Artill
         };
 
+    abstract public UnitT GetUnitType();
 
     new
     protected void Start() {
@@ -40,7 +41,6 @@ public abstract class AgentUnit : AgentNPC {
         militar.SetAgent(this);
     }
 
-    abstract public UnitT GetUnitType();
 
     override
     protected void ApplyActuator()
@@ -85,23 +85,20 @@ public abstract class AgentUnit : AgentNPC {
     }
 
     public void SetTarget(Vector3 targetPosition) {
-        if (task != null)
-            task.Terminate();
+        ResetTask();
 
         if (faction == Faction.A) {
             Debug.Log("Aggresive");
             task = new GoToAggresive(this, targetPosition, 7f, (bool sucess) => {
                 Debug.Log("Aggresive terminate");
-                task.Terminate();
-                task = null;
+                ResetTask();
             });
         }
         else {
             Debug.Log("Passive");
             task = new GoTo(this, targetPosition, (bool sucess) => {
                 Debug.Log("Passive finished");
-                task.Terminate();
-                task = null;
+                ResetTask();
             });
         }
 
@@ -109,18 +106,15 @@ public abstract class AgentUnit : AgentNPC {
     }
 
     public void AttackEnemy(AgentUnit enemy) {
-        if (task != null)
-            task.Terminate();
+        ResetTask();
 
         task = new Attack(this, enemy, (bool sucess) => {
             Debug.Log("Task finished");
-            task.Terminate();
-            task = null;
+            ResetTask();
         });
         /*task = new DefendZone(this, position, 6f, (bool sucess) => {
             Debug.Log("Defend finished");
-            task.Terminate();
-            task = null;
+            RemoveTask();
         });*/
     }
 

@@ -5,7 +5,7 @@ using UnityEngine;
 public class SchedulerDefBase : SchedulerStrategy
 {
 
-    
+    HashSet<AgentUnit> defn = new HashSet<AgentUnit>(); // Unidades defendiendo
 
     override
     public void ApplyStrategy()
@@ -15,8 +15,9 @@ public class SchedulerDefBase : SchedulerStrategy
         {
             if (Util.HorizontalDistance(allyBase.worldPosition, unit.position) > 15) // El 15 es un numero pendiente de ajuste
             {
-                if (!(unit.GetTask() is GoTo))
+                if (defn.Contains(unit) == false || !(unit.GetTask() is GoTo))
                 {
+                    defn.Add(unit);
                     Debug.Log("Dandole a " + unit + " la orden de MOVERSE A LA BASE");
                     unit.SetTask(new GoTo(unit, allyBase.worldPosition, (bool success) =>
                     {
@@ -31,5 +32,11 @@ public class SchedulerDefBase : SchedulerStrategy
                 unit.SetTask(new DefendZone(unit, allyBase.worldPosition, 15, (_) => { }));
             }
         }
+    }
+
+    override
+    public void Reset()
+    {
+        defn.Clear();
     }
 }

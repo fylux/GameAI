@@ -8,11 +8,13 @@ public class StrategyManager : MonoBehaviour {
     [SerializeField]
     Faction faction;
 
+    public bool test; //borrar
+
     [SerializeField]
     float offensiveFactor;
 
     StrategyLayer strategyLayer;
-    MilitaryResourcesAllocator militaryResourceAllocator;
+    public MilitaryResourcesAllocator militaryResourceAllocator;
 
     Dictionary<StrategyT, SchedulerStrategy> strategySchedulers = new Dictionary<StrategyT, SchedulerStrategy>() {
                                                                               { StrategyT.DEF_BASE, new SchedulerDefBase() },
@@ -36,13 +38,15 @@ public class StrategyManager : MonoBehaviour {
     void Update() {
         if (Time.frameCount % 60 == 0) {
             //Layer1
-            if (strategyLayer.Apply()) { 
+            if (strategyLayer.Apply() || test == true) {
+                test = false;
                 Debug.Log("HAN CAMBIADO LOS VALORES DE ESTRATEGIA, REASIGNANDO TROPAS");
                 //Layer 2
                // militaryResourceAllocator.SetPriority(strategyLayer.GetPriority()); DESACTIVAR MIENTRAS ESTEMOS HACIENDO PRUEBAS
                 Dictionary<StrategyT, HashSet<AgentUnit>> unitsToStrategy = militaryResourceAllocator.AllocateResources();
 
                 foreach (var strategy in unitsToStrategy.Keys) {
+                    strategySchedulers[strategy].Reset();
                     strategySchedulers[strategy].usableUnits = unitsToStrategy[strategy];
                 }
             }

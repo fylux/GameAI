@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public static class InfoManager {
+public static class Info {
 
 
     public static Dictionary<string, Node> waypoints = new Dictionary<string, Node>();

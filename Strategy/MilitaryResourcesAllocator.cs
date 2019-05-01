@@ -13,7 +13,7 @@ public class MilitaryResourcesAllocator {
      };*/
 
     Dictionary<StrategyT, float> importanceWeigth;
-    Dictionary<StrategyT, float> priority;
+    public Dictionary<StrategyT, float> priority;
     Dictionary<StrategyT, float> offensiveWeight = new Dictionary<StrategyT, float>() {
             { StrategyT.ATK_BASE, 0.2f},
             { StrategyT.ATK_HALF, 0.5f},
@@ -83,7 +83,7 @@ public class MilitaryResourcesAllocator {
             Debug.Log(z.Key + " " + z.Value + "; weight: " + priority[z.Key]);
         }
 
-        Dictionary<AgentUnit, Dictionary<StrategyT, float>> strategyAffinity = availableUnits.ToDictionary(u => u, u => InfoManager.GetStrategyPriority(u, faction));
+        Dictionary<AgentUnit, Dictionary<StrategyT, float>> strategyAffinity = availableUnits.ToDictionary(u => u, u => Info.GetStrategyPriority(u, faction));
 
         //Assign units with the same strategy
         foreach (StrategyT strategy in priority.Keys) {

@@ -9,9 +9,9 @@ public class SchedulerDefHalf : SchedulerStrategy {
     {
         foreach (AgentUnit unit in usableUnits)
         {
-            Debug.Log("El waypoint del allyBase es " + InfoManager.GetWaypoint("base",allyFaction)); // ¿NOT SET?
+            Debug.Log("El waypoint del allyBase es " + Info.GetWaypoint("base",allyFaction)); // ¿NOT SET?
             List<Body> healPts;
-            if (unit.militar.health <= unit.militar.maxHealth * 0.3 && (healPts = InfoManager.GetHealingPoints(Map.NodeFromPosition(unit.position), 60)).Count > 0)
+            if (unit.militar.health <= unit.militar.maxHealth * 0.3 && (healPts = Info.GetHealingPoints(Map.NodeFromPosition(unit.position), 60)).Count > 0)
             {
                 foreach (Body hp in healPts)
                 {
@@ -24,7 +24,7 @@ public class SchedulerDefHalf : SchedulerStrategy {
                     Debug.Log("Asignada a la unidad " + unit + " la orden GoTo con destino el healPoint" + closerPoint);
                 }
             }
-            else if (InfoManager.AreaMilitaryAdvantage(InfoManager.GetWaypoint("base", allyFaction), 25, allyFaction) > 1.2f) // ¿Agrandar el area con varios niveles?
+            else if (Info.AreaMilitaryAdvantage(Info.GetWaypoint("base", allyFaction), 25, allyFaction) > 1.2f) // ¿Agrandar el area con varios niveles?
             {
                 // Todas las unidades usables reciben la orden de defender la zona de delante de la base
             }

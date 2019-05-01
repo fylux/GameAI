@@ -13,7 +13,6 @@ public class StrategyManager : MonoBehaviour {
 
     StrategyLayer strategyLayer;
     MilitaryResourcesAllocator militaryResourceAllocator;
-    InfoManager info;
 
     Dictionary<StrategyT, SchedulerStrategy> strategySchedulers = new Dictionary<StrategyT, SchedulerStrategy>() {
                                                                               { StrategyT.DEF_BASE, new SchedulerDefBase() },
@@ -23,13 +22,10 @@ public class StrategyManager : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        info = InfoManager.instance;
-        info.Initialize();
         strategyLayer = new StrategyLayer(faction);
 
-        foreach (KeyValuePair<StrategyT, SchedulerStrategy> tuple in strategySchedulers)
-        {
-            tuple.Value.Initialize(info.waypoints["allyBase"], info.waypoints["enemyBase"]);
+        foreach (StrategyT strategy in strategySchedulers.Keys) {
+            strategySchedulers[strategy].Initialize(faction);
         }
 
         militaryResourceAllocator = new MilitaryResourcesAllocator(faction);

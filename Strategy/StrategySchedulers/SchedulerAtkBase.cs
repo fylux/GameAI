@@ -17,10 +17,10 @@ public class SchedulerAtkBase : SchedulerStrategy
     {
         if (usableUnits.Count > 0)
         {
-            HashSet<AgentUnit> alliesAtk = info.GetUnitsFactionArea(enemyBase, 45, faction);
-            HashSet<AgentUnit> enemiesDef = info.GetUnitsFactionArea(enemyBase, 25, Util.EnemyFactionOf(faction));
+            HashSet<AgentUnit> alliesAtk = InfoManager.GetUnitsFactionArea(enemyBase, 45, allyFaction);
+            HashSet<AgentUnit> enemiesDef = InfoManager.GetUnitsFactionArea(enemyBase, 25, Util.OppositeFaction(allyFaction));
             alliesAtk.UnionWith(enemiesDef);
-            if (info.MilitaryAdvantage(alliesAtk, faction) >= 0.85)
+            if (InfoManager.MilitaryAdvantage(alliesAtk, allyFaction) >= 0.85)
             {
                 RegroupAndAttack();
             }
@@ -32,10 +32,10 @@ public class SchedulerAtkBase : SchedulerStrategy
                     if (!(unit.GetTask() is GoTo))
                     {
                         Debug.Log("Dandole a " + unit + " la orden de MOVERSE AL FRONT");
-                        unit.SetTask(new GoTo(unit, info.waypoints["enemyFront"].worldPosition, (bool success) =>
+                        unit.SetTask(new GoTo(unit, InfoManager.GetWaypoint("front", enemyFaction).worldPosition, (bool success) =>
                         {
                             Debug.Log("Dandole a " + unit + " la orden de DEFENDER LA ZONA");
-                            unit.SetTask(new DefendZone(unit, info.waypoints["enemyFront"].worldPosition, 15, (_) => { }));
+                            unit.SetTask(new DefendZone(unit, InfoManager.GetWaypoint("front", enemyFaction).worldPosition, 15, (_) => { }));
                         }));
                     }
                 }

@@ -44,7 +44,9 @@ public class LoadMap : MonoBehaviour {
             {
                 GenerateMap();
             }
+
         Map.Init(BuildMap(), gridSize);
+        InfoManager.Init();
     }
 
     Node[,] BuildMap() {

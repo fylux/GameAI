@@ -234,13 +234,13 @@ public static class Info {
     public static Dictionary<StrategyT, float> GetStrategyPriority(AgentUnit unit, Faction faction) {
         return new Dictionary<StrategyT, float> {
             { StrategyT.ATK_BASE,
-                Util.HorizontalDistance(unit.position, GetWaypoint("base", Util.OppositeFaction(faction)).worldPosition) },
+                Util.HorizontalDist(unit.position, GetWaypoint("base", Util.OppositeFaction(faction)).worldPosition) },
             { StrategyT.ATK_HALF,
-                Util.HorizontalDistance(unit.position, GetWaypoint("front", faction).worldPosition) },
+                Util.HorizontalDist(unit.position, GetWaypoint("front", faction).worldPosition) },
             { StrategyT.DEF_HALF,
-                Util.HorizontalDistance(unit.position, GetWaypoint(StrategyLayer.chosenWaypoint, faction).worldPosition) },
+                Util.HorizontalDist(unit.position, GetWaypoint(StrategyLayer.chosenWaypoint, faction).worldPosition) },
             { StrategyT.DEF_BASE,
-                Util.HorizontalDistance(unit.position,GetWaypoint("base", faction).worldPosition) }
+                Util.HorizontalDist(unit.position,GetWaypoint("base", faction).worldPosition) }
         };
     }
 }

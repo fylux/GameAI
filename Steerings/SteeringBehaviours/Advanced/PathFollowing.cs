@@ -38,7 +38,7 @@ public class PathFollowing : SteeringBehaviour {
         }
 
 
-        float distance = Util.HorizontalDistance(path[currentPoint], npc.position);
+        float distance = Util.HorizontalDist(path[currentPoint], npc.position);
         if (distance < arrivalRadius) {
             if (type == FollowT.STAY) {
                 currentPoint = Mathf.Min(currentPoint + 1, path.Length - 1); //When it reaches the last stays on it

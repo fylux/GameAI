@@ -33,7 +33,7 @@ public class SchedulerAtkBase : SchedulerStrategy
                 Debug.Log("Somos mas FUERTES asi que vamos a atacar");
                 foreach (AgentUnit unit in usableUnits)
                 {
-                    if (atking.Contains(unit) == false || (!(unit.GetTask() is GoTo) && Util.HorizontalDistance(unit.position, Info.GetWaypoint("base", enemyFaction).worldPosition) >= 15)) 
+                    if (atking.Contains(unit) == false || (!(unit.GetTask() is GoTo) && Util.HorizontalDist(unit.position, Info.GetWaypoint("base", enemyFaction).worldPosition) >= 15)) 
                     {
                         atking.Add(unit);
                         if (regr.Contains(unit))
@@ -53,7 +53,7 @@ public class SchedulerAtkBase : SchedulerStrategy
                 Debug.Log("Somos mas DEBILES asi que vamos a esperar");
                 foreach (AgentUnit unit in usableUnits)
                 {
-                    if (regr.Contains(unit) == false || !(unit.GetTask() is GoTo) && Util.HorizontalDistance(unit.position, Info.GetWaypoint("base", enemyFaction).worldPosition) >= 15)
+                    if (regr.Contains(unit) == false || !(unit.GetTask() is GoTo) && Util.HorizontalDist(unit.position, Info.GetWaypoint("base", enemyFaction).worldPosition) >= 15)
                     {
                         regr.Add(unit);
                         if (atking.Contains(unit))

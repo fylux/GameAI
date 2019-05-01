@@ -14,7 +14,7 @@ public class Pursue : SteeringBehaviourTarget {
     }
 
     public static Steering GetSteering(Agent target, Agent npc, float maxAccel, float maxPrediction, bool visibleRays = false) {
-        float distance =  Util.HorizontalDistance(target.position, npc.position);
+        float distance =  Util.HorizontalDist(target.position, npc.position);
         float speed = npc.velocity.magnitude;
 
         float prediction;
@@ -30,7 +30,7 @@ public class Pursue : SteeringBehaviourTarget {
 
     private void OnDrawGizmos()
     {
-        float distance = Util.HorizontalDistance(target.position, npc.position);
+        float distance = Util.HorizontalDist(target.position, npc.position);
         float speed = npc.velocity.magnitude;
 
         float prediction;

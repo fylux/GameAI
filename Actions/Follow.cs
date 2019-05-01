@@ -21,7 +21,7 @@ public class Follow : Task {
     }
 
     bool ReconsiderPath() {
-        if (Util.HorizontalDistance(lastTargetPosition, GetFutureTargetPosition()) > 0.2) {
+        if (Util.HorizontalDist(lastTargetPosition, GetFutureTargetPosition()) > 0.2) {
             goTo.SetNewTarget(GetFutureTargetPosition());
             lastTargetPosition = GetFutureTargetPosition();
             return true;
@@ -30,10 +30,10 @@ public class Follow : Task {
     }
 
     Vector3 GetFutureTargetPosition() {
-        float lookAhead = Util.HorizontalDistance(agent.position, target.position) / 2f ;
+        float lookAhead = Util.HorizontalDist(agent.position, target.position) / 2f ;
         Vector3 futurePosition = target.position + target.velocity * lookAhead;
         //Only predict if it is not too close and the prediction is a walkable place
-        if (Util.HorizontalDistance(agent.position, target.position) > 4f && Map.NodeFromPosition(futurePosition).isWalkable())
+        if (Util.HorizontalDist(agent.position, target.position) > 4f && Map.NodeFromPosition(futurePosition).isWalkable())
             return futurePosition;
         else
             return target.position;
@@ -46,8 +46,8 @@ public class Follow : Task {
             return st;
         }
 
-        float distanceToTarget = Util.HorizontalDistance(agent.position, lastTargetPosition);
-        float realDistance = Util.HorizontalDistance(agent.position, target.position);
+        float distanceToTarget = Util.HorizontalDist(agent.position, lastTargetPosition);
+        float realDistance = Util.HorizontalDist(agent.position, target.position);
 
         // If has reached range or fixed time reconsider path
         if ( (!inRange && distanceToTarget < agent.attackRange * 0.9) || Time.fixedTime - timeStamp > 2) {

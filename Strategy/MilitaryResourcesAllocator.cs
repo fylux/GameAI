@@ -74,10 +74,19 @@ public class MilitaryResourcesAllocator {
         //If there are remaining units due to rounding errors are assigned to the most important strategy
         Dictionary<StrategyT, int> nUnitsAllocToStrategy = priority.ToDictionary(w => w.Key, w => Mathf.FloorToInt(w.Value * nTotalAvailableUnits));
 
+        //Asign remaining units to the most important strategy
         StrategyT mostImportantStrategy = priority.OrderBy(strategy => strategy.Value).Last().Key;
         Debug.Log("most important:" + mostImportantStrategy);
         nUnitsAllocToStrategy[mostImportantStrategy] += nTotalAvailableUnits - nUnitsAllocToStrategy.Sum(w => w.Value);
         Debug.Assert(nUnitsAllocToStrategy.Sum(w => w.Value) == nTotalAvailableUnits);
+
+        /*int nRemainingUnits = nTotalAvailableUnits - nUnitsAllocToStrategy.Sum(w => w.Value);
+        var strategiesByAllocResidual = priority.OrderByDescending(s => (s.Value * nTotalAvailableUnits) - Mathf.FloorToInt(s.Value * nTotalAvailableUnits))
+                                        .Select(s => s.Key)
+                                        .Take(nRemainingUnits);
+        foreach (StrategyT strategy in strategiesByAllocResidual) {
+            nUnitsAllocToStrategy[strategy]++;
+        }*/
 
         foreach (var z in nUnitsAllocToStrategy) {
             Debug.Log(z.Key + " " + z.Value + "; weight: " + priority[z.Key]);

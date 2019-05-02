@@ -47,6 +47,7 @@ public class MilitarComponent : UnitComponent {
             agent.gameObject.SetActive(false);
 
             //Update list of units removing this one
+            Map.unitList.Remove(agent);
             GameObject.Destroy(agent.gameObject);
         }
         else if (agent.GetTask() is HostileTask) { //To change the target if needed

@@ -57,16 +57,16 @@ public class StrategyLayer {
         float defhalf = Mathf.Clamp(PriorityDefhalf(), 0, 1);
         float atkhalf = 1 - (Mathf.Max(defbase, defhalf));
 
-
+        // *********** Bonus de controlar territorio aliado **********
         float terr = Info.GetTerritoryInfluence(allyFaction, enemyFaction);
-        if (!(terr >= 0))
+        if (!(terr >= 0.001))
         {
             atkhalf += 0.2f;
             Debug.Log("BONUS por dominación de territorio!");
         }
         else
             Debug.Log("La influencia enemiga en el territorio aliado es de " + terr);
-
+        // ***********************************************************
 
 
         return new Dictionary<StrategyT, float>(){

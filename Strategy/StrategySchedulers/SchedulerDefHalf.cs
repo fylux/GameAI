@@ -3,7 +3,9 @@ using System.Linq;
 using UnityEngine;
 
 public class SchedulerDefHalf : SchedulerStrategy {
- 
+
+    const int minimunHealth = 3; //If it is lower the unit will try to go to a healing point
+
     public float GetMilitaryBalanceCluster(HashSet<AgentUnit> cluster) {
         return Info.MilitaryAdvantageArea(Map.NodeFromPosition(Info.GetClusterCenter(cluster)), 15f, allyFaction);
     }
@@ -33,7 +35,13 @@ public class SchedulerDefHalf : SchedulerStrategy {
     override
     public void ApplyStrategy()
     {
-        var remainingUnits = new HashSet<AgentUnit>(usableUnits);
+        //Units with low level of health should try to go to a healing point
+        var damagedAllies = usableUnits.Where(unit => unit.militar.health < minimunHealth && !(unit.GetTask() is RestoreHealth));
+        foreach (var ally in damagedAllies) {
+            ally.SetTask(new RestoreHealth(ally, (_) => { }));
+        }
+
+        var remainingUnits = new HashSet<AgentUnit>(usableUnits.Where(unit => !(unit.GetTask() is RestoreHealth)));
         var clusters = Info.GetClusters(allyFaction);
         var clustersByAdvantage = clusters.ToDictionary(c => c, c => GetMilitaryBalanceCluster(c)).OrderByDescending(c => c.Value);
         var unitsAssignedToClusters = new Dictionary<HashSet<AgentUnit>, HashSet<AgentUnit>>();

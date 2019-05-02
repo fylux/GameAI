@@ -141,9 +141,11 @@ public static class Info {
         return adv / nTotalUnits;
     }
 
-    public static List<Body> GetHealingPoints(Node tile, float areaSize) {
-        int nFound = Physics.OverlapSphereNonAlloc(tile.worldPosition, areaSize, hits, Map.healingMask);
-        return new List<Body>(hits.Take(nFound).Select(hit => hit.GetComponent<Body>()));
+    public static Body GetClosestHealingPoint(Vector3 position, float areaSize) {
+        int nFound = Physics.OverlapSphereNonAlloc(position, areaSize, hits, Map.healingMask);
+        var healingPoints = hits.Take(nFound).Select(hit => hit.GetComponent<Body>());
+        Debug.Assert(healingPoints.Count() > 0);
+        return healingPoints.OrderBy(hPt => Util.HorizontalDist(position, hPt.position)).FirstOrDefault();
     }
 
     //Funciones que trabajan con influencia:

@@ -220,7 +220,7 @@ public class StrategyLayer {
         baseEnemies.UnionWith(Info.GetUnitsFactionArea(Info.GetWaypoint("base", enemyFaction), 45, allyFaction)); // Añadimos los aliados en territorio enemigo
 
         float result = Mathf.Clamp(Info.MilitaryAdvantage(baseEnemies, allyFaction) - 1, -0.4f, 0.4f);
-        if (dbg) .Log("Gracias a la ventaja de las fuerzas aliadas en territorio enemigo frente a las enemigas en la base enemigo, tenemos un peso actual de " + result);
+        if (dbg) Debug.Log("Gracias a la ventaja de las fuerzas aliadas en territorio enemigo frente a las enemigas en la base enemigo, tenemos un peso actual de " + result);
 
         /*HashSet<AgentUnit> units = new HashSet<AgentUnit>(Map.GetAllies(allyFaction));
         units.UnionWith(Map.GetEnemies(allyFaction)); // Tenemos ahora un hashset con todas las unidades vivas*/

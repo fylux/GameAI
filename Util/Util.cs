@@ -24,15 +24,20 @@ public static class Util {
         return Mathf.Abs(node1.gridX - node2.gridX) + Mathf.Abs(node1.gridY - node2.gridY);
     }
 
-    public static Body GetCloserBody(List<Body> bodies, Node tile)
+   /* public static Body GetCloserBody(List<Body> bodies, Node tile)
     {
+
+        Debug.Assert(bodies.Count > 0);
+
         int minDist = 100;
         Body selected = null;
 
         int dist;
         foreach (Body body in bodies)
         {
-            if ((dist = NodeDistance(Map.NodeFromPosition(body.position),tile)) < minDist)
+            Debug.Log("Calculamos la posicion de " + body.position);
+            dist = NodeDistance(Map.NodeFromPosition(body.position), tile);
+            if (dist < minDist)
             {
                 minDist = dist;
                 selected = body;
@@ -40,7 +45,7 @@ public static class Util {
         }
 
         return selected;
-    }
+    }*/
 
     public static Faction OppositeFaction(Faction faction) {
         if (faction == Faction.A)

@@ -6,7 +6,7 @@ using UnityEngine;
 public class AgentNPC : Agent {
 
     protected List<SteeringBehaviour> steers;
-    protected Task task;
+    public Task task;
 
     [SerializeField]
     protected bool visibleRays;

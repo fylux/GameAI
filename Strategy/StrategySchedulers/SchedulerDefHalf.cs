@@ -9,7 +9,7 @@ public class SchedulerDefHalf : SchedulerStrategy {
     {
         foreach (AgentUnit unit in usableUnits)
         {
-            Debug.Log("El waypoint del allyBase es " + Info.GetWaypoint("base",allyFaction)); // ¿NOT SET?
+           /* Debug.Log("El waypoint del allyBase es " + Info.GetWaypoint("base",allyFaction)); // ¿NOT SET?
             List<Body> healPts;
             if (unit.militar.health <= unit.militar.maxHealth * 0.3 && (healPts = Info.GetHealingPoints(Map.NodeFromPosition(unit.position), 60)).Count > 0)
             {
@@ -31,7 +31,7 @@ public class SchedulerDefHalf : SchedulerStrategy {
             else
             {
                 // Todas las unidades usables reciben la orden de defender la zona de la base
-            }
+            }*/
         }
 
     }

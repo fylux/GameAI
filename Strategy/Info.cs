@@ -87,7 +87,7 @@ public static class Info {
     }
 
     // Obtiene un numero que indica la ventaja militar en un area
-    public static float AreaMilitaryAdvantage(Node tile, float areaSize, Faction fact) {
+    public static float MilitaryAdvantageArea(Node tile, float areaSize, Faction fact) {
         return MilitaryAdvantage(GetUnitsArea(tile, areaSize), fact);
     }
 
@@ -208,7 +208,8 @@ public static class Info {
     public static List<HashSet<AgentUnit>> GetClusters(Faction faction) {
         List<HashSet<AgentUnit>> clusters = new List<HashSet<AgentUnit>>();
 
-        var enemies = new HashSet<AgentUnit>(Map.unitList.Where(unit => unit.faction == faction));
+        var enemies = GetUnitsFactionArea(GetWaypoint("base", faction), 45f, Util.OppositeFaction(faction));
+
         while (enemies.Count > 0) {
             HashSet<AgentUnit> cluster = new HashSet<AgentUnit>();
             Stack<AgentUnit> neighbours = new Stack<AgentUnit>();
@@ -226,10 +227,13 @@ public static class Info {
                     cluster.Add(nearEnemy);
                 }
             }
-            var clusterCenter = cluster.Aggregate(new Vector3(0, 0, 0), (center, unit) => center + unit.position) / cluster.Count;
             clusters.Add(cluster);
         }
         return clusters;
+    }
+
+    public static Vector3 GetClusterCenter(HashSet<AgentUnit> cluster) {
+        return cluster.Aggregate(new Vector3(0, 0, 0), (center, unit) => center + unit.position) / cluster.Count;
     }
 
     public static Dictionary<StrategyT, float> GetStrategyPriority(AgentUnit unit, Faction faction) {

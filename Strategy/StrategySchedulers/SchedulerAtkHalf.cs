@@ -39,7 +39,7 @@ public class SchedulerAtkHalf : SchedulerStrategy {
                     Debug.Log("Asignada a la unidad " + unit + " la orden GoTo con destino el healPoint" + closerPoint);
                 }
             }*/
-            if (Info.AreaMilitaryAdvantage(Info.waypoints["allyBase"], 25, allyFaction) > 1.2f) // ¿Agrandar el area con varios niveles?
+            if (Info.MilitaryAdvantageArea(Info.waypoints["allyBase"], 25, allyFaction) > 1.2f) // ¿Agrandar el area con varios niveles?
             {
                 // Todas las unidades usables reciben la orden de defender la zona de delante de la base
                 Node dest = Info.GetWaypoint("front", enemyFaction);

@@ -36,7 +36,7 @@ public class StrategyManager : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        if (Time.frameCount % 60 == 0) {
+        if (Time.frameCount % 120 == 0) {
             //Layer1
             if (strategyLayer.Apply() || test == true) {
                 test = false; // TESTGGG todo lo relacionado con la variable test se eliminará

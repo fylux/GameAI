@@ -36,8 +36,6 @@ public class SchedulerDefHalf : SchedulerStrategy {
     override
     public void ApplyStrategy()
     {
-        if (Time.frameCount % 120 != 0)
-            return;
         //Units with low l1evel of health should try to go to a healing point
         var damagedAllies = usableUnits.Where(unit => unit.militar.health < minimunHealth && !(unit.GetTask() is RestoreHealth));
         foreach (var ally in damagedAllies) {
@@ -90,7 +88,10 @@ public class SchedulerDefHalf : SchedulerStrategy {
             foreach (AgentUnit ally in cluster.Value) {
                 if (ally.GetTask() is Attack) continue;
                 var closestEnemy = cluster.Key.OrderBy(unit => Util.HorizontalDist(ally.position, unit.position)).First();
-                ally.SetTask(new Attack(ally, closestEnemy, (_) => { }));
+                ally.SetTask(new Attack(ally, closestEnemy, (_) => {
+                    //If you kill an enemy reconsider assignations
+                    ApplyStrategy();
+                }));
             }
         }
 
@@ -101,7 +102,7 @@ public class SchedulerDefHalf : SchedulerStrategy {
         foreach (var ally in alliesToDefendBridge) {
             Debug.Assert(!(ally.GetTask() is DefendZone));
             ally.SetTask(new GoTo(ally, Info.GetWaypoint("mid", allyFaction).worldPosition,(bool success) => {
-                ally.SetTask(new DefendZone(ally, ally.position, 8f, (_) => {
+                ally.SetTask(new DefendZone(ally, ally.position, 6f, (_) => {
                 }));
             }));
         }

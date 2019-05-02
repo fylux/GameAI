@@ -121,7 +121,7 @@ public static class Info {
         int i = (int)fact;
         int j = 1 - i;
         if (number[i] == 0) return 0;
-        if (number[j] == 0) return Mathf.Infinity;
+        if (number[j] == 0) return 50000;
         float result = Mathf.Sqrt(HP[i] / HP[j] * (ATK[i] + adv[i]) / (ATK[j] + adv[j]));
 
         if (dbg) Debug.Log("La ventaja total de "+fact.ToString()+" es de :" + result);
@@ -137,7 +137,7 @@ public static class Info {
             adv += AgentUnit.atkTable[(int)UnitT.MELEE, (int)UnitT.MELEE] * nUnits;
             nTotalUnits += nUnits;
         }
-        if (nTotalUnits == 0) return Mathf.Infinity;
+        if (nTotalUnits == 0) return 50000;
         return adv / nTotalUnits;
     }
 

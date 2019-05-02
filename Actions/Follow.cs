@@ -55,7 +55,7 @@ public class Follow : Task {
             bool changed_path = ReconsiderPath();
             //If the path has not changed and we are on range
             if (!changed_path && distanceToTarget < agent.attackRange * 0.9) {
-                Debug.Log("Enemy in attack range");
+                //Debug.Log("Enemy in attack range");
                 inRange = true;
                 goTo.FinishPath();
                 agent.RequestStopMoving();
@@ -63,7 +63,7 @@ public class Follow : Task {
         }
         //If the enemy it goes out of range
         else if (inRange && realDistance > agent.attackRange * 1.1) {
-            Debug.Log("Enemy goes out of range");
+            //Debug.Log("Enemy goes out of range");
             inRange = false;
             ReconsiderPath();
         }

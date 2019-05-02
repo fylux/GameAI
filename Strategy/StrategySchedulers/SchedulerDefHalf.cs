@@ -7,7 +7,7 @@ public class SchedulerDefHalf : SchedulerStrategy {
     const int minimunHealth = 3; //If it is lower the unit will try to go to a healing point
 
     public float GetMilitaryBalanceCluster(HashSet<AgentUnit> cluster) {
-        return Info.MilitaryAdvantageArea(Map.NodeFromPosition(Info.GetClusterCenter(cluster)), 15f, allyFaction);
+        return Info.MilitaryAdvantageArea(Map.NodeFromPosition(Info.GetClusterCenter(cluster)), 10f, allyFaction);
     }
 
     public Dictionary<HashSet<AgentUnit>, int> DistributeClusters(Dictionary<HashSet<AgentUnit>, float> clusters, int nUnits) {
@@ -15,6 +15,7 @@ public class SchedulerDefHalf : SchedulerStrategy {
         float sum = clusters.Sum(c => c.Value);
         foreach (var cluster in clusters.Keys.ToList()) {
             clusters[cluster] /= sum;
+
         }
 
         //Distribute
@@ -35,7 +36,9 @@ public class SchedulerDefHalf : SchedulerStrategy {
     override
     public void ApplyStrategy()
     {
-        //Units with low level of health should try to go to a healing point
+        if (Time.frameCount % 120 != 0)
+            return;
+        //Units with low l1evel of health should try to go to a healing point
         var damagedAllies = usableUnits.Where(unit => unit.militar.health < minimunHealth && !(unit.GetTask() is RestoreHealth));
         foreach (var ally in damagedAllies) {
             ally.SetTask(new RestoreHealth(ally, (_) => { }));
@@ -48,6 +51,7 @@ public class SchedulerDefHalf : SchedulerStrategy {
 
         //Foreach cluster sorted by the advantage that we have
         foreach (HashSet<AgentUnit> cluster in clustersByAdvantage.Select(c => c.Key)) {
+
             var unitsCluster = new HashSet<AgentUnit>(cluster);
             var center = Info.GetClusterCenter(cluster);
             var closestAllies = remainingUnits.OrderBy(unit => Util.HorizontalDist(center, unit.position));
@@ -55,9 +59,8 @@ public class SchedulerDefHalf : SchedulerStrategy {
             //Assign the closest allies to that cluster
             foreach (AgentUnit closestAlly in closestAllies) {
                 unitsCluster.Add(closestAlly);
-
                 //Till the balance between the cluster and the assign allies is positive
-                if (Info.MilitaryAdvantage(unitsCluster, allyFaction) > 0) {
+                if (Info.MilitaryAdvantage(unitsCluster, allyFaction) > 1) {
                     var alliesToCluster = new HashSet<AgentUnit>(unitsCluster.Where(unit => unit.faction == allyFaction));
                     unitsAssignedToClusters.Add(cluster, alliesToCluster);
                     remainingUnits.ExceptWith(alliesToCluster);

@@ -45,7 +45,6 @@ public class Attack : Task {
 
     override
     public void Terminate() {
-        Debug.Log("End of attack");
         follow.Terminate();
     }
 

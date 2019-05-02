@@ -21,7 +21,6 @@ public class GoTo : Task {
         pathF.visibleRays = true;
         pathF.maxAccel = 50f;
 
-        Debug.Log("Peticion de Pathfinding en GoTo " + agent.name + " en " + Time.frameCount);
         PathfindingManager.RequestPath(agent.position, target, agent.Cost, ProcessPath);
     }
 

@@ -76,7 +76,6 @@ public class MilitaryResourcesAllocator {
 
         //Asign remaining units to the most important strategy
         StrategyT mostImportantStrategy = priority.OrderBy(strategy => strategy.Value).Last().Key;
-        Debug.Log("most important:" + mostImportantStrategy);
         nUnitsAllocToStrategy[mostImportantStrategy] += nTotalAvailableUnits - nUnitsAllocToStrategy.Sum(w => w.Value);
         Debug.Assert(nUnitsAllocToStrategy.Sum(w => w.Value) == nTotalAvailableUnits);
 
@@ -88,9 +87,9 @@ public class MilitaryResourcesAllocator {
             nUnitsAllocToStrategy[strategy]++;
         }*/
 
-        foreach (var z in nUnitsAllocToStrategy) {
+        /*foreach (var z in nUnitsAllocToStrategy) {
             Debug.Log(z.Key + " " + z.Value + "; weight: " + priority[z.Key]);
-        }
+        }*/
 
         Dictionary<AgentUnit, Dictionary<StrategyT, float>> strategyAffinity = availableUnits.ToDictionary(u => u, u => Info.GetStrategyPriority(u, faction));
 
@@ -110,10 +109,10 @@ public class MilitaryResourcesAllocator {
 
         Debug.Assert(nUnitsAllocToStrategy.Sum(w => w.Value) == availableUnits.Count);
 
-        Debug.Log("List available unit");
+        /*Debug.Log("List available unit");
         foreach (var unit in availableUnits) {
             Debug.Log(unit.name);
-        }
+        }*/
 
         //Assign units to strategies based on affinity
         while (priority.Keys.Any(s => nUnitsAllocToStrategy[s] > 0)) {

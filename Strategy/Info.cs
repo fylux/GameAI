@@ -159,6 +159,14 @@ public static class Info {
        return GetNodesInfluence(fac, GetNodesInArea(node, areaSize));
     }
 
+    public static float GetTerritoryInfluence(Faction territoryFaction, Faction unitsFaction)
+    {
+        return GetAreaInfluence(unitsFaction,waypoints["mid"],10) +
+               GetAreaInfluence(unitsFaction, waypoints["top"], 10) +
+               GetAreaInfluence(unitsFaction, waypoints["bottom"], 10) +
+               GetAreaInfluence(unitsFaction, GetWaypoint("base",territoryFaction), 45);
+    }
+
     public static float GetNodesInfluence(Faction fac, List<Node> nodes) {
         Dictionary<Faction, int> infl = new Dictionary<Faction, int>() { { Faction.A, 0 }, { Faction.B, 0 }, { Faction.C, 0 } };
 

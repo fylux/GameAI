@@ -31,10 +31,11 @@ public class StrategyLayer {
     }
 
     public bool Apply() {
-        if (dbg) Debug.Log("Starting apply");
+        /*if (dbg)*/ Debug.Log("Starting apply");
         bool changed = false;
 
         Dictionary<StrategyT, float> newPriority = ComputePriority();
+
         foreach (StrategyT strategy in newPriority.Keys) {
             if (dbg) Debug.Log("El valor de la estrategia " + strategy + " es de " + newPriority[strategy]);
             if (Mathf.Abs(newPriority[strategy] - priority[strategy]) >= 0.15) //TODO: Decidir valor real. ¿Lo hacemos así o pedimos cambio estable?
@@ -54,11 +55,24 @@ public class StrategyLayer {
     Dictionary<StrategyT, float> ComputePriority() {
         float defbase = Mathf.Clamp(PriorityDefbase(), 0, 1);
         float defhalf = Mathf.Clamp(PriorityDefhalf(), 0, 1);
+        float atkhalf = 1 - (Mathf.Max(defbase, defhalf));
+
+
+        float terr = Info.GetTerritoryInfluence(allyFaction, enemyFaction);
+        if (!(terr >= 0))
+        {
+            atkhalf += 0.2f;
+            Debug.Log("BONUS por dominación de territorio!");
+        }
+        else
+            Debug.Log("La influencia enemiga en el territorio aliado es de " + terr);
+
+
 
         return new Dictionary<StrategyT, float>(){
             { StrategyT.DEF_BASE, defbase },
             { StrategyT.DEF_HALF, defhalf },
-            { StrategyT.ATK_HALF, 1 - (Mathf.Max(defbase,defhalf)) },
+            { StrategyT.ATK_HALF, atkhalf },
             { StrategyT.ATK_BASE, Mathf.Clamp(PriorityAtkbase(), 0, 1) }
         };
     }
@@ -208,6 +222,16 @@ public class StrategyLayer {
           Debug.Log("En bottom, la ventaja militar de los aliados es de " + inflB);
           result += Mathf.Max(inflM, Mathf.Max(inflT, inflB));*/
         result += inflM;
+
+        float terr = Info.GetTerritoryInfluence(allyFaction, enemyFaction);
+        if (!(terr >= 0))
+        {
+            result += 0.2f;
+            Debug.Log("BONUS por dominación de territorio!");
+        }
+        else
+            Debug.Log("La influencia enemiga en el territorio aliado es de " + terr);
+            
 
         if (dbg) Debug.Log("El peso dado a ATKHALF es de " + result);
 

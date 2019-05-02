@@ -4,7 +4,6 @@ using UnityEngine;
 using System;
 
 public class GoTo : Task {
-
     GameObject empty;
     PathFollowing pathF;
     Vector3 target;
@@ -63,5 +62,10 @@ public class GoTo : Task {
     public void Terminate() {
         if (empty != null) UnityEngine.Object.Destroy(empty);
         agent.RequestStopMoving(); //To remove remaining forces of movement
+    }
+
+    override
+    public String ToString() {
+        return "GoTo -> "+target;
     }
 }

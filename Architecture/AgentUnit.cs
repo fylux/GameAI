@@ -89,17 +89,17 @@ public abstract class AgentUnit : AgentNPC {
 
         if (faction == Faction.A) {
             Debug.Log("Aggresive");
-            task = new GoToAggresive(this, targetPosition, 7f, (bool sucess) => {
+            SetTask(new GoToAggresive(this, targetPosition, 7f, (bool sucess) => {
                 Debug.Log("Aggresive terminate");
                 ResetTask();
-            });
+            }));
         }
         else {
             Debug.Log("Passive");
-            task = new GoTo(this, targetPosition, (bool sucess) => {
+            SetTask(new GoTo(this, targetPosition, (bool sucess) => {
                 Debug.Log("Passive finished");
                 ResetTask();
-            });
+            }));
         }
 
 
@@ -108,14 +108,14 @@ public abstract class AgentUnit : AgentNPC {
     public void AttackEnemy(AgentUnit enemy) {
         ResetTask();
 
-        task = new Attack(this, enemy, (bool sucess) => {
+        SetTask(new Attack(this, enemy, (bool sucess) => {
             Debug.Log("Task finished");
             ResetTask();
-        });
-        /*task = new DefendZone(this, position, 6f, (bool sucess) => {
+        }));
+        /* SetTask(new DefendZone(this, position, 6f, (bool sucess) => {
             Debug.Log("Defend finished");
             RemoveTask();
-        });*/
+        }));*/
     }
 
 

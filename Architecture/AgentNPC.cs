@@ -7,6 +7,7 @@ public class AgentNPC : Agent {
 
     protected List<SteeringBehaviour> steers;
     protected Task task;
+    public string taskName = "";
 
     [SerializeField]
     protected bool visibleRays;
@@ -71,12 +72,15 @@ public class AgentNPC : Agent {
         new_task.SetCallback(callback);
 
         task = new_task;
+
+        taskName = task.ToString();
     }
 
     public void ResetTask() {
         if (task != null) {
             task.Terminate();
             task = null;
+            taskName = "";
         }   
     }
 

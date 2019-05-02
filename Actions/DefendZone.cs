@@ -80,4 +80,9 @@ public class DefendZone : HostileTask {
     public void Terminate() {
         if (attack != null) attack.Terminate();
     }
+
+    override
+    public String ToString() {
+        return "DefendZone -> " + center;
+    }
 }

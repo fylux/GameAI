@@ -48,4 +48,9 @@ public class Attack : Task {
         Debug.Log("End of attack");
         follow.Terminate();
     }
+
+    override
+    public string ToString() {
+        return "Attack ->" + targetEnemy.name;
+    }
 }

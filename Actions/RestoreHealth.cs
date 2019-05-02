@@ -55,4 +55,9 @@ public class RestoreHealth : Task {
         if (goTo != null) goTo.Terminate();
         if (defendZone != null) defendZone.Terminate();
     }
+
+    override
+    public String ToString() {
+        return "RestoreHealth ->" + healingPoint;
+    }
 }

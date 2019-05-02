@@ -67,7 +67,7 @@ public class SchedulerDefHalf : SchedulerStrategy {
         }
 
         //Take the units that haven't been assigned and distribute them between clusters
-        var priorityClusters = clusters.ToDictionary(c => c, c => Info.MilitaryAdvantage(c, enemyFaction));
+        var priorityClusters = unitsAssignedToClusters.ToDictionary(c => c.Key, c => Info.MilitaryAdvantage(c.Key, enemyFaction));
         var remainingUnitsToCluster = DistributeClusters(priorityClusters, remainingUnits.Count);
 
         //Foreach cluster sorted by the advantage that we have
@@ -85,18 +85,21 @@ public class SchedulerDefHalf : SchedulerStrategy {
         //Asign tasks to units in the selected clusters
         foreach (var cluster in unitsAssignedToClusters) {
             foreach (AgentUnit ally in cluster.Value) {
+                if (ally.GetTask() is Attack) continue;
                 var closestEnemy = cluster.Key.OrderBy(unit => Util.HorizontalDist(ally.position, unit.position)).First();
                 ally.SetTask(new Attack(ally, closestEnemy, (_) => { }));
             }
         }
 
-      //  Debug.Log("[Def_half] Remaining units :" + remainingUnits.Count);
 
         //Remaining units go to defend the bridge
         var alliesToDefendBridge = remainingUnits.Where(unit => !(unit.GetTask() is GoTo) && !(unit.GetTask() is DefendZone));
+
         foreach (var ally in alliesToDefendBridge) {
+            Debug.Assert(!(ally.GetTask() is DefendZone));
             ally.SetTask(new GoTo(ally, Info.GetWaypoint("mid", allyFaction).worldPosition,(bool success) => {
-                ally.SetTask(new DefendZone(ally, ally.position, 8f, (_) => {}));
+                ally.SetTask(new DefendZone(ally, ally.position, 8f, (_) => {
+                }));
             }));
         }
     }

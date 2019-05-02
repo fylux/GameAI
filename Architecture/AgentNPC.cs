@@ -68,9 +68,7 @@ public class AgentNPC : Agent {
         ResetTask();
 
         //Apart from the callback logic we need to Terminate it and set it to null
-        var callback = new_task.GetCallback();
-        callback += (_) => { ResetTask(); };
-        new_task.SetCallback(callback);
+        new_task.SetCallback(((_) => { ResetTask(); }) + new_task.GetCallback());
 
         task = new_task;
 

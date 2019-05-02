@@ -35,10 +35,10 @@ public class MilitaryResourcesAllocator {
         this.faction = faction;
 
         priority = new Dictionary<StrategyT, float>() {
-            { StrategyT.ATK_BASE, 1},
+            { StrategyT.ATK_BASE, 0},
             { StrategyT.ATK_HALF, 0.0f},
-            { StrategyT.DEF_BASE, 0.9f},
-            { StrategyT.DEF_HALF, 0.0f}
+            { StrategyT.DEF_BASE, 0.0f},
+            { StrategyT.DEF_HALF, 1}
         };
 
         importanceWeigth = new Dictionary<StrategyT, float>() {

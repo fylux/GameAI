@@ -35,6 +35,7 @@ public class RestoreHealth : Task {
 
         if (goTo != null) {
             st = goTo.Apply();
+          //  Debug.Log("Aplicando goto");
         }
         else if (defendZone != null) {
             st = defendZone.Apply();

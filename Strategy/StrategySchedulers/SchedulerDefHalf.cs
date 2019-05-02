@@ -90,7 +90,7 @@ public class SchedulerDefHalf : SchedulerStrategy {
             }
         }
 
-        Debug.Log("[Def_half] Remaining units :" + remainingUnits.Count);
+      //  Debug.Log("[Def_half] Remaining units :" + remainingUnits.Count);
 
         //Remaining units go to defend the bridge
         var alliesToDefendBridge = remainingUnits.Where(unit => !(unit.GetTask() is GoTo) && !(unit.GetTask() is DefendZone));

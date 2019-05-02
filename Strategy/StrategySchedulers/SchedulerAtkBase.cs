@@ -33,7 +33,7 @@ public class SchedulerAtkBase : SchedulerStrategy
 
             if (strong && regrouped.Count >= usableUnits.Count * 0.8)
             {
-                Debug.Log("Somos mas FUERTES asi que vamos a atacar");
+               // Debug.Log("Somos mas FUERTES asi que vamos a atacar");
                 foreach (AgentUnit unit in usableUnits)
                 {
                     if (atking.Contains(unit) == false || (!(unit.GetTask() is GoTo) && Util.HorizontalDist(unit.position, Info.GetWaypoint("base", enemyFaction).worldPosition) >= 15)) 
@@ -51,22 +51,16 @@ public class SchedulerAtkBase : SchedulerStrategy
             }
             else
             {
-                Debug.Log("Somos mas DEBILES asi que vamos a esperar");
+               // Debug.Log("Somos mas DEBILES asi que vamos a esperar");
                 foreach (AgentUnit unit in usableUnits)
                 {
-                    if (strong == false && unit.militar.health < unit.militar.maxHealth && (heal.Contains(unit) == false || !(unit.GetTask() is GoTo)))
+                    if (strong == false && unit.militar.health < unit.militar.maxHealth && (heal.Contains(unit) == false || !(unit.GetTask() is RestoreHealth)))
                     {
                         AddGroup(unit, "heal");
-                        Debug.Log("Añadadida unidad a heal");
-                        List<Body> healPts = Info.GetHealingPoints(Map.NodeFromPosition(unit.position), 60);
-                        Body closerPoint = healPts.OrderBy(hPt => Util.HorizontalDist(hPt.position, unit.position)).FirstOrDefault();
-                        if (closerPoint != null)
-                        {
-                            Debug.Log("Asignada a la unidad " + unit + " la orden GoTo con destino el healPoint" + closerPoint.position);
-                            unit.SetTask(new GoTo(unit, closerPoint.position, (bool success) => { }));          
-                        }
+                       // Debug.Log("Añadadida unidad a heal");
+                        unit.SetTask(new RestoreHealth(unit, (bool success) => { }));          
                     }
-                    else if ((strong == true || unit.militar.health == unit.militar.maxHealth) && (regr.Contains(unit) == false || !(unit.GetTask() is GoTo) && Util.HorizontalDist(unit.position, Info.GetWaypoint("base", enemyFaction).worldPosition) >= 15))
+                    else if ((strong == true || unit.militar.health == unit.militar.maxHealth) && (regr.Contains(unit) == false || !(unit.GetTask() is GoTo) && Util.HorizontalDist(unit.position, Info.GetWaypoint("front", enemyFaction).worldPosition) >= 15))
                     {
                         AddGroup(unit, "regr");
 

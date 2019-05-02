@@ -15,7 +15,7 @@ public class Arrive : SteeringBehaviourTarget {
 
         // Calculate the desired velocity
         var desiredVelocity = targetPosition - npc.position;
-        var distance = Util.HorizontalDistance(targetPosition, npc.position); //(targetPosition - npc.position).magnitude;
+        var distance = Util.HorizontalDist(targetPosition, npc.position); //(targetPosition - npc.position).magnitude;
 
         // Check the distance to detect whether the character
         // is inside the slowing area

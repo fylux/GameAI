@@ -20,8 +20,8 @@ public class DefendZone : HostileTask {
     override
     public void ReceiveAttack(AgentUnit enemy) {
         //It would be uncommon that targetEnemy is null unless that the range of the enemy is greater than the range of defend zone
-        bool inRange = Util.HorizontalDistance(targetEnemy.position, center) /* + Attack range*/ > rangeRadius;
-        bool targetNear = Util.HorizontalDistance(targetEnemy.position, agent.position) < 3f /*+ AttackRange*/;
+        bool inRange = Util.HorizontalDist(targetEnemy.position, center) /* + Attack range*/ > rangeRadius;
+        bool targetNear = Util.HorizontalDist(targetEnemy.position, agent.position) < 3f /*+ AttackRange*/;
         if (targetEnemy == null || (inRange && !targetNear)) {
             AttackEnemy(enemy);
         }
@@ -54,11 +54,11 @@ public class DefendZone : HostileTask {
         Steering st = new Steering();
 
         //Comprobar si se ha matado a la unidad
-        if (attack == null || Util.HorizontalDistance(targetEnemy.position, center) > rangeRadius + agent.attackRange) {
+        if (attack == null || Util.HorizontalDist(targetEnemy.position, center) > rangeRadius + agent.attackRange) {
             AgentUnit closerEnemy = Physics.OverlapSphere(center, rangeRadius + agent.attackRange)
                                             .Select(coll => coll.GetComponent<AgentUnit>())
                                             .Where(unit => unit != null && unit.faction != agent.faction)
-                                            .OrderBy(enemy => Util.HorizontalDistance(agent.position, enemy.position))
+                                            .OrderBy(enemy => Util.HorizontalDist(agent.position, enemy.position))
                                             .FirstOrDefault();
 
             AttackEnemy(closerEnemy);

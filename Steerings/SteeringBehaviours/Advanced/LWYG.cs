@@ -22,7 +22,7 @@ public class LWYG : SteeringBehaviourTarget {
 
     public static Steering GetSteering(Agent target, Agent npc, float maxPrediction, float targetRadius, float slowRadius, float timeToTarget, bool visibleRays)
     {
-        float distance = Util.HorizontalDistance(target.position, npc.position);
+        float distance = Util.HorizontalDist(target.position, npc.position);
         float speed = npc.velocity.magnitude;
 
         float prediction;

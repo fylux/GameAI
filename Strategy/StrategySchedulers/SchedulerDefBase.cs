@@ -1,42 +1,37 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
+//Tal como está este scheduler basta con llamarlo simplemente cada vez que se llame a la capa 2
 public class SchedulerDefBase : SchedulerStrategy
 {
-
-    HashSet<AgentUnit> defn = new HashSet<AgentUnit>(); // Unidades defendiendo
+    private bool InBase(Vector3 position) {
+        return Util.HorizontalDist(allyBase.worldPosition, position) < 15;
+    }
 
     override
     public void ApplyStrategy()
     {
-
-        foreach (AgentUnit unit in usableUnits)
-        {
-            if (Util.HorizontalDistance(allyBase.worldPosition, unit.position) > 15) // El 15 es un numero pendiente de ajuste
-            {
-                if (defn.Contains(unit) == false || !(unit.GetTask() is GoTo))
-                {
-                    defn.Add(unit);
-                    Debug.Log("Dandole a " + unit + " la orden de MOVERSE A LA BASE");
-                    unit.SetTask(new GoTo(unit, allyBase.worldPosition, (bool success) =>
-                    {
-                        Debug.Log("Dandole a " + unit + " la orden de DEFENDER LA ZONA");
-                        unit.SetTask(new DefendZone(unit, allyBase.worldPosition, 15, (_) => { }));
-                    }));
-                }
-            }
-            else if (!(unit.GetTask() is DefendZone))
+        var unitsOutsideBase = usableUnits.Where(unit => !InBase(unit.position) && !(unit.GetTask() is GoTo));
+        foreach (AgentUnit unit in unitsOutsideBase) {
+            Debug.Log("Dandole a " + unit + " la orden de MOVERSE A LA BASE");
+            unit.SetTask(new GoTo(unit, allyBase.worldPosition, (bool success) =>
             {
                 Debug.Log("Dandole a " + unit + " la orden de DEFENDER LA ZONA");
                 unit.SetTask(new DefendZone(unit, allyBase.worldPosition, 15, (_) => { }));
-            }
+            }));
+        }
+        var unitsInsideBase = usableUnits.Where(unit => InBase(unit.position) && !(unit.GetTask() is DefendZone) && !(unit.GetTask() is GoTo));
+        foreach (AgentUnit unit in unitsInsideBase)
+        {
+            Debug.Log("Dandole a " + unit + " la orden de DEFENDER LA ZONA");
+            unit.SetTask(new DefendZone(unit, allyBase.worldPosition, 15, (_) => { }));
         }
     }
 
     override
     public void Reset()
     {
-        defn.Clear();
     }
 }

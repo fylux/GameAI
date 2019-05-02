@@ -37,7 +37,7 @@ public class MilitaryResourcesAllocator {
         priority = new Dictionary<StrategyT, float>() {
             { StrategyT.ATK_BASE, 1},
             { StrategyT.ATK_HALF, 0.0f},
-            { StrategyT.DEF_BASE, 0.0f},
+            { StrategyT.DEF_BASE, 0.9f},
             { StrategyT.DEF_HALF, 0.0f}
         };
 
@@ -74,10 +74,19 @@ public class MilitaryResourcesAllocator {
         //If there are remaining units due to rounding errors are assigned to the most important strategy
         Dictionary<StrategyT, int> nUnitsAllocToStrategy = priority.ToDictionary(w => w.Key, w => Mathf.FloorToInt(w.Value * nTotalAvailableUnits));
 
+        //Asign remaining units to the most important strategy
         StrategyT mostImportantStrategy = priority.OrderBy(strategy => strategy.Value).Last().Key;
         Debug.Log("most important:" + mostImportantStrategy);
         nUnitsAllocToStrategy[mostImportantStrategy] += nTotalAvailableUnits - nUnitsAllocToStrategy.Sum(w => w.Value);
         Debug.Assert(nUnitsAllocToStrategy.Sum(w => w.Value) == nTotalAvailableUnits);
+
+        /*int nRemainingUnits = nTotalAvailableUnits - nUnitsAllocToStrategy.Sum(w => w.Value);
+        var strategiesByAllocResidual = priority.OrderByDescending(s => (s.Value * nTotalAvailableUnits) - Mathf.FloorToInt(s.Value * nTotalAvailableUnits))
+                                        .Select(s => s.Key)
+                                        .Take(nRemainingUnits);
+        foreach (StrategyT strategy in strategiesByAllocResidual) {
+            nUnitsAllocToStrategy[strategy]++;
+        }*/
 
         foreach (var z in nUnitsAllocToStrategy) {
             Debug.Log(z.Key + " " + z.Value + "; weight: " + priority[z.Key]);
@@ -90,17 +99,21 @@ public class MilitaryResourcesAllocator {
             var selectedUnits = availableUnits.Where(u => u.strategy == strategy)
                                                 .OrderBy(u => strategyAffinity[u][strategy])
                                                 .Take(nUnitsAllocToStrategy[strategy]);
+
             unitsAssignedToStrategy[strategy] = new HashSet<AgentUnit>(selectedUnits);
-            availableUnits.ExceptWith(unitsAssignedToStrategy[strategy]);
-
             foreach (var unit in unitsAssignedToStrategy[strategy]) {
-                Debug.Log("Unit " + unit.name + " selected same strategy " + strategy);
+                availableUnits.Remove(unit);
+                strategyAffinity.Remove(unit);
+                nUnitsAllocToStrategy[strategy]--;
             }
-
-            nUnitsAllocToStrategy[strategy] -= unitsAssignedToStrategy[strategy].Count();
         }
 
         Debug.Assert(nUnitsAllocToStrategy.Sum(w => w.Value) == availableUnits.Count);
+
+        Debug.Log("List available unit");
+        foreach (var unit in availableUnits) {
+            Debug.Log(unit.name);
+        }
 
         //Assign units to strategies based on affinity
         while (priority.Keys.Any(s => nUnitsAllocToStrategy[s] > 0)) {

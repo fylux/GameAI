@@ -47,7 +47,7 @@ public class GoToLRTA : Task {
 
     override
     protected bool IsFinished() {
-        return Util.HorizontalDistance(agent.position, target) < 0.3f;
+        return Util.HorizontalDist(agent.position, target) < 0.3f;
     }
 
     override

@@ -87,7 +87,7 @@ public static class Info {
     }
 
     // Obtiene un numero que indica la ventaja militar en un area
-    public static float AreaMilitaryAdvantage(Node tile, float areaSize, Faction fact) {
+    public static float MilitaryAdvantageArea(Node tile, float areaSize, Faction fact) {
         return MilitaryAdvantage(GetUnitsArea(tile, areaSize), fact);
     }
 
@@ -141,9 +141,11 @@ public static class Info {
         return adv / nTotalUnits;
     }
 
-    public static List<Body> GetHealingPoints(Node tile, float areaSize) {
-        int nFound = Physics.OverlapSphereNonAlloc(tile.worldPosition, areaSize, hits, Map.healingMask);
-        return new List<Body>(hits.Take(nFound).Select(hit => hit.GetComponent<Body>()));
+    public static Body GetClosestHealingPoint(Vector3 position, float areaSize) {
+        int nFound = Physics.OverlapSphereNonAlloc(position, areaSize, hits, Map.healingMask);
+        var healingPoints = hits.Take(nFound).Select(hit => hit.GetComponent<Body>());
+        Debug.Assert(healingPoints.Count() > 0);
+        return healingPoints.OrderBy(hPt => Util.HorizontalDist(position, hPt.position)).FirstOrDefault();
     }
 
     //Funciones que trabajan con influencia:
@@ -208,7 +210,8 @@ public static class Info {
     public static List<HashSet<AgentUnit>> GetClusters(Faction faction) {
         List<HashSet<AgentUnit>> clusters = new List<HashSet<AgentUnit>>();
 
-        var enemies = new HashSet<AgentUnit>(Map.unitList.Where(unit => unit.faction == faction));
+        var enemies = GetUnitsFactionArea(GetWaypoint("base", faction), 45f, Util.OppositeFaction(faction));
+
         while (enemies.Count > 0) {
             HashSet<AgentUnit> cluster = new HashSet<AgentUnit>();
             Stack<AgentUnit> neighbours = new Stack<AgentUnit>();
@@ -226,10 +229,13 @@ public static class Info {
                     cluster.Add(nearEnemy);
                 }
             }
-            var clusterCenter = cluster.Aggregate(new Vector3(0, 0, 0), (center, unit) => center + unit.position) / cluster.Count;
             clusters.Add(cluster);
         }
         return clusters;
+    }
+
+    public static Vector3 GetClusterCenter(HashSet<AgentUnit> cluster) {
+        return cluster.Aggregate(new Vector3(0, 0, 0), (center, unit) => center + unit.position) / cluster.Count;
     }
 
     public static Dictionary<StrategyT, float> GetStrategyPriority(AgentUnit unit, Faction faction) {

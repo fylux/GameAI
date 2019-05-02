@@ -120,10 +120,10 @@ public class StrategyLayer {
         float area = 20;
         // En el mejor caso para nosotros, tendremos un +0.5 en mid, que significa que al menos doblamos en fuerza al enemigo. En el peor, -0.35,
         // ya que es probable que el enemigo se vea limitado por el terreno
-        float inflM = Mathf.Clamp(Info.AreaMilitaryAdvantage(Info.waypoints["mid"], area, allyFaction) - 1, -0.3f, 0.4f);
+        float inflM = Mathf.Clamp(Info.MilitaryAdvantageArea(Info.waypoints["mid"], area, allyFaction) - 1, -0.3f, 0.4f);
         // Para los otros dos waypoints, el resultado será menos relevante
-        float inflT = Mathf.Clamp(Info.AreaMilitaryAdvantage(Info.waypoints["top"], area, allyFaction) - 1, -0.2f, 0.3f);
-        float inflB = Mathf.Clamp(Info.AreaMilitaryAdvantage(Info.waypoints["bottom"], area, allyFaction) - 1, -0.2f, 0.3f);
+        float inflT = Mathf.Clamp(Info.MilitaryAdvantageArea(Info.waypoints["top"], area, allyFaction) - 1, -0.2f, 0.3f);
+        float inflB = Mathf.Clamp(Info.MilitaryAdvantageArea(Info.waypoints["bottom"], area, allyFaction) - 1, -0.2f, 0.3f);
 
 
         result[0] += inflM;
@@ -200,7 +200,7 @@ public class StrategyLayer {
 
         // Para calcular la diferencia de fuerza en los waypoints, mismo sistema que en DEFHALF
         // float area = 20;
-        float inflM = Mathf.Clamp(Info.AreaMilitaryAdvantage(Info.GetWaypoint("base", enemyFaction), 45, allyFaction) - 1, -0.5f, 0.5f);
+        float inflM = Mathf.Clamp(Info.MilitaryAdvantageArea(Info.GetWaypoint("base", enemyFaction), 45, allyFaction) - 1, -0.5f, 0.5f);
         /*  float inflT = Mathf.Max(Mathf.Min(info.AreaMilitaryAdvantage(info.waypoints["top"], area, faction) - 1, 0.35f), -0.25f);
           float inflB = Mathf.Max(Mathf.Min(info.AreaMilitaryAdvantage(info.waypoints["bottom"], area, faction) - 1, 0.35f), -0.25f);
           Debug.Log("En mid, la ventaja militar de los aliados es de " + inflM);
@@ -230,8 +230,8 @@ public class StrategyLayer {
 
         HashSet<AgentUnit> unitsInOtherHalf = Info.UnitsNearBase(enemyFaction, allyFaction, 40); //Unidades de un bando en territorio del otro
         unitsInOtherHalf.UnionWith(Info.UnitsNearBase(allyFaction, enemyFaction, 40));
-        float allyAdv = Info.AreaMilitaryAdvantage(Info.GetWaypoint("base", enemyFaction), 40, allyFaction);
-        float enemAdv = Info.AreaMilitaryAdvantage(Info.GetWaypoint("base", allyFaction), 40, enemyFaction);
+        float allyAdv = Info.MilitaryAdvantageArea(Info.GetWaypoint("base", enemyFaction), 40, allyFaction);
+        float enemAdv = Info.MilitaryAdvantageArea(Info.GetWaypoint("base", allyFaction), 40, enemyFaction);
 
         result += Mathf.Clamp(allyAdv - enemAdv, -0.4f, 0.4f);
         if (dbg) Debug.Log("Finalmente, comparandola ventaja atacante aliada con la enemiga, el peso de ATKBASE es de " + result);

@@ -17,7 +17,7 @@ public class Console : MonoBehaviour {
     }
 	
 	public static void Log(string str) {
-        consoleText.text += str + '\n';
+        consoleText.text += "[" + Time.frameCount + "]" +  str + '\n';
         nLines++;
 
         if (nLines > maxLines) {

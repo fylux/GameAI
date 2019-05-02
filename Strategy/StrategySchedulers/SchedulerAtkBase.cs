@@ -14,6 +14,7 @@ public class SchedulerAtkBase : SchedulerStrategy
     delante de la base enemiga #-> DefenderZona*/
     HashSet<AgentUnit> regr = new HashSet<AgentUnit>(); // Para saber las unidades que se estan reagrupando
     HashSet<AgentUnit> atking = new HashSet<AgentUnit>(); // para saber las que estan atacando
+    HashSet<AgentUnit> heal = new HashSet<AgentUnit>();
     // Esos sets son necesarios para no darle la orden GoTo a una unidad que ya la este siguiendo, pero sí hacerlo cuando esa unidad pasa
     // de reagruparse a atacar
 
@@ -28,16 +29,16 @@ public class SchedulerAtkBase : SchedulerStrategy
 
             HashSet<AgentUnit> regrouped = new HashSet<AgentUnit>(Info.GetUnitsFactionArea(Info.GetWaypoint("front", enemyFaction), 35, allyFaction).Where(unit => unit.strategy == StrategyT.ATK_BASE));
 
-            if (Info.MilitaryAdvantage(alliesAtk, allyFaction) >= 0.85 && regrouped.Count >= usableUnits.Count * 0.8)
+            bool strong = Info.MilitaryAdvantage(alliesAtk, allyFaction) >= 0.85;
+
+            if (strong && regrouped.Count >= usableUnits.Count * 0.8)
             {
                 Debug.Log("Somos mas FUERTES asi que vamos a atacar");
                 foreach (AgentUnit unit in usableUnits)
                 {
                     if (atking.Contains(unit) == false || (!(unit.GetTask() is GoTo) && Util.HorizontalDist(unit.position, Info.GetWaypoint("base", enemyFaction).worldPosition) >= 15)) 
                     {
-                        atking.Add(unit);
-                        if (regr.Contains(unit))
-                            regr.Remove(unit);
+                        AddGroup(unit, "atking");
 
                         //   Debug.Log("Dandole a " + unit + " la orden de MOVERSE A LA BASE ENEMIGA");
                         unit.SetTask(new GoTo(unit, Info.GetWaypoint("base", enemyFaction).worldPosition, (bool success) =>
@@ -53,11 +54,21 @@ public class SchedulerAtkBase : SchedulerStrategy
                 Debug.Log("Somos mas DEBILES asi que vamos a esperar");
                 foreach (AgentUnit unit in usableUnits)
                 {
-                    if (regr.Contains(unit) == false || !(unit.GetTask() is GoTo) && Util.HorizontalDist(unit.position, Info.GetWaypoint("base", enemyFaction).worldPosition) >= 15)
+                    if (strong == false && unit.militar.health < unit.militar.maxHealth && (heal.Contains(unit) == false || !(unit.GetTask() is GoTo)))
                     {
-                        regr.Add(unit);
-                        if (atking.Contains(unit))
-                            atking.Remove(unit);
+                        AddGroup(unit, "heal");
+                        Debug.Log("Añadadida unidad a heal");
+                        List<Body> healPts = Info.GetHealingPoints(Map.NodeFromPosition(unit.position), 60);
+                        Body closerPoint = healPts.OrderBy(hPt => Util.HorizontalDist(hPt.position, unit.position)).FirstOrDefault();
+                        if (closerPoint != null)
+                        {
+                            Debug.Log("Asignada a la unidad " + unit + " la orden GoTo con destino el healPoint" + closerPoint.position);
+                            unit.SetTask(new GoTo(unit, closerPoint.position, (bool success) => { }));          
+                        }
+                    }
+                    else if ((strong == true || unit.militar.health == unit.militar.maxHealth) && (regr.Contains(unit) == false || !(unit.GetTask() is GoTo) && Util.HorizontalDist(unit.position, Info.GetWaypoint("base", enemyFaction).worldPosition) >= 15))
+                    {
+                        AddGroup(unit, "regr");
 
                       //  Debug.Log("Dandole a " + unit + " la orden de MOVERSE AL FRONT");
                         unit.SetTask(new GoTo(unit, Info.GetWaypoint("front", enemyFaction).worldPosition, (bool success) =>
@@ -76,5 +87,29 @@ public class SchedulerAtkBase : SchedulerStrategy
     {
         regr.Clear();
         atking.Clear();
+    }
+
+    void AddGroup(AgentUnit unit, string group)
+    {
+        Debug.Assert(group == "heal" || group == "regr" || group == "atking");
+
+        if (group == "heal")
+        {
+            regr.Remove(unit);
+            atking.Remove(unit);
+            heal.Add(unit);
+        }
+        else if (group == "regr")
+        {
+            regr.Add(unit);
+            atking.Remove(unit);
+            heal.Remove(unit);
+        }
+        else
+        {
+            regr.Remove(unit);
+            atking.Add(unit);
+            heal.Remove(unit);
+        }
     }
 }

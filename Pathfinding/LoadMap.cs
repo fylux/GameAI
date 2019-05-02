@@ -25,11 +25,11 @@ public class LoadMap : MonoBehaviour {
     Vector3 offset;
 
 
-    private void OnDrawGizmosSelected()
+    /*private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
-        Gizmos.DrawSphere(Info.GetWaypoint("base",Faction.B).worldPosition, 25);
-    }
+        Gizmos.DrawSphere(Info.GetWaypoint("base",Faction.B).worldPosition, 10);
+    }*/
 
     void Awake() {
         this.transform.position = Vector3.zero;

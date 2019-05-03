@@ -8,6 +8,7 @@ public class DefendZone : HostileTask {
     float rangeRadius;
     AgentUnit targetEnemy;
     public Attack attack;
+    const float followRangeExtra = 3f;
 
     public DefendZone(AgentUnit agent, Vector3 center, float rangeRadius, Action<bool> callback) : base(agent,callback) {
         this.center = center;
@@ -54,7 +55,7 @@ public class DefendZone : HostileTask {
         Steering st = new Steering();
 
         //Comprobar si se ha matado a la unidad
-        if (attack == null || Util.HorizontalDist(targetEnemy.position, center) > rangeRadius + agent.attackRange) {
+        if (attack == null || Util.HorizontalDist(targetEnemy.position, center) > rangeRadius + agent.attackRange + followRangeExtra) {
             AgentUnit closerEnemy = Physics.OverlapSphere(center, rangeRadius + agent.attackRange)
                                             .Select(coll => coll.GetComponent<AgentUnit>())
                                             .Where(unit => unit != null && unit.faction != agent.faction)

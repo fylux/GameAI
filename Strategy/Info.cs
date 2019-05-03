@@ -228,7 +228,7 @@ public static class Info {
             cluster.Add(units.First());
             units.Remove(units.First());
 
-            while (neighbours.Count > 0 ) {
+            while (neighbours.Count > 0) {
                 AgentUnit currentUnit = neighbours.Pop();
                 var nearUnits = GetUnitsFactionArea(Map.NodeFromPosition(currentUnit.position), 4f, unitsFaction)
                                                     .Where(unit => !clusters.Any(c => c.Contains(unit)));

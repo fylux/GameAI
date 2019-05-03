@@ -11,6 +11,7 @@ public class Melee : AgentUnit
         MaxAccel = 20;
         MaxRotation = 60;
         MaxAngular = 60;
+        attackRange = 1.5f;
 
         cost = new Dictionary<NodeT, float>() {
             { NodeT.ROAD, 1 },

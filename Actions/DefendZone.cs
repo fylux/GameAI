@@ -8,9 +8,10 @@ public class DefendZone : HostileTask {
     float rangeRadius;
     AgentUnit targetEnemy;
     public Attack attack;
-    const float followRangeExtra = 3f;
+    const float followRangeExtra = 1f;
 
     public DefendZone(AgentUnit agent, Vector3 center, float rangeRadius, Action<bool> callback) : base(agent,callback) {
+        Debug.Assert(followRangeExtra >= 1f);
         this.center = center;
         this.rangeRadius = rangeRadius;
         targetEnemy = null;

@@ -219,6 +219,7 @@ public static class Info {
         List<HashSet<AgentUnit>> clusters = new List<HashSet<AgentUnit>>();
 
         var enemies = GetUnitsFactionArea(GetWaypoint("base", faction), 45f, Util.OppositeFaction(faction));
+		HashSet<AgentUnit> allEnemies = new HashSet<AgentUnit> (Map.GetEnemies (faction));
 
         while (enemies.Count > 0) {
             HashSet<AgentUnit> cluster = new HashSet<AgentUnit>();
@@ -229,11 +230,12 @@ public static class Info {
 
             while (neighbours.Count > 0) {
                 AgentUnit currentEnemy = neighbours.Pop();
-                var nearEnemies = Physics.OverlapSphere(currentEnemy.position, 5f, Map.unitsMask).Select(coll => coll.GetComponent<AgentUnit>()).Intersect(enemies);
+				var nearEnemies = Physics.OverlapSphere(currentEnemy.position, 5f, Map.unitsMask).Select(coll => coll.GetComponent<AgentUnit>()).Intersect(allEnemies);
                 foreach (AgentUnit nearEnemy in nearEnemies) {
                     Debug.DrawLine(currentEnemy.position, nearEnemy.position);
                     neighbours.Push(nearEnemy);
                     enemies.Remove(nearEnemy);
+					allEnemies.Remove(nearEnemy);
                     cluster.Add(nearEnemy);
                 }
             }

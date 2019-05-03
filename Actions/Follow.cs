@@ -16,7 +16,7 @@ public class Follow : Task {
         this.target = target;
         this.lastTargetPosition = target.position;
         this.goTo = new GoTo(agent, GetFutureTargetPosition(), (_) => {});
-        inRange = false;
+        inRange = IsNearEnough();
         timeStamp = Time.fixedTime;
     }
 
@@ -46,15 +46,14 @@ public class Follow : Task {
             return st;
         }
 
-        float distanceToTarget = Util.HorizontalDist(agent.position, lastTargetPosition);
         float realDistance = Util.HorizontalDist(agent.position, target.position);
 
         // If has reached range or fixed time reconsider path
-        if ( (!inRange && distanceToTarget < agent.attackRange * 0.9) || Time.fixedTime - timeStamp > 2) {
+        if ( (!inRange && IsNearEnough()) || Time.fixedTime - timeStamp > 2) {
             timeStamp = Time.fixedTime;
             bool changed_path = ReconsiderPath();
             //If the path has not changed and we are on range
-            if (!changed_path && distanceToTarget < agent.attackRange * 0.9) {
+            if (!changed_path && IsNearEnough()) {
                 //Debug.Log("Enemy in attack range");
                 inRange = true;
                 goTo.FinishPath();
@@ -76,6 +75,11 @@ public class Follow : Task {
 
     public bool IsInRange() {
         return inRange;
+    }
+
+    private bool IsNearEnough() {
+        float distanceToTarget = Util.HorizontalDist(agent.position, lastTargetPosition);
+        return distanceToTarget < agent.attackRange * 0.9;
     }
 
     //Should I consider then the unit that we are following died?

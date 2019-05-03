@@ -50,7 +50,7 @@ public class MilitarComponent : UnitComponent {
             Map.unitList.Remove(agent);
             GameObject.Destroy(agent.gameObject);
         }
-        else if (agent.GetTask() is HostileTask) { //To change the target if needed
+        else if (agent.HasTask<HostileTask>()) { //To change the target if needed
             ((HostileTask)agent.GetTask()).ReceiveAttack(enemy);
         }
         //Request to update selection text

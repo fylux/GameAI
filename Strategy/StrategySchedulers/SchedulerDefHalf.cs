@@ -37,12 +37,12 @@ public class SchedulerDefHalf : SchedulerStrategy {
     public void ApplyStrategy()
     {
         //Units with low l1evel of health should try to go to a healing point
-        var damagedAllies = usableUnits.Where(unit => unit.militar.health < minimunHealth && !(unit.GetTask() is RestoreHealth));
+        var damagedAllies = usableUnits.Where(unit => unit.militar.health < minimunHealth && !unit.HasTask<RestoreHealth>());
         foreach (var ally in damagedAllies) {
             ally.SetTask(new RestoreHealth(ally, (_) => { }));
         }
 
-        var remainingUnits = new HashSet<AgentUnit>(usableUnits.Where(unit => !(unit.GetTask() is RestoreHealth)));
+        var remainingUnits = new HashSet<AgentUnit>(usableUnits.Where(unit => !unit.HasTask<RestoreHealth>()));
 
         var clusters = Info.GetClusters(enemyFaction, allyFaction);
         var clustersByAdvantage = clusters.ToDictionary(c => c, c => GetMilitaryBalanceCluster(c)).OrderByDescending(c => c.Value);
@@ -87,7 +87,7 @@ public class SchedulerDefHalf : SchedulerStrategy {
         //Asign tasks to units in the selected clusters
         foreach (var cluster in unitsAssignedToClusters) {
             foreach (AgentUnit ally in cluster.Value) {
-                if (ally.GetTask() is Attack) continue;
+                if (ally.HasTask<Attack>()) continue;
                 var closestEnemy = cluster.Key.OrderBy(unit => Util.HorizontalDist(ally.position, unit.position)).First();
                 ally.SetTask(new Attack(ally, closestEnemy, (_) => {
                     //If you kill an enemy reconsider assignations
@@ -98,10 +98,10 @@ public class SchedulerDefHalf : SchedulerStrategy {
 
 
         //Remaining units go to defend the bridge
-        var alliesToDefendBridge = remainingUnits.Where(unit => !(unit.GetTask() is GoTo) && !(unit.GetTask() is DefendZone));
+        var alliesToDefendBridge = remainingUnits.Where(unit => !unit.HasTask<GoTo>() && !unit.HasTask<DefendZone>());
 
         foreach (var ally in alliesToDefendBridge) {
-            Debug.Assert(!(ally.GetTask() is DefendZone));
+            Debug.Assert(!ally.HasTask<DefendZone>());
             ally.SetTask(new GoTo(ally, Info.GetWaypoint("mid", allyFaction), 1.3f, (bool success) => {
                 ally.SetTask(new DefendZone(ally, ally.position, 6f, (_) => {
                 }));

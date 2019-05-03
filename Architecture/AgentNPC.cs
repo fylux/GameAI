@@ -86,4 +86,8 @@ public class AgentNPC : Agent {
     public Task GetTask() {
         return task;
     }
+
+    public bool HasTask<T>() {
+        return task is T;
+    }
 }

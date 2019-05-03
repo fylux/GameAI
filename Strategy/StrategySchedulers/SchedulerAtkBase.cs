@@ -36,7 +36,7 @@ public class SchedulerAtkBase : SchedulerStrategy
                // Debug.Log("Somos mas FUERTES asi que vamos a atacar");
                 foreach (AgentUnit unit in usableUnits)
                 {
-                    if (atking.Contains(unit) == false || (!(unit.GetTask() is GoTo) && Util.HorizontalDist(unit.position, Info.GetWaypoint("base", enemyFaction)) >= 15)) 
+                    if (atking.Contains(unit) == false || (!unit.HasTask<GoTo>() && Util.HorizontalDist(unit.position, Info.GetWaypoint("base", enemyFaction)) >= 15)) 
                     {
                         AddGroup(unit, "atking");
 
@@ -54,13 +54,13 @@ public class SchedulerAtkBase : SchedulerStrategy
                // Debug.Log("Somos mas DEBILES asi que vamos a esperar");
                 foreach (AgentUnit unit in usableUnits)
                 {
-                    if (strong == false && unit.militar.health < unit.militar.maxHealth && (heal.Contains(unit) == false || !(unit.GetTask() is RestoreHealth)))
+                    if (strong == false && unit.militar.health < unit.militar.maxHealth && (heal.Contains(unit) == false || !unit.HasTask<RestoreHealth>()))
                     {
                         AddGroup(unit, "heal");
                        // Debug.Log("Añadadida unidad a heal");
                         unit.SetTask(new RestoreHealth(unit, (bool success) => { }));          
                     }
-                    else if ((strong == true || unit.militar.health == unit.militar.maxHealth) && (regr.Contains(unit) == false || !(unit.GetTask() is GoTo) && Util.HorizontalDist(unit.position, Info.GetWaypoint("front", enemyFaction)) >= 15))
+                    else if ((strong == true || unit.militar.health == unit.militar.maxHealth) && (regr.Contains(unit) == false || !unit.HasTask<GoTo>() && Util.HorizontalDist(unit.position, Info.GetWaypoint("front", enemyFaction)) >= 15))
                     {
                         AddGroup(unit, "regr");
 

@@ -41,61 +41,57 @@ public class SchedulerAtkHalf : SchedulerStrategy {
 		var damagedAllies = usableUnits.Where(unit => unit.militar.health < minimunHealth && !(unit.GetTask() is RestoreHealth));
 		foreach (var ally in damagedAllies) {
 			ally.SetTask(new RestoreHealth(ally, (_) => { }));
-		} // Asignamos a las unidades con menos vida que minimunHealth la orden de irse a base
-
-		// Restantes -> Unidades con suficiente vida como para pelear
-		var remainingUnits = new HashSet<AgentUnit>(usableUnits.Where(unit => !(unit.GetTask() is RestoreHealth)));
-		var clusters = Info.GetClusters(enemyFaction, enemyFaction); // Obtenemos los clusters de unidades enemigas en el territorio enemigo
-		var clustersByAdvantage = clusters.ToDictionary(c => c, c => GetMilitaryBalanceCluster(c)).OrderByDescending(c => c.Value); // Ordena los clusters enemigos dependiendo de la ventaja que tengamos frente a ellos
-		var unitsAssignedToClusters = new Dictionary<HashSet<AgentUnit>, HashSet<AgentUnit>>();
-
-		//Foreach cluster sorted by the advantage that we have
-		foreach (HashSet<AgentUnit> cluster in clustersByAdvantage.Select(c => c.Key)) {
-
-			var unitsCluster = new HashSet<AgentUnit>(cluster);
-			var center = Info.GetClusterCenter(cluster);
-			var closestAllies = remainingUnits.OrderBy(unit => Util.HorizontalDist(center, unit.position));
-
-			//Assign the closest allies to that cluster
-			foreach (AgentUnit closestAlly in closestAllies) {
-				unitsCluster.Add(closestAlly);
-				//Till the balance between the cluster and the assign allies is positive
-				if (Info.MilitaryAdvantage(unitsCluster, allyFaction) > 1) {
-					var alliesToCluster = new HashSet<AgentUnit>(unitsCluster.Where(unit => unit.faction == allyFaction));
-					unitsAssignedToClusters.Add(cluster, alliesToCluster);
-					remainingUnits.ExceptWith(alliesToCluster);
-					break;
-				}
-			}
 		}
 
+		var remainingUnits = new HashSet<AgentUnit>(usableUnits.Where(unit => !(unit.GetTask() is RestoreHealth)));
+
+		var clusters = Info.GetClusters(enemyFaction, enemyFaction);
+		var selectedCluster = clusters.ToDictionary(c => c, c => GetMilitaryBalanceCluster(c)).OrderByDescending(c => c.Value).First().Key;
+		//var unitsAssignedToCluster = new HashSet<AgentUnit>(); -> Es remainingUnits
+
+		//var unitsCluster = new HashSet<AgentUnit>(selectedCluster);
+		var center = Info.GetClusterCenter(selectedCluster);
+		/*var closestAllies = remainingUnits.OrderBy(unit => Util.HorizontalDist(center, unit.position));
+
+		//Assign the closest allies to that cluster
+		foreach (AgentUnit closestAlly in closestAllies) {
+			unitsCluster.Add(closestAlly);
+			//Till the balance between the cluster and the assign allies is positive
+			if (Info.MilitaryAdvantage(unitsCluster, allyFaction) > 1) {
+				var alliesToCluster = new HashSet<AgentUnit>(unitsCluster.Where(unit => unit.faction == allyFaction));
+				unitsAssignedToCluster.Add(alliesToCluster);
+				remainingUnits.ExceptWith(alliesToCluster);
+				break;
+			}
+		}*/
+
 		//Take the units that haven't been assigned and distribute them between clusters
+		/*
 		var priorityClusters = unitsAssignedToClusters.ToDictionary(c => c.Key, c => Info.MilitaryAdvantage(c.Key, enemyFaction));
-		var remainingUnitsToCluster = DistributeClusters(priorityClusters, remainingUnits.Count);
+		var remainingUnitsToCluster = DistributeClusters(priorityClusters, remainingUnits.Count);*/
 
 		//Foreach cluster sorted by the advantage that we have
-		foreach (HashSet<AgentUnit> cluster in remainingUnitsToCluster.Select(c => c.Key)) {
-			var center = Info.GetClusterCenter(cluster);
-			int nAssignedUnits = remainingUnitsToCluster[cluster];
+		//foreach (HashSet<AgentUnit> cluster in remainingUnitsToCluster.Select(c => c.Key)) {
+		/*	int nAssignedUnits = remainingUnitsToCluster[cluster];
 			var closestAllies = remainingUnits.OrderBy(unit => Util.HorizontalDist(center, unit.position)).Take(nAssignedUnits);
 
 			//Assign the corresponding number of closest allies to that cluster
 			unitsAssignedToClusters[cluster].UnionWith(closestAllies);
 			remainingUnits.ExceptWith(unitsAssignedToClusters[cluster]);
-		}
+		//}*/
 
 
 		//Asign tasks to units in the selected clusters
-		foreach (var cluster in unitsAssignedToClusters) {
-			foreach (AgentUnit ally in cluster.Value) {
-				if (ally.GetTask() is Attack) continue;
-				var closestEnemy = cluster.Key.OrderBy(unit => Util.HorizontalDist(ally.position, unit.position)).First();
-				ally.SetTask(new Attack(ally, closestEnemy, (_) => {
-					//If you kill an enemy reconsider assignations
-					ApplyStrategy();
-				}));
-			}
+		//foreach (var cluster in unitsAssignedToClusters) {
+		foreach (AgentUnit ally in remainingUnits) {
+			if (ally.GetTask() is Attack) continue;
+			AgentUnit closestEnemy = selectedCluster.OrderBy(unit => Util.HorizontalDist(ally.position, unit.position)).First();
+			ally.SetTask(new Attack(ally, closestEnemy, (_) => {
+				//If you kill an enemy reconsider assignations
+				ApplyStrategy();
+			}));
 		}
+		//}
 
 
 		//Remaining units go to defend the bridge
@@ -103,7 +99,7 @@ public class SchedulerAtkHalf : SchedulerStrategy {
 
 		foreach (var ally in alliesToDefendBridge) {
 			Debug.Assert(!(ally.GetTask() is DefendZone));
-			ally.SetTask(new GoTo(ally, Info.GetWaypoint("mid", allyFaction),(bool success) => {
+			ally.SetTask(new GoTo(ally, Info.GetWaypoint("front", enemyFaction), 1.3f, (bool success) => {
 				ally.SetTask(new DefendZone(ally, ally.position, 6f, (_) => {
 				}));
 			}));

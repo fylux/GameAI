@@ -40,7 +40,10 @@ public class GoTo : Task {
     }
 
     public void SetNewTarget(Vector3 new_target) {
-        target = new Vector3(new_target.x + UnityEngine.Random.Range(-offset, offset) , 1f, new_target.z + UnityEngine.Random.Range(-offset, offset));
+        do {
+            target = new Vector3(new_target.x + UnityEngine.Random.Range(-offset, offset), 1f, new_target.z + UnityEngine.Random.Range(-offset, offset));
+        } while(!Map.NodeFromPosition(target).isWalkable());
+
         pathF.path = null;
         PathfindingManager.RequestPath(agent.position, target, agent.Cost, ProcessPath);
     }

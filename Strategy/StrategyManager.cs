@@ -20,7 +20,7 @@ public class StrategyManager : MonoBehaviour {
                                                                               { StrategyT.DEF_BASE, new SchedulerDefBase() },
                                                                               { StrategyT.DEF_HALF, new SchedulerDefHalf() },
                                                                               { StrategyT.ATK_BASE, new SchedulerAtkBase() },
-                                                                              { StrategyT.ATK_HALF, new SchedulerDefBase() } };
+                                                                              { StrategyT.ATK_HALF, new SchedulerAtkHalf() } };
 
     // Use this for initialization
     void Start () {

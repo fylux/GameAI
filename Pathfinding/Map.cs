@@ -101,8 +101,9 @@ public class Map {
         for (int x = 0; x < mapX; x++) {
             for (int y = 0; y < mapY; y++) {
                 Vector3 size = Vector3.one;
-                float influ = grid[x, y].getInfluence() / 100f;
+                float influ = grid[x, y].GetInfluence() / 100f;
                 float otherColor = Mathf.Max(0f,1f - influ * 4f);
+
                 //otherColor = Mathf.Round(otherColor * 5f) / 5f; //To discretize the range of colors
                 Dictionary<Faction, Color> colors = new Dictionary<Faction, Color>() {
                     {Faction.A, new Color(1f, otherColor, otherColor, 1f) },
@@ -110,7 +111,20 @@ public class Map {
                     {Faction.C, Color.gray }
                 };
 
-                grid[x, y].influenceTile.GetComponent<Renderer>().material.color = colors[grid[x, y].getFaction()];
+                influ = grid[x, y].GetInfluence(Faction.B);
+                if (influ > 0.65) {
+                    grid[x, y].influenceTile.GetComponent<Renderer>().material.color = Color.black;
+
+                } 
+                else if (influ > 0.4) {
+                    grid[x, y].influenceTile.GetComponent<Renderer>().material.color = Color.red;
+
+                } else if (influ > 0.27) {
+                    grid[x, y].influenceTile.GetComponent<Renderer>().material.color = Color.yellow;
+
+                } else {
+                    grid[x, y].influenceTile.GetComponent<Renderer>().material.color = Color.white;
+                }
                 grid[x, y].influenceTile.GetComponent<Renderer>().material.SetFloat("_Glossiness", 0f);
                 //grid[x, y].gameObject.transform.GetChild(0).GetComponent<Renderer>().material.color = colors[grid[x, y].getFaction()];
                 /*Gizmos.color = colors[grid[x, y].getFaction()];

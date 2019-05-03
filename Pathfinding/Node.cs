@@ -63,7 +63,14 @@ public class Node : IHeapItem<Node> {
         //influence[(int)f] = Mathf.Max(influence[(int)f],v); //Flooding, max influence
     }
 
-    public float getInfluence() {
+    public float GetInfluence(Faction faction) {
+        /*Debug.Assert(faction != Faction.C);
+        int IsStrongest = faction == GetFaction() ? 1 : -1;
+        return GetInfluence() * IsStrongest;*/
+        return Mathf.Min(100f, influence[(int)faction]) / 100f;
+    }
+
+    public float GetInfluence() {
         return Mathf.Min(100f, Mathf.Abs(influence[0]-influence[1])); //Influence of one faction removes influence of another
         //return Mathf.Min(100f, Mathf.Max(influence[0], influence[1])); //Influence of one faction does not affect the other
     }
@@ -73,10 +80,10 @@ public class Node : IHeapItem<Node> {
         influence = Vector2.zero;
     }
 
-    public Faction getFaction() {
-        if (getInfluence() < 1f)//(influence[0] < 0.1f && influence[1] < 0.1f)
-            return Faction.C;
-        else if (influence[0] > influence[1])
+    public Faction GetFaction() {
+        /*if (GetInfluence() < 1f)//(influence[0] < 0.1f && influence[1] < 0.1f)
+            return Faction.C;*/
+        if (influence[0] > influence[1])
             return Faction.A;
         else
             return Faction.B;

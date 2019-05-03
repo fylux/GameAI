@@ -170,7 +170,7 @@ public static class Info {
         Dictionary<Faction, int> infl = new Dictionary<Faction, int>() { { Faction.A, 0 }, { Faction.B, 0 }, { Faction.C, 0 } };
 
         foreach (Node nodo in nodes) {
-            infl[nodo.getFaction()]++;
+            infl[nodo.GetFaction()]++;
         }
 
         return ((float)infl[fac] / (infl[Faction.A] + infl[Faction.B] + infl[Faction.C]));
@@ -180,7 +180,7 @@ public static class Info {
         Dictionary<Faction, int> infl = new Dictionary<Faction, int>() { { Faction.A, 0 }, { Faction.B, 0 }, { Faction.C, 0 } };
 
         foreach (Node nodo in path) {
-            infl[nodo.getFaction()]++;
+            infl[nodo.GetFaction()]++;
         }
 
         return ((float)infl[fac] / (infl[Faction.A] + infl[Faction.B] + infl[Faction.C]));

@@ -26,7 +26,7 @@ public class GoTo : Task {
 
     public GoTo(AgentUnit agent, Vector3 target, Action<bool> callback) : this(agent, target, 0f, callback) { }
 
-    private void ProcessPath(Vector3[] newPath, List<Node> nodesPath, bool pathSuccessful) {
+    private void ProcessPath(Vector3[] newPath, bool pathSuccessful) {
         if (pathSuccessful) {
             pathF.SetPath(newPath);
         }
@@ -47,7 +47,7 @@ public class GoTo : Task {
         } while(!Map.NodeFromPosition(target).isWalkable());
 
         pathF.path = null;
-        PathfindingManager.RequestPath(agent.position, target, agent.Cost, ProcessPath);
+        PathfindingManager.RequestPath(agent.position, target, agent.Cost, 100f, Faction.B, ProcessPath);
     }
 
     override

@@ -37,6 +37,7 @@ public class SchedulerAtkHalf : SchedulerStrategy {
 	override
 	public void ApplyStrategy()
 	{
+        return;
 		//Units with low l1evel of health should try to go to a healing point
 		var damagedAllies = usableUnits.Where(unit => unit.militar.health < minimunHealth && !(unit.GetTask() is RestoreHealth));
 		foreach (var ally in damagedAllies) {
@@ -48,8 +49,8 @@ public class SchedulerAtkHalf : SchedulerStrategy {
 		var clusters = Info.GetClusters(enemyFaction, enemyFaction);
 		var selectedCluster = clusters.ToDictionary(c => c, c => GetMilitaryBalanceCluster(c)).OrderByDescending(c => c.Value).FirstOrDefault().Key;
 
-		HashSet<AgentUnit> totalUnits = new HashSet<AgentUnit> (remainingUnits);
-		totalUnits.UnionWith (selectedCluster);
+		HashSet<AgentUnit> totalUnits = new HashSet<AgentUnit>(remainingUnits);
+		totalUnits.UnionWith(selectedCluster);
 
 		if (Info.MilitaryAdvantage (totalUnits, allyFaction) < 1)
 			selectedCluster = null;

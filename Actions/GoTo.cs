@@ -54,8 +54,15 @@ public class GoTo : Task {
     public Steering Apply() {
         if (IsFinished()) callback(true);
 
-        if (pathF.path != null)
+        if (pathF.path != null) {
+            if (Time.fixedTime - timeStamp > 5) {
+                timeStamp = Time.fixedTime;
+                PathfindingManager.RequestPath(agent.position, target, agent.Cost, 100f, Faction.B, ProcessPath);
+            }
+
             return pathF.GetSteering();
+        }
+            
         else
             return Seek.GetSteering(target, agent, 50f); //If path has not been solved yet just do Seek.
     }

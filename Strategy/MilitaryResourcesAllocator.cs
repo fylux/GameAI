@@ -38,7 +38,7 @@ public class MilitaryResourcesAllocator {
             { StrategyT.ATK_BASE, 0},
             { StrategyT.ATK_HALF, 0f},
             { StrategyT.DEF_BASE, 0.0f},
-            { StrategyT.DEF_HALF, 0}
+            { StrategyT.DEF_HALF, 1}
         };
 
         importanceWeigth = new Dictionary<StrategyT, float>() {

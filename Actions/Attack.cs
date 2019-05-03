@@ -6,12 +6,10 @@ public class Attack : Task {
     AgentUnit targetEnemy;
     bool killedEnemy = true;
     Follow follow;
-    float timeLastAttack;
 
 	public Attack(AgentUnit agent, AgentUnit targetEnemy, Action<bool> callback) : base(agent,callback) {
         this.targetEnemy = targetEnemy;
         follow = new Follow(agent, targetEnemy, (_) => { });
-        timeLastAttack = Time.fixedTime;
     }
 
 
@@ -25,9 +23,9 @@ public class Attack : Task {
 
 
         if (follow.IsInRange()) {
-            if (Time.fixedTime - timeLastAttack > 1) {
+            if (Time.fixedTime - timeStamp > 1) {
                 agent.militar.Attack(targetEnemy);
-                timeLastAttack = Time.fixedTime;
+                timeStamp = Time.fixedTime;
             }
         }
         else {

@@ -42,7 +42,7 @@ public class StrategyManager : MonoBehaviour {
                 test = false; // TESTGGG todo lo relacionado con la variable test se eliminará
                 Debug.Log("HAN CAMBIADO LOS VALORES DE ESTRATEGIA, REASIGNANDO TROPAS");
                 //Layer 2
-               // militaryResourceAllocator.SetPriority(strategyLayer.GetPriority()); DESACTIVAR MIENTRAS ESTEMOS HACIENDO PRUEBAS
+                militaryResourceAllocator.SetPriority(strategyLayer.GetPriority()); //DESACTIVAR MIENTRAS ESTEMOS HACIENDO PRUEBAS
                 Dictionary<StrategyT, HashSet<AgentUnit>> unitsToStrategy = militaryResourceAllocator.AllocateResources();
 
                 foreach (var strategy in unitsToStrategy.Keys) {

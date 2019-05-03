@@ -23,15 +23,19 @@ public class SchedulerAtkBase : SchedulerStrategy
     {
         if (usableUnits.Count > 0)
         {
-            HashSet<AgentUnit> alliesAtk = Info.GetUnitsFactionArea(enemyBase, 45, allyFaction);
+			HashSet<AgentUnit> alliesAtk = new HashSet<AgentUnit>(Info.GetUnitsFactionArea(Info.GetWaypoint("base", enemyFaction), 45, allyFaction).Where(unit => unit.strategy == StrategyT.ATK_BASE));
             HashSet<AgentUnit> enemiesDef = Info.GetUnitsFactionArea(enemyBase, 25, Util.OppositeFaction(allyFaction));
             alliesAtk.UnionWith(enemiesDef);
 
-            HashSet<AgentUnit> regrouped = new HashSet<AgentUnit>(Info.GetUnitsFactionArea(Info.GetWaypoint("front", enemyFaction), 35, allyFaction).Where(unit => unit.strategy == StrategyT.ATK_BASE));
+            HashSet<AgentUnit> regrouped = new HashSet<AgentUnit>(Info.GetUnitsFactionArea(Info.GetWaypoint("base", enemyFaction), 35, allyFaction).Where(unit => unit.strategy == StrategyT.ATK_BASE));
+
+			HashSet<AgentUnit> regrAtk = new HashSet<AgentUnit> (regrouped);
+			regrAtk.UnionWith (enemiesDef);
 
             bool strong = Info.MilitaryAdvantage(alliesAtk, allyFaction) >= 0.85;
+			bool reunitedStrong = Info.MilitaryAdvantage(regrAtk, allyFaction) >= 0.85;
 
-            if (strong && regrouped.Count >= usableUnits.Count * 0.8)
+			if ((strong && regrouped.Count >= usableUnits.Count * 0.8) || reunitedStrong)
             {
                // Debug.Log("Somos mas FUERTES asi que vamos a atacar");
                 foreach (AgentUnit unit in usableUnits)

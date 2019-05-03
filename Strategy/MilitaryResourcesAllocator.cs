@@ -36,7 +36,7 @@ public class MilitaryResourcesAllocator {
 
         priority = new Dictionary<StrategyT, float>() {
             { StrategyT.ATK_BASE, 0},
-            { StrategyT.ATK_HALF, 1f},
+            { StrategyT.ATK_HALF, 0f},
             { StrategyT.DEF_BASE, 0.0f},
             { StrategyT.DEF_HALF, 0}
         };
@@ -223,7 +223,7 @@ public class MilitaryResourcesAllocator {
      }
      */
     public void SetPriority(Dictionary<StrategyT, float> priority) {
-        this.priority = priority;
+	this.priority = new Dictionary<StrategyT, float>(priority);
     }
 
     public void SetImportanceWeights(Dictionary<StrategyT, float> weights) {

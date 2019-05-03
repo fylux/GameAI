@@ -214,7 +214,9 @@ public static class Info {
         return nodes;
     }
 
-    public static List<HashSet<AgentUnit>> GetClusters(Faction unitsFaction, Faction baseFaction) {
+
+	public static List<HashSet<AgentUnit>> GetClusters(Faction unitsFaction, Faction baseFaction) {
+
         List<HashSet<AgentUnit>> clusters = new List<HashSet<AgentUnit>>();
         var units = GetUnitsFactionArea(GetWaypoint("base", baseFaction), 45f, unitsFaction);
 

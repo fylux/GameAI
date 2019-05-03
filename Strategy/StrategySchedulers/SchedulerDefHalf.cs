@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SchedulerDefHalf : SchedulerStrategy {
 
-    const int minimunHealth = 3; //If it is lower the unit will try to go to a healing point
+    const int minimunHealth = 5; //If it is lower the unit will try to go to a healing point
 
     public float GetMilitaryBalanceCluster(HashSet<AgentUnit> cluster) {
         return Info.MilitaryAdvantageArea(Info.GetClusterCenter(cluster), 10f, allyFaction);
@@ -43,6 +43,7 @@ public class SchedulerDefHalf : SchedulerStrategy {
         }
 
         var remainingUnits = new HashSet<AgentUnit>(usableUnits.Where(unit => !unit.HasTask<RestoreHealth>()));
+
         var clusters = Info.GetClusters(enemyFaction, allyFaction);
         var clustersByAdvantage = clusters.ToDictionary(c => c, c => GetMilitaryBalanceCluster(c)).OrderByDescending(c => c.Value);
         var unitsAssignedToClusters = new Dictionary<HashSet<AgentUnit>, HashSet<AgentUnit>>();

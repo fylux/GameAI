@@ -13,7 +13,7 @@ public class SchedulerDefBase : SchedulerStrategy
     override
     public void ApplyStrategy()
     {
-        var unitsOutsideBase = usableUnits.Where(unit => !InBase(unit.position) && !(unit.GetTask() is GoTo));
+        var unitsOutsideBase = usableUnits.Where(unit => !InBase(unit.position) && !unit.HasTask<GoTo>());
         foreach (AgentUnit unit in unitsOutsideBase) {
             Debug.Log("Dandole a " + unit + " la orden de MOVERSE A LA BASE");
             unit.SetTask(new GoTo(unit, allyBase, (bool success) =>
@@ -22,7 +22,7 @@ public class SchedulerDefBase : SchedulerStrategy
                 unit.SetTask(new DefendZone(unit, allyBase, 15, (_) => { }));
             }));
         }
-        var unitsInsideBase = usableUnits.Where(unit => InBase(unit.position) && !(unit.GetTask() is DefendZone) && !(unit.GetTask() is GoTo));
+        var unitsInsideBase = usableUnits.Where(unit => InBase(unit.position) && !unit.HasTask<DefendZone>() && !unit.HasTask<GoTo>());
         foreach (AgentUnit unit in unitsInsideBase)
         {
             Debug.Log("Dandole a " + unit + " la orden de DEFENDER LA ZONA");

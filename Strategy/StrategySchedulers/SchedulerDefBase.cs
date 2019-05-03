@@ -7,7 +7,7 @@ using UnityEngine;
 public class SchedulerDefBase : SchedulerStrategy
 {
     private bool InBase(Vector3 position) {
-        return Util.HorizontalDist(allyBase.worldPosition, position) < 15;
+        return Util.HorizontalDist(allyBase, position) < 15;
     }
 
     override
@@ -16,17 +16,17 @@ public class SchedulerDefBase : SchedulerStrategy
         var unitsOutsideBase = usableUnits.Where(unit => !InBase(unit.position) && !(unit.GetTask() is GoTo));
         foreach (AgentUnit unit in unitsOutsideBase) {
             Debug.Log("Dandole a " + unit + " la orden de MOVERSE A LA BASE");
-            unit.SetTask(new GoTo(unit, allyBase.worldPosition, (bool success) =>
+            unit.SetTask(new GoTo(unit, allyBase, (bool success) =>
             {
                 Debug.Log("Dandole a " + unit + " la orden de DEFENDER LA ZONA");
-                unit.SetTask(new DefendZone(unit, allyBase.worldPosition, 15, (_) => { }));
+                unit.SetTask(new DefendZone(unit, allyBase, 15, (_) => { }));
             }));
         }
         var unitsInsideBase = usableUnits.Where(unit => InBase(unit.position) && !(unit.GetTask() is DefendZone) && !(unit.GetTask() is GoTo));
         foreach (AgentUnit unit in unitsInsideBase)
         {
             Debug.Log("Dandole a " + unit + " la orden de DEFENDER LA ZONA");
-            unit.SetTask(new DefendZone(unit, allyBase.worldPosition, 15, (_) => { }));
+            unit.SetTask(new DefendZone(unit, allyBase, 15, (_) => { }));
         }
     }
 

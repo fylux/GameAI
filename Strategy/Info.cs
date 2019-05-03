@@ -6,7 +6,7 @@ using UnityEngine;
 public static class Info {
 
 
-    public static Dictionary<string, Node> waypoints = new Dictionary<string, Node>();
+    public static Dictionary<string, Vector3> waypoints = new Dictionary<string, Vector3>();
 
     static Collider[] hits = new Collider[40];
 
@@ -21,27 +21,27 @@ public static class Info {
         GameObject upBase = GameObject.Find("upBase");
         GameObject downBase = GameObject.Find("downBase");
 
-        waypoints.Add("mid", Map.NodeFromPosition(mid.transform.position));
-        waypoints.Add("top", Map.NodeFromPosition(top.transform.position));
-        waypoints.Add("bottom", Map.NodeFromPosition(bottom.transform.position));
+        waypoints.Add("mid", mid.transform.position);
+        waypoints.Add("top", top.transform.position);
+        waypoints.Add("bottom", bottom.transform.position);
 
-        waypoints.Add("upFront", Map.NodeFromPosition(GameObject.Find("upFront").transform.position));
-        waypoints.Add("downFront", Map.NodeFromPosition(GameObject.Find("downFront").transform.position));
+        waypoints.Add("upFront", GameObject.Find("upFront").transform.position);
+        waypoints.Add("downFront", GameObject.Find("downFront").transform.position);
 
-        waypoints.Add("upMid", Map.NodeFromPosition(mid.transform.Find("upMid").transform.position));
-        waypoints.Add("downMid", Map.NodeFromPosition(mid.transform.Find("downMid").transform.position));
+        waypoints.Add("upMid", mid.transform.Find("upMid").transform.position);
+        waypoints.Add("downMid", mid.transform.Find("downMid").transform.position);
 
-        waypoints.Add("upTop", Map.NodeFromPosition(top.transform.Find("upTop").transform.position));
-        waypoints.Add("downTop", Map.NodeFromPosition(top.transform.Find("downTop").transform.position));
+        waypoints.Add("upTop", top.transform.Find("upTop").transform.position);
+        waypoints.Add("downTop", top.transform.Find("downTop").transform.position);
 
-        waypoints.Add("upBottom", Map.NodeFromPosition(bottom.transform.Find("upBottom").transform.position));
-        waypoints.Add("downBottom", Map.NodeFromPosition(bottom.transform.Find("downBottom").transform.position));
+        waypoints.Add("upBottom", bottom.transform.Find("upBottom").transform.position);
+        waypoints.Add("downBottom", bottom.transform.Find("downBottom").transform.position);
 
-        waypoints.Add("upBase", Map.NodeFromPosition(upBase.transform.position));
-        waypoints.Add("downBase", Map.NodeFromPosition(downBase.transform.position));
+        waypoints.Add("upBase", upBase.transform.position);
+        waypoints.Add("downBase", downBase.transform.position);
     }
 
-    public static Node GetWaypoint(String waypoint, Faction faction) {
+    public static Vector3 GetWaypoint(String waypoint, Faction faction) {
         var z = new Dictionary<String, String> {
             { "bottom", faction == Faction.A ? "downBottom" : "upBottom"},
             { "mid", faction == Faction.A ? "downMid" : "upMid" },
@@ -58,37 +58,36 @@ public static class Info {
      Obtiene la lista de unidades en un area
     */
     //Actualmente, layerMask 9 para unidades
-    public static HashSet<AgentUnit> GetUnitsArea(Node tile, float areaSize) {
-        int nFound = Physics.OverlapSphereNonAlloc(tile.worldPosition, areaSize, hits, Map.unitsMask);
+    public static HashSet<AgentUnit> GetUnitsArea(Vector3 center, float areaSize) {
+        int nFound = Physics.OverlapSphereNonAlloc(center, areaSize, hits, Map.unitsMask);
         return new HashSet<AgentUnit>(hits.Take(nFound).Select(hit => hit.GetComponent<AgentUnit>()));
     }
 
-    public static HashSet<AgentUnit> GetUnitsFactionArea(Node tile, float areaSize, Faction fact) {
-        return new HashSet<AgentUnit>(GetUnitsArea(tile, areaSize).Select(hit => hit.GetComponent<AgentUnit>()).Where(unit => unit.faction == fact));
+    public static HashSet<AgentUnit> GetUnitsFactionArea(Vector3 center, float areaSize, Faction fact) {
+        return new HashSet<AgentUnit>(GetUnitsArea(center, areaSize).Select(hit => hit.GetComponent<AgentUnit>()).Where(unit => unit.faction == fact));
     }
 
     //CUIDADO: Puede devolver null si no hay unidades en ese rango
-    public static AgentUnit SelectClosestUnit(Node tile, float areaSize, Faction fact) {
-        return GetUnitsFactionArea(tile, areaSize, fact).OrderBy(unit => Util.NodeDistance(tile, Map.NodeFromPosition(unit.position))).FirstOrDefault();
+    public static AgentUnit SelectClosestUnit(Vector3 center, float areaSize, Faction fact) {
+        return GetUnitsFactionArea(center, areaSize, fact).OrderBy(unit => Util.HorizontalDist(center, unit.position)).FirstOrDefault();
     }
 
-    public static AgentUnit SelectClosestUnit(Node tile, float areaSize) {
-        return GetUnitsArea(tile, areaSize).OrderBy(unit => Util.NodeDistance(tile, Map.NodeFromPosition(unit.position))).FirstOrDefault();
+    public static AgentUnit SelectClosestUnit(Vector3 center, float areaSize) {
+        return GetUnitsArea(center, areaSize).OrderBy(unit => Util.HorizontalDist(center, unit.position)).FirstOrDefault();
     }
 
     // Obtiene el numero de uniades aliadas que siguen esa estrategia en un area
-    public static int StrategyFollowersArea(Node tile, float areaSize, Faction faction, StrategyT strat) {
-        return GetUnitsFactionArea(tile, areaSize, faction).Count(unit => unit.strategy == strat); ;
+    public static int StrategyFollowersArea(Vector3 center, float areaSize, Faction faction, StrategyT strat) {
+        return GetUnitsFactionArea(center, areaSize, faction).Count(unit => unit.strategy == strat); ;
     }
 
     public static HashSet<AgentUnit> UnitsNearBase(Faction baseFaction, Faction unitsFaction, float areaSize) {
-        Node nodo = GetWaypoint("base", baseFaction);
-        return GetUnitsFactionArea(nodo, areaSize, unitsFaction); 
+        return GetUnitsFactionArea( GetWaypoint("base", baseFaction), areaSize, unitsFaction); 
     }
 
     // Obtiene un numero que indica la ventaja militar en un area
-    public static float MilitaryAdvantageArea(Node tile, float areaSize, Faction fact) {
-        return MilitaryAdvantage(GetUnitsArea(tile, areaSize), fact);
+    public static float MilitaryAdvantageArea(Vector3 center, float areaSize, Faction fact) {
+        return MilitaryAdvantage(GetUnitsArea(center, areaSize), fact);
     }
 
     public static float MilitaryAdvantage(HashSet<AgentUnit> units, Faction fact) {
@@ -155,8 +154,8 @@ public static class Info {
         return GetNodesInfluence(fac, Map.grid.Cast<Node>().ToList());
     }
 
-    public static float GetAreaInfluence(Faction fac, Node node, float areaSize) {
-       return GetNodesInfluence(fac, GetNodesInArea(node, areaSize));
+    public static float GetAreaInfluence(Faction fac, Vector3 center, float areaSize) {
+       return GetNodesInfluence(fac, GetNodesInArea(center, areaSize));
     }
 
     public static float GetTerritoryInfluence(Faction territoryFaction, Faction unitsFaction)
@@ -193,11 +192,10 @@ public static class Info {
     }*/
 
 
-    public static List<Node> GetNodesInArea(Node node, float areaSize) {
-        List<Node> nodes = new List<Node>();
-
-        int x = node.gridX;
-        int y = node.gridY;
+    public static List<Node> GetNodesInArea(Vector3 center, float areaSize) {
+        Node centerNode = Map.NodeFromPosition(center);
+        int x = centerNode.gridX;
+        int y = centerNode.gridY;
 
         int xstart = Mathf.Max(0, x - (int)(areaSize / 2));
         int ystart = Mathf.Max(0, y - (int)(areaSize / 2));
@@ -205,6 +203,7 @@ public static class Info {
         int xend = Mathf.Min(Map.mapX, x + (int)areaSize);
         int yend = Mathf.Min(Map.mapY, y + (int)areaSize);
 
+        List<Node> nodes = new List<Node>();
         for (int i = xstart; i < xend; i++) {
             for (int j = ystart; j < yend; j++) {
                 nodes.Add(Map.grid[i, j]);
@@ -230,7 +229,7 @@ public static class Info {
 
             while (neighbours.Count > 0) {
                 AgentUnit currentUnit = neighbours.Pop();
-                var nearUnits = GetUnitsFactionArea(Map.NodeFromPosition(currentUnit.position), 4f, unitsFaction)
+                var nearUnits = GetUnitsFactionArea(currentUnit.position, 4f, unitsFaction)
                                                     .Where(unit => !clusters.Any(c => c.Contains(unit)));
 
                 foreach (AgentUnit nearUnit in nearUnits) {
@@ -252,13 +251,13 @@ public static class Info {
     public static Dictionary<StrategyT, float> GetStrategyPriority(AgentUnit unit, Faction faction) {
         return new Dictionary<StrategyT, float> {
             { StrategyT.ATK_BASE,
-                Util.HorizontalDist(unit.position, GetWaypoint("base", Util.OppositeFaction(faction)).worldPosition) },
+                Util.HorizontalDist(unit.position, GetWaypoint("base", Util.OppositeFaction(faction))) },
             { StrategyT.ATK_HALF,
-                Util.HorizontalDist(unit.position, GetWaypoint("front", faction).worldPosition) },
+                Util.HorizontalDist(unit.position, GetWaypoint("front", faction)) },
             { StrategyT.DEF_HALF,
-                Util.HorizontalDist(unit.position, GetWaypoint(StrategyLayer.chosenWaypoint, faction).worldPosition) },
+                Util.HorizontalDist(unit.position, GetWaypoint(StrategyLayer.chosenWaypoint, faction)) },
             { StrategyT.DEF_BASE,
-                Util.HorizontalDist(unit.position,GetWaypoint("base", faction).worldPosition) }
+                Util.HorizontalDist(unit.position,GetWaypoint("base", faction)) }
         };
     }
 }

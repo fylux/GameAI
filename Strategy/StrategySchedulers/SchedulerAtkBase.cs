@@ -36,15 +36,15 @@ public class SchedulerAtkBase : SchedulerStrategy
                // Debug.Log("Somos mas FUERTES asi que vamos a atacar");
                 foreach (AgentUnit unit in usableUnits)
                 {
-                    if (atking.Contains(unit) == false || (!(unit.GetTask() is GoTo) && Util.HorizontalDist(unit.position, Info.GetWaypoint("base", enemyFaction).worldPosition) >= 15)) 
+                    if (atking.Contains(unit) == false || (!(unit.GetTask() is GoTo) && Util.HorizontalDist(unit.position, Info.GetWaypoint("base", enemyFaction)) >= 15)) 
                     {
                         AddGroup(unit, "atking");
 
                         //   Debug.Log("Dandole a " + unit + " la orden de MOVERSE A LA BASE ENEMIGA");
-                        unit.SetTask(new GoTo(unit, Info.GetWaypoint("base", enemyFaction).worldPosition, (bool success) =>
+                        unit.SetTask(new GoTo(unit, Info.GetWaypoint("base", enemyFaction), (bool success) =>
                         {
                           //  Debug.Log("Dandole a " + unit + " la orden de DEFENDER LA ZONA");
-                            unit.SetTask(new DefendZone(unit, Info.GetWaypoint("base", enemyFaction).worldPosition, 15, (_) => { }));
+                            unit.SetTask(new DefendZone(unit, Info.GetWaypoint("base", enemyFaction), 15, (_) => { }));
                         }));
                     }
                 }
@@ -60,15 +60,15 @@ public class SchedulerAtkBase : SchedulerStrategy
                        // Debug.Log("Añadadida unidad a heal");
                         unit.SetTask(new RestoreHealth(unit, (bool success) => { }));          
                     }
-                    else if ((strong == true || unit.militar.health == unit.militar.maxHealth) && (regr.Contains(unit) == false || !(unit.GetTask() is GoTo) && Util.HorizontalDist(unit.position, Info.GetWaypoint("front", enemyFaction).worldPosition) >= 15))
+                    else if ((strong == true || unit.militar.health == unit.militar.maxHealth) && (regr.Contains(unit) == false || !(unit.GetTask() is GoTo) && Util.HorizontalDist(unit.position, Info.GetWaypoint("front", enemyFaction)) >= 15))
                     {
                         AddGroup(unit, "regr");
 
                       //  Debug.Log("Dandole a " + unit + " la orden de MOVERSE AL FRONT");
-                        unit.SetTask(new GoTo(unit, Info.GetWaypoint("front", enemyFaction).worldPosition, (bool success) =>
+                        unit.SetTask(new GoTo(unit, Info.GetWaypoint("front", enemyFaction), (bool success) =>
                         {
                        //     Debug.Log("Dandole a " + unit + " la orden de DEFENDER LA ZONA");
-                            unit.SetTask(new DefendZone(unit, Info.GetWaypoint("front", enemyFaction).worldPosition, 15, (_) => { }));
+                            unit.SetTask(new DefendZone(unit, Info.GetWaypoint("front", enemyFaction), 15, (_) => { }));
                         }));
                     }
                 }

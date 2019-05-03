@@ -8,7 +8,7 @@ public abstract class SchedulerStrategy {
 
     protected Faction allyFaction = Faction.A;
     protected Faction enemyFaction = Faction.B;
-    protected Node allyBase, enemyBase;
+    protected Vector3 allyBase, enemyBase;
 
     abstract public void ApplyStrategy();
 

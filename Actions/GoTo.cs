@@ -7,22 +7,24 @@ public class GoTo : Task {
     GameObject empty;
     PathFollowing pathF;
     Vector3 target;
+    float offset;
 
 
-    public GoTo(AgentUnit agent, Vector3 target, Action<bool> callback) : base(agent,callback) {
-        this.target = new Vector3(target.x, 111f, target.z);
+    public GoTo(AgentUnit agent, Vector3 target, float offset, Action<bool> callback) : base(agent,callback) {
+        this.offset = offset;
 
         empty = new GameObject();
         empty.transform.parent = agent.gameObject.transform;
 
         pathF = empty.AddComponent<PathFollowing>();
         pathF.SetNPC(agent);
-        pathF.path = null;
         pathF.visibleRays = true;
         pathF.maxAccel = 50f;
 
-        PathfindingManager.RequestPath(agent.position, target, agent.Cost, ProcessPath);
+        SetNewTarget(target);
     }
+
+    public GoTo(AgentUnit agent, Vector3 target, Action<bool> callback) : this(agent, target, 0f, callback) { }
 
     private void ProcessPath(Vector3[] newPath, List<Node> nodesPath, bool pathSuccessful) {
         if (pathSuccessful) {
@@ -37,8 +39,8 @@ public class GoTo : Task {
         pathF.SetPath(null);
     }
 
-    public void SetNewTarget(Vector3 target) {
-        this.target = new Vector3(target.x, 0f, target.z);
+    public void SetNewTarget(Vector3 new_target) {
+        target = new Vector3(new_target.x + UnityEngine.Random.Range(-offset, offset) , 1f, new_target.z + UnityEngine.Random.Range(-offset, offset));
         pathF.path = null;
         PathfindingManager.RequestPath(agent.position, target, agent.Cost, ProcessPath);
     }

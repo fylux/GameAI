@@ -215,11 +215,11 @@ public static class Info {
         return nodes;
     }
 
-    public static List<HashSet<AgentUnit>> GetClusters(Faction faction) {
+	public static List<HashSet<AgentUnit>> GetClusters(Faction unitsFaction, Faction baseFaction) {
         List<HashSet<AgentUnit>> clusters = new List<HashSet<AgentUnit>>();
 
-        var enemies = GetUnitsFactionArea(GetWaypoint("base", faction), 45f, Util.OppositeFaction(faction));
-		HashSet<AgentUnit> allEnemies = new HashSet<AgentUnit> (Map.GetEnemies (faction));
+		var enemies = GetUnitsFactionArea(GetWaypoint("base", baseFaction), 45f, Util.OppositeFaction(unitsFaction));
+		HashSet<AgentUnit> allEnemies = new HashSet<AgentUnit> (Map.GetEnemies (unitsFaction));
 
         while (enemies.Count > 0) {
             HashSet<AgentUnit> cluster = new HashSet<AgentUnit>();

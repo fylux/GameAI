@@ -215,29 +215,32 @@ public static class Info {
         return nodes;
     }
 
-    public static List<HashSet<AgentUnit>> GetClusters(Faction faction) {
+    public static List<HashSet<AgentUnit>> GetClusters(Faction unitsFaction, Faction baseFaction) {
         List<HashSet<AgentUnit>> clusters = new List<HashSet<AgentUnit>>();
+        var units = GetUnitsFactionArea(GetWaypoint("base", baseFaction), 45f, unitsFaction);
 
-        var enemies = GetUnitsFactionArea(GetWaypoint("base", faction), 45f, Util.OppositeFaction(faction));
-
-        while (enemies.Count > 0) {
+        while (units.Count > 0) {
             HashSet<AgentUnit> cluster = new HashSet<AgentUnit>();
             Stack<AgentUnit> neighbours = new Stack<AgentUnit>();
-            neighbours.Push(enemies.First());
-            cluster.Add(enemies.First());
-            enemies.Remove(enemies.First());
+            clusters.Add(cluster);
 
-            while (neighbours.Count > 0) {
-                AgentUnit currentEnemy = neighbours.Pop();
-                var nearEnemies = Physics.OverlapSphere(currentEnemy.position, 5f, Map.unitsMask).Select(coll => coll.GetComponent<AgentUnit>()).Intersect(enemies);
-                foreach (AgentUnit nearEnemy in nearEnemies) {
-                    Debug.DrawLine(currentEnemy.position, nearEnemy.position);
-                    neighbours.Push(nearEnemy);
-                    enemies.Remove(nearEnemy);
-                    cluster.Add(nearEnemy);
+            neighbours.Push(units.First());
+            cluster.Add(units.First());
+            units.Remove(units.First());
+
+            while (neighbours.Count > 0 ) {
+                AgentUnit currentUnit = neighbours.Pop();
+                var nearUnits = GetUnitsFactionArea(Map.NodeFromPosition(currentUnit.position), 4f, unitsFaction)
+                                                    .Where(unit => !clusters.Any(c => c.Contains(unit)));
+
+                foreach (AgentUnit nearUnit in nearUnits) {
+                    Debug.DrawLine(currentUnit.position, nearUnit.position);
+                    neighbours.Push(nearUnit);
+                    units.Remove(nearUnit);
+                    cluster.Add(nearUnit);
                 }
             }
-            clusters.Add(cluster);
+            
         }
         return clusters;
     }

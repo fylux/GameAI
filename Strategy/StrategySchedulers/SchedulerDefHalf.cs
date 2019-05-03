@@ -43,7 +43,7 @@ public class SchedulerDefHalf : SchedulerStrategy {
         }
 
         var remainingUnits = new HashSet<AgentUnit>(usableUnits.Where(unit => !(unit.GetTask() is RestoreHealth)));
-        var clusters = Info.GetClusters(allyFaction);
+        var clusters = Info.GetClusters(enemyFaction, allyFaction);
         var clustersByAdvantage = clusters.ToDictionary(c => c, c => GetMilitaryBalanceCluster(c)).OrderByDescending(c => c.Value);
         var unitsAssignedToClusters = new Dictionary<HashSet<AgentUnit>, HashSet<AgentUnit>>();
 
@@ -101,7 +101,7 @@ public class SchedulerDefHalf : SchedulerStrategy {
 
         foreach (var ally in alliesToDefendBridge) {
             Debug.Assert(!(ally.GetTask() is DefendZone));
-            ally.SetTask(new GoTo(ally, Info.GetWaypoint("mid", allyFaction).worldPosition,(bool success) => {
+            ally.SetTask(new GoTo(ally, Info.GetWaypoint("mid", allyFaction).worldPosition, 1.3f, (bool success) => {
                 ally.SetTask(new DefendZone(ally, ally.position, 6f, (_) => {
                 }));
             }));

@@ -11,10 +11,12 @@ public abstract class Task {
 
     protected AgentUnit agent;
     protected Action<bool> callback;
+    protected float timeStamp;
 
     public Task(AgentUnit agent, Action<bool> callback) {
         this.agent = agent;
         this.callback = callback;
+        timeStamp = Time.fixedTime;
     }
 
     virtual public void Terminate() {}

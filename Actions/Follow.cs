@@ -10,14 +10,12 @@ public class Follow : Task {
     Vector3 lastTargetPosition;
     GoTo goTo;
     bool inRange;
-    float timeStamp;
 
 	public Follow(AgentUnit agent, AgentUnit target, Action<bool> callback) : base(agent,callback) {
         this.target = target;
         this.lastTargetPosition = target.position;
         this.goTo = new GoTo(agent, GetFutureTargetPosition(), (_) => {});
         inRange = IsNearEnough();
-        timeStamp = Time.fixedTime;
     }
 
     bool ReconsiderPath() {

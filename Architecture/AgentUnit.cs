@@ -125,6 +125,6 @@ public abstract class AgentUnit : AgentNPC {
 
     public float GetDropOff(float locationDistance) {
         //100f is 100% influence
-        return 1000f / (locationDistance*locationDistance);
+        return 775f / (locationDistance*locationDistance);
     }
 }

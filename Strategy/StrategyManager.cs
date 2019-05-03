@@ -20,7 +20,7 @@ public class StrategyManager : MonoBehaviour {
                                                                               { StrategyT.DEF_BASE, new SchedulerDefBase() },
                                                                               { StrategyT.DEF_HALF, new SchedulerDefHalf() },
                                                                               { StrategyT.ATK_BASE, new SchedulerAtkBase() },
-                                                                              { StrategyT.ATK_HALF, new SchedulerDefBase() } };
+                                                                              { StrategyT.ATK_HALF, new SchedulerAtkHalf() } };
 
     // Use this for initialization
     void Start () {
@@ -42,7 +42,7 @@ public class StrategyManager : MonoBehaviour {
                 test = false; // TESTGGG todo lo relacionado con la variable test se eliminará
                 Debug.Log("HAN CAMBIADO LOS VALORES DE ESTRATEGIA, REASIGNANDO TROPAS");
                 //Layer 2
-               // militaryResourceAllocator.SetPriority(strategyLayer.GetPriority()); DESACTIVAR MIENTRAS ESTEMOS HACIENDO PRUEBAS
+                militaryResourceAllocator.SetPriority(strategyLayer.GetPriority()); //DESACTIVAR MIENTRAS ESTEMOS HACIENDO PRUEBAS
                 Dictionary<StrategyT, HashSet<AgentUnit>> unitsToStrategy = militaryResourceAllocator.AllocateResources();
 
                 foreach (var strategy in unitsToStrategy.Keys) {

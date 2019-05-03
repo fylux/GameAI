@@ -7,12 +7,12 @@ public enum StrategyT {
 
 public class StrategyLayer {
 
-    bool dbg = false;
+    bool dbg = true;
 
     Dictionary<StrategyT, float> priority = new Dictionary<StrategyT, float>() { { StrategyT.DEF_BASE, 0 },
                                                                               { StrategyT.DEF_HALF, 0 },
-                                                                              { StrategyT.ATK_BASE, 0 },
-                                                                              { StrategyT.ATK_HALF, 0 } };
+                                                                              { StrategyT.ATK_HALF, 0 },
+                                                                              { StrategyT.ATK_BASE, 0 } };
 
     Dictionary<string, List<Node>> waypointArea;
 
@@ -34,17 +34,22 @@ public class StrategyLayer {
         /*if (dbg)*/ Debug.Log("Starting apply");
         bool changed = false;
 
+		Debug.Log ("Valores iniciales del diccionario " + priority);
+		foreach (KeyValuePair<StrategyT,float> tuple in priority) {
+			Debug.Log ("Initial --> La estrategia " + tuple.Key + " tiene el valor " + tuple.Value);
+		}
+
         Dictionary<StrategyT, float> newPriority = ComputePriority();
 
         foreach (StrategyT strategy in newPriority.Keys) {
             if (dbg) Debug.Log("El valor de la estrategia " + strategy + " es de " + newPriority[strategy]);
+		//	Debug.Log ("Antes, el valor de la estrategia era de " + priority [strategy]);
             if (Mathf.Abs(newPriority[strategy] - priority[strategy]) >= 0.15) //TODO: Decidir valor real. ¿Lo hacemos así o pedimos cambio estable?
             {
                 priority = newPriority;
                 changed = true;
             }
         }
-
         return changed;
     }
 
@@ -82,7 +87,7 @@ public class StrategyLayer {
         // 40 sería un "casi llegando a la base"
         // 25 sería que están en la misma base
         if (dbg) Debug.Log("START DEFBASE");
-        HashSet<AgentUnit> near = Info.UnitsNearBase(allyFaction, enemyFaction, 25);
+        HashSet<AgentUnit> near = Info.UnitsNearBase(allyFaction, enemyFaction, 30);
         HashSet<AgentUnit> mid = Info.UnitsNearBase(allyFaction, enemyFaction, 40);
         HashSet<AgentUnit> far = Info.UnitsNearBase(allyFaction, enemyFaction, 50);
 
@@ -94,13 +99,13 @@ public class StrategyLayer {
         float result = 0;
 
         foreach (AgentUnit unit in near) {
-            result += ((float)1 / 20) * 0.8f; // ¿Deberiamos considerar el "peor caso" antes, o no tiene sentido?
+            result += ((float)1 / 10); // ¿Deberiamos considerar el "peor caso" antes, o no tiene sentido?
         }
         foreach (AgentUnit unit in mid) {
-            result += ((float)1 / 20) * 0.55f;
+            result += ((float)1 / 10) * 0.65f;
         }
         foreach (AgentUnit unit in far) {
-            result += ((float)1 / 20) * 0.3f;
+            result += ((float)1 / 10) * 0.3f;
         }
 
         /*HashSet<AgentUnit> units = new HashSet<AgentUnit>(Map.GetAllies(allyFaction));

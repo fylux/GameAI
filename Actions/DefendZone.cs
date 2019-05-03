@@ -8,7 +8,9 @@ public class DefendZone : HostileTask {
     float rangeRadius;
     AgentUnit targetEnemy;
     public Attack attack;
+    GoTo goTo;
     const float followRangeExtra = 1f;
+    bool returning;
 
     public DefendZone(AgentUnit agent, Vector3 center, float rangeRadius, Action<bool> callback) : base(agent,callback) {
         Debug.Assert(followRangeExtra >= 1f);
@@ -16,6 +18,13 @@ public class DefendZone : HostileTask {
         this.rangeRadius = rangeRadius;
         targetEnemy = null;
         attack = null;
+        goTo = new GoTo(agent, center, rangeRadius / 3, (_) => {
+            returning = false;
+            goTo.SetVisiblePath(false);
+            agent.RequestStopMoving();
+        }); //The offset should be smaller than the distance when it is consider far
+        goTo.SetVisiblePath(false);
+        returning = false;
     }
 
     //If you are attacked by a different unit you will start figthing with it unless that you are already figthing or very close to your target
@@ -38,6 +47,8 @@ public class DefendZone : HostileTask {
         if (newEnemy != null) {
             Debug.Log("Found enemy " + newEnemy.name);
             targetEnemy = newEnemy;
+            returning = false;
+            goTo.SetVisiblePath(false);
             attack = new Attack(agent, targetEnemy, (_) => {
                 attack.Terminate();
                 attack = null;
@@ -57,18 +68,28 @@ public class DefendZone : HostileTask {
 
         //Comprobar si se ha matado a la unidad
         if (attack == null || Util.HorizontalDist(targetEnemy.position, center) > rangeRadius + agent.attackRange + followRangeExtra) {
-            AgentUnit closerEnemy = Physics.OverlapSphere(center, rangeRadius + agent.attackRange)
+            AgentUnit closerEnemy = Physics.
+                OverlapSphere(center, rangeRadius + agent.attackRange)
                                             .Select(coll => coll.GetComponent<AgentUnit>())
                                             .Where(unit => unit != null && unit.faction != agent.faction)
                                             .OrderBy(enemy => Util.HorizontalDist(agent.position, enemy.position))
                                             .FirstOrDefault();
 
+
             AttackEnemy(closerEnemy);
 
-            //It would be nice if it does not find any target that it returns back to the center
+            //if it does not find any target that it returns back to the center
+
+            if (closerEnemy == null && !returning && Util.HorizontalDist(agent.position, center) > rangeRadius / 2 ) { 
+                goTo.SetNewTarget(center);
+                goTo.SetVisiblePath(true);
+                returning = true;
+            }
+
         }
 
         if (attack != null) st = attack.Apply();
+        else if (returning) st = goTo.Apply();
 
         return st;
     }

@@ -41,7 +41,9 @@ public class GoTo : Task {
 
     public void SetNewTarget(Vector3 new_target) {
         do {
-            target = new Vector3(new_target.x + UnityEngine.Random.Range(-offset, offset), 1f, new_target.z + UnityEngine.Random.Range(-offset, offset));
+            Vector2 offsetXY = UnityEngine.Random.insideUnitCircle * offset;
+
+            target = new Vector3(new_target.x + offsetXY[0], 1f, new_target.z + offsetXY[1]);
         } while(!Map.NodeFromPosition(target).isWalkable());
 
         pathF.path = null;
@@ -55,7 +57,7 @@ public class GoTo : Task {
         if (pathF.path != null)
             return pathF.GetSteering();
         else
-            return Seek.GetSteering(target, agent, 10f); //If path has not been solved yet just do Seek.
+            return Seek.GetSteering(target, agent, 50f); //If path has not been solved yet just do Seek.
     }
 
     override
@@ -67,6 +69,10 @@ public class GoTo : Task {
     public void Terminate() {
         if (empty != null) UnityEngine.Object.Destroy(empty);
         agent.RequestStopMoving(); //To remove remaining forces of movement
+    }
+
+    public void SetVisiblePath(bool visiblePath) {
+        pathF.visibleRays = visiblePath;
     }
 
     override

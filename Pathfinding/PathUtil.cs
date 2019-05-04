@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum DistanceT {
+    EUCLIDEAN, MANHATTAN, CHEBYSHEV
+};
+
 public class PathUtil : MonoBehaviour {
 
     //Simplfies path and does not add the targetNode, since the last position is no the center of targetNode but targetPos

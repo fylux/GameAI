@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-
-
-public class LRTA : Pathfinding {
+public class LRTA  {
 
     const int lookahead = 7;
 

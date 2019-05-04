@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 
 
-public class AStar : Pathfinding {
+public class AStar {
 
     Node startNode, targetNode;
     Vector3 targetPos;
@@ -13,9 +13,7 @@ public class AStar : Pathfinding {
     PathfindingManager requestManager;
 
 
-    // AStar() : base() {}
-
-    public IEnumerator FindPath(Vector3 startPos, Vector3 targetPos, Dictionary<NodeT, float> cost, Action<Vector3[], List<Node>, bool> FinishedProcessing) {
+    public IEnumerator FindPath(Vector3 startPos, Vector3 targetPos, Dictionary<NodeT, float> cost, float influenceFactor, Faction faction, Action<Vector3[], bool> FinishedProcessing) {
         prev = new Dictionary<Node, Node>();
         bool pathSuccess = false;
 
@@ -47,8 +45,38 @@ public class AStar : Pathfinding {
 						continue;
 					}
 
+                    float enemy = neighbour.GetInfluence(faction);//(100 + neighbour.GetInfluence(faction)) / 200f;
+                    float ally = neighbour.GetInfluence(Util.OppositeFaction(faction));//(100 + neighbour.GetInfluence(faction)) / 200f;
+
+                    float r;
+                    /*if (enemy > 0.65) {
+                        r = 1000;
+                    } else if (enemy > 0.4) {
+                        r = 100;
+                    } else if (enemy > 0.3) {
+                        r = 4;
+                    }  else {
+                        r = 1;
+                    }*/
+
+                    if (enemy > 0.3) {
+                        r = 1000;
+                    } 
+                    else if (ally > 0.3) {
+                        r = 0;
+                    }
+                    else {
+                        r = 20;
+                    }
+
+                    //r = (1f / (z * z * z)) * influenceFactor;
+                    Debug.Assert(enemy <= 1 && enemy >= 0);
                     //This penaly for the terrain is based on the idea that if you move from road to forest is slower than from forest to road
-                    float newMovementCostToNeighbour = currentNode.gCost + PathUtil.realDist(currentNode, neighbour) * cost[neighbour.type];
+                    float newMovementCostToNeighbour = currentNode.gCost 
+                                                        + PathUtil.realDist(currentNode, neighbour) * cost[neighbour.type]
+                                                        //+ (100+neighbour.GetInfluence(Util.OppositeFaction(faction))) / 200f * influenceFactor;
+                                                        + r;
+
 
                     if (newMovementCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour)) {
 						neighbour.gCost = newMovementCostToNeighbour;
@@ -73,7 +101,7 @@ public class AStar : Pathfinding {
             waypoints.Add(targetPos);
         }
 
-        FinishedProcessing(waypoints.ToArray(), nodesPath, pathSuccess);
+        FinishedProcessing(waypoints.ToArray(), pathSuccess);
     }
     
    List<Node> RetracePath() {

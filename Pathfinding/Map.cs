@@ -111,20 +111,17 @@ public class Map {
                     {Faction.C, Color.gray }
                 };
 
-                influ = grid[x, y].GetInfluence(Faction.B);
-                if (influ > 0.65) {
-                    grid[x, y].influenceTile.GetComponent<Renderer>().material.color = Color.black;
-
-                } 
-                else if (influ > 0.4) {
+                float ally = grid[x, y].GetInfluence(Faction.A);
+                float enemy = grid[x, y].GetInfluence(Faction.B);
+                if (enemy > 0.3) {
+                    grid[x, y].influenceTile.GetComponent<Renderer>().material.color = Color.blue;
+                } else if (ally > 0.3) {
                     grid[x, y].influenceTile.GetComponent<Renderer>().material.color = Color.red;
-
-                } else if (influ > 0.27) {
-                    grid[x, y].influenceTile.GetComponent<Renderer>().material.color = Color.yellow;
-
-                } else {
+                }
+                else {
                     grid[x, y].influenceTile.GetComponent<Renderer>().material.color = Color.white;
                 }
+               
                 grid[x, y].influenceTile.GetComponent<Renderer>().material.SetFloat("_Glossiness", 0f);
                 //grid[x, y].gameObject.transform.GetChild(0).GetComponent<Renderer>().material.color = colors[grid[x, y].getFaction()];
                 /*Gizmos.color = colors[grid[x, y].getFaction()];

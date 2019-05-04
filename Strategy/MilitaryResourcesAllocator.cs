@@ -44,14 +44,13 @@ public class MilitaryResourcesAllocator {
         importanceWeigth = new Dictionary<StrategyT, float>() {
             { StrategyT.ATK_BASE, 1},
             { StrategyT.ATK_HALF, 1},
-            { StrategyT.DEF_BASE, 1},
+            { StrategyT.DEF_BASE, 1.25f},
             { StrategyT.DEF_HALF, 1}
         };
     }
 
 
     public Dictionary<StrategyT, HashSet<AgentUnit>> AllocateResources() {
-        //  ClearUnitSets(); // Vaciamos los sets que contienen las unidades de cada estrategia
         HashSet<AgentUnit> availableUnits = new HashSet<AgentUnit>(Map.unitList.Where(unit => unit.faction == faction));
         int nTotalAvailableUnits = availableUnits.Count;
 
@@ -69,6 +68,17 @@ public class MilitaryResourcesAllocator {
             Debug.Log("No strategy has enough importance");
         }
 
+		Dictionary<AgentUnit, Dictionary<StrategyT, float>> strategyAffinity = availableUnits.ToDictionary(u => u, u => Info.GetStrategyPriority(u, faction));
+
+		int unitsToTakeDefBase = Mathf.Min (nTotalAvailableUnits, 2);
+
+		//********* Aseguramos que al menos dos unidades siempre estarán defendiendo la base **********
+
+		var patrol =  availableUnits.Where(u => u.strategy == StrategyT.DEF_BASE)
+			.OrderBy(u => strategyAffinity[u][StrategyT.DEF_BASE])
+			.Take(unitsToTakeDefBase);
+
+		//*********************************************************************************************
 
         //Map to number of units
         //If there are remaining units due to rounding errors are assigned to the most important strategy
@@ -90,8 +100,6 @@ public class MilitaryResourcesAllocator {
         /*foreach (var z in nUnitsAllocToStrategy) {
             Debug.Log(z.Key + " " + z.Value + "; weight: " + priority[z.Key]);
         }*/
-
-        Dictionary<AgentUnit, Dictionary<StrategyT, float>> strategyAffinity = availableUnits.ToDictionary(u => u, u => Info.GetStrategyPriority(u, faction));
 
         //Assign units with the same strategy
         foreach (StrategyT strategy in priority.Keys) {

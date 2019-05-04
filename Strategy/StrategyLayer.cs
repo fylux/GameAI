@@ -7,7 +7,7 @@ public enum StrategyT {
 
 public class StrategyLayer {
 
-	bool dbg = true;
+	bool dbg = false;
 
 	Dictionary<StrategyT, float> priority = new Dictionary<StrategyT, float>() { { StrategyT.DEF_BASE, 0 },
 		{ StrategyT.DEF_HALF, 0 },
@@ -33,11 +33,6 @@ public class StrategyLayer {
 	public bool Apply() {
 		/*if (dbg)*/ Debug.Log("Starting apply");
 		bool changed = false;
-
-		Debug.Log ("Valores iniciales del diccionario " + priority);
-		foreach (KeyValuePair<StrategyT,float> tuple in priority) {
-			Debug.Log ("Initial --> La estrategia " + tuple.Key + " tiene el valor " + tuple.Value);
-		}
 
 		Dictionary<StrategyT, float> newPriority = ComputePriority();
 

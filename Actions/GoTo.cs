@@ -47,7 +47,7 @@ public class GoTo : Task {
         } while(!Map.NodeFromPosition(target, true).isWalkable());
 
         pathF.path = null;
-        PathfindingManager.RequestPath(agent.position, target, agent.Cost, 100f, Util.OppositeFaction(agent.faction), ProcessPath);
+		PathfindingManager.RequestPath(agent.position, target, agent.Cost, 100f, Util.OppositeFaction(agent.faction), ProcessPath);
     }
 
     override
@@ -57,7 +57,7 @@ public class GoTo : Task {
         if (pathF.path != null) {
             if (Time.fixedTime - timeStamp > 2) {
                 timeStamp = Time.fixedTime;
-                PathfindingManager.RequestPath(agent.position, target, agent.Cost, 100f, Faction.B, ProcessPath);
+				PathfindingManager.RequestPath(agent.position, target, agent.Cost, 100f, Util.OppositeFaction(agent.faction), ProcessPath);
             }
 
             return pathF.GetSteering();

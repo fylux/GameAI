@@ -18,8 +18,6 @@ public abstract class SchedulerStrategy {
         
         allyBase = Info.GetWaypoint("base", allyFaction);
         enemyBase = Info.GetWaypoint("base", enemyFaction);
-
-        Debug.Log("Actualizando el valor de las bases de " + this + " y son allyBase: " + allyBase + " y enemyBase: " + enemyBase);
     }
 
     public virtual void Reset() { }

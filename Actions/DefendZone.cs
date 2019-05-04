@@ -45,7 +45,7 @@ public class DefendZone : HostileTask {
         }
 
         if (newEnemy != null) {
-            Debug.Log("Found enemy " + newEnemy.name);
+            Debug.Log("Found enemy " + newEnemy.name + " distance " + Util.HorizontalDist(newEnemy.position, agent.position) +" by "+agent.name);
             targetEnemy = newEnemy;
             returning = false;
             goTo.SetVisiblePath(false);
@@ -68,10 +68,7 @@ public class DefendZone : HostileTask {
 
         //Comprobar si se ha matado a la unidad
         if (attack == null || Util.HorizontalDist(targetEnemy.position, center) > rangeRadius + agent.attackRange + followRangeExtra) {
-            AgentUnit closerEnemy = Physics.
-                OverlapSphere(center, rangeRadius + agent.attackRange)
-                                            .Select(coll => coll.GetComponent<AgentUnit>())
-                                            .Where(unit => unit != null && unit.faction != agent.faction)
+            AgentUnit closerEnemy = Info.GetUnitsFactionArea(center, rangeRadius + agent.attackRange, Util.OppositeFaction(agent.faction))
                                             .OrderBy(enemy => Util.HorizontalDist(agent.position, enemy.position))
                                             .FirstOrDefault();
 

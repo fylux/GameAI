@@ -19,6 +19,9 @@ public class Projectile : MonoBehaviour {
     }
 
 	void Update () {
+        transform.LookAt(target.position);
+        transform.Rotate(new Vector3(90, 180, 0));
+
         transform.position += -transform.up * velocity * Time.deltaTime;
 
         if (Time.fixedTime > endTime) {

@@ -76,7 +76,7 @@ public class Follow : Task {
     }
 
     private bool IsNearEnough() {
-        float distanceToTarget = Util.HorizontalDist(agent.position, lastTargetPosition);
+        float distanceToTarget = Util.HorizontalDist(agent.position, target.position);
         return distanceToTarget < agent.attackRange * 0.9;
     }
 

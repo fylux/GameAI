@@ -28,12 +28,12 @@ public class Follow : Task {
     }
 
     Vector3 GetFutureTargetPosition() {
-        float lookAhead = Util.HorizontalDist(agent.position, target.position) / 2f ;
+        /**float lookAhead = Util.HorizontalDist(agent.position, target.position) / 2f ;
         Vector3 futurePosition = target.position + target.velocity * lookAhead;
         //Only predict if it is not too close and the prediction is a walkable place
         if (Util.HorizontalDist(agent.position, target.position) > 4f && Map.NodeFromPosition(futurePosition, true).isWalkable())
             return futurePosition;
-        else
+        else*/
             return target.position;
     }
 

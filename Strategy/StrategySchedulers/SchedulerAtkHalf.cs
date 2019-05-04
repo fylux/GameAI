@@ -37,7 +37,7 @@ public class SchedulerAtkHalf : SchedulerStrategy {
 	override
 	public void ApplyStrategy()
 	{
-		//Units with low l1evel of health should try to go to a healing point
+		//Units with low level of health should try to go to a healing point
 		var damagedAllies = usableUnits.Where(unit => unit.militar.health < minimunHealth && !(unit.GetTask() is RestoreHealth));
 		foreach (var ally in damagedAllies) {
 			ally.SetTask(new RestoreHealth(ally, (_) => { }));
@@ -47,27 +47,31 @@ public class SchedulerAtkHalf : SchedulerStrategy {
 
 		var clusters = Info.GetClusters(enemyFaction, enemyFaction);
 		var selectedCluster = clusters.ToDictionary(c => c, c => GetMilitaryBalanceCluster(c)).OrderByDescending(c => c.Value).FirstOrDefault().Key;
+		if (selectedCluster != null)
+		{
+			HashSet<AgentUnit> totalUnits = new HashSet<AgentUnit>(remainingUnits);
+			totalUnits.UnionWith(selectedCluster);
 
-		HashSet<AgentUnit> totalUnits = new HashSet<AgentUnit> (remainingUnits);
-		totalUnits.UnionWith (selectedCluster);
+			if (!(Info.MilitaryAdvantage(totalUnits, allyFaction) < 1))
+			{
+				//var unitsAssignedToCluster = new HashSet<AgentUnit>(); -> Es remainingUnits
+				var center = Info.GetClusterCenter(selectedCluster);
 
-		if (Info.MilitaryAdvantage (totalUnits, allyFaction) < 1)
-			selectedCluster = null;
-
-		//var unitsAssignedToCluster = new HashSet<AgentUnit>(); -> Es remainingUnits
-		if (selectedCluster != null) {
-			var center = Info.GetClusterCenter(selectedCluster);
-
-			foreach (AgentUnit ally in remainingUnits) {
-				if (ally.GetTask() is Attack) continue;
-				AgentUnit closestEnemy = selectedCluster.OrderBy(unit => Util.HorizontalDist(ally.position, unit.position)).First();
-				//Debug.Log (ally.name + " esta atacando a " + closestEnemy.name + " y su task es " + ally.GetTask());
-				ally.SetTask(new Attack(ally, closestEnemy, (_) => {
-					//If you kill an enemy reconsider assignations
-					ApplyStrategy();
-				}));
+				foreach (AgentUnit ally in remainingUnits)
+				{
+					if (ally.GetTask() is Attack) continue;
+					AgentUnit closestEnemy = selectedCluster.OrderBy(unit => Util.HorizontalDist(ally.position, unit.position)).First();
+					//Debug.Log (ally.name + " esta atacando a " + closestEnemy.name + " y su task es " + ally.GetTask());
+					ally.SetTask(new Attack(ally, closestEnemy, (_) =>
+						{
+							//If you kill an enemy reconsider assignations
+							ApplyStrategy();
+						}));
+				}
 			}
 		}
+
+
 		//var unitsCluster = new HashSet<AgentUnit>(selectedCluster);
 
 		/*var closestAllies = remainingUnits.OrderBy(unit => Util.HorizontalDist(center, unit.position));

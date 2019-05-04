@@ -42,13 +42,13 @@ public class MilitarComponent : UnitComponent {
         int damage = Mathf.Max(0, amount - defense);
         Console.Log("Unit caused " + damage + " damage");
         health -= damage;
+        agent.StartCoroutine(BlinkMesh());
         if (IsDead()) {
             Console.Log("Unit died");
-            agent.gameObject.SetActive(false);
-
             //Update list of units removing this one
             Map.unitList.Remove(agent);
-            GameObject.Destroy(agent.gameObject);
+            agent.StartCoroutine(DestroyUnit());
+           
         }
         else if (agent.HasTask<HostileTask>()) { //To change the target if needed
             ((HostileTask)agent.GetTask()).ReceiveAttack(enemy);
@@ -59,5 +59,21 @@ public class MilitarComponent : UnitComponent {
 
     public bool IsDead() {
         return health <= 0;
+    }
+
+    public IEnumerator BlinkMesh() {
+        var z = agent.GetComponent<Renderer>();
+        z.enabled = false;
+        yield return new WaitForSeconds(0.15f);
+        z.enabled = true;
+        yield return new WaitForSeconds(0.15f);
+        z.enabled = false;
+        yield return new WaitForSeconds(0.15f);
+        z.enabled = true;
+    }
+
+    public IEnumerator DestroyUnit() {
+        yield return new WaitForSeconds(0.6f);
+        GameObject.Destroy(agent.gameObject);
     }
 }

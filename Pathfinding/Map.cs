@@ -85,14 +85,19 @@ public class Map {
         return neighbours;
     }
 
-    public static Node NodeFromPosition(Vector3 nodePosition) {
+    public static Node NodeFromPosition(Vector3 nodePosition, bool clamp=false) {
         float percentX = Mathf.Clamp01(nodePosition.x / gridSize.x);
         float percentY = Mathf.Clamp01(nodePosition.z / gridSize.y);
 
         int x = Mathf.FloorToInt(mapX * percentX);
         int y = Mathf.FloorToInt(mapY * percentY);
 
-        Assert.IsTrue(x < mapX && y < mapY);
+        if (clamp) {
+            x = Mathf.Clamp(x, 0, mapX - 1);
+            y = Mathf.Clamp(y, 0, mapY - 1);
+        }
+
+        Assert.IsTrue(x < mapX && y < mapY && x >= 0 && y >= 0);
         return grid[x, y];
     }
 
@@ -113,11 +118,11 @@ public class Map {
 
                 float ally = grid[x, y].GetInfluence(Faction.A);
                 float enemy = grid[x, y].GetInfluence(Faction.B);
-                if (enemy > 0.3) {
-                    grid[x, y].influenceTile.GetComponent<Renderer>().material.color = Color.blue;
-                } else if (ally > 0.3) {
+                if (ally > 0.3) {
                     grid[x, y].influenceTile.GetComponent<Renderer>().material.color = Color.red;
-                }
+                } /*else if (enemy > 0.3) {
+                    grid[x, y].influenceTile.GetComponent<Renderer>().material.color = Color.blue;
+                }*/
                 else {
                     grid[x, y].influenceTile.GetComponent<Renderer>().material.color = Color.white;
                 }

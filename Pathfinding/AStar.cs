@@ -45,30 +45,32 @@ public class AStar {
 						continue;
 					}
 
-                    float enemy = neighbour.GetInfluence(faction);//(100 + neighbour.GetInfluence(faction)) / 200f;
-                    float ally = neighbour.GetInfluence(Util.OppositeFaction(faction));//(100 + neighbour.GetInfluence(faction)) / 200f;
+                    float r = 0;
+                    if (faction != Faction.C) {
+                        float enemy = neighbour.GetInfluence(faction);//(100 + neighbour.GetInfluence(faction)) / 200f;
+                        float ally = neighbour.GetInfluence(Util.OppositeFaction(faction));//(100 + neighbour.GetInfluence(faction)) / 200f;
+                        /*if (enemy > 0.65) {
+                            r = 1000;
+                        } else if (enemy > 0.4) {
+                            r = 100;
+                        } else if (enemy > 0.3) {
+                            r = 4;
+                        }  else {
+                            r = 1;
+                        }*/
 
-                    float r;
-                    /*if (enemy > 0.65) {
-                        r = 1000;
-                    } else if (enemy > 0.4) {
-                        r = 100;
-                    } else if (enemy > 0.3) {
-                        r = 4;
-                    }  else {
-                        r = 1;
-                    }*/
-
-                    if (enemy > 0.3) {
-                        r = 0;
-                       // Debug.Log("Node enemy "+enemy);
-                    } 
-                   /* else if (ally > 0.3) {
-                        r = 0;
-                    }*/
-                    else {
-                        r = 0;
+                        if (enemy > 0.3) {
+                            r = 0;
+                            // Debug.Log("Node enemy "+enemy);
+                        }
+                        /* else if (ally > 0.3) {
+                             r = 0;
+                         }*/
+                        else {
+                            r = 0;
+                        }
                     }
+                    
 
 
                     //r = (1f / (z * z * z)) * influenceFactor;
@@ -77,7 +79,8 @@ public class AStar {
                     float newMovementCostToNeighbour = currentNode.gCost 
                                                         + PathUtil.realDist(currentNode, neighbour) * cost[neighbour.type]
                                                         //+ (100+neighbour.GetInfluence(Util.OppositeFaction(faction))) / 200f * influenceFactor;
-                                                        + r;
+                                                        +r ;
+
 
 
                     if (newMovementCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour)) {

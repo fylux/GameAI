@@ -8,10 +8,11 @@ public class GoTo : Task {
     PathFollowing pathF;
     Vector3 target;
     float offset;
+    bool defensive;
 
-
-    public GoTo(AgentUnit agent, Vector3 target, float offset, Action<bool> callback) : base(agent,callback) {
+    public GoTo(AgentUnit agent, Vector3 target, float offset, bool defensive, Action<bool> callback) : base(agent,callback) {
         this.offset = offset;
+        this.defensive = defensive;
 
         empty = new GameObject();
         empty.transform.parent = agent.gameObject.transform;
@@ -24,7 +25,9 @@ public class GoTo : Task {
         SetNewTarget(target);
     }
 
-    public GoTo(AgentUnit agent, Vector3 target, Action<bool> callback) : this(agent, target, 0f, callback) { }
+    public GoTo(AgentUnit agent, Vector3 target, float offset, Action<bool> callback) : this(agent, target, 0f, false, callback) { }
+
+    public GoTo(AgentUnit agent, Vector3 target, Action<bool> callback) : this(agent, target, 0f, false, callback) { }
 
     private void ProcessPath(Vector3[] newPath, bool pathSuccessful) {
         if (pathSuccessful) {
@@ -47,7 +50,10 @@ public class GoTo : Task {
         } while(!Map.NodeFromPosition(target, true).isWalkable());
 
         pathF.path = null;
-		PathfindingManager.RequestPath(agent.position, target, agent.Cost, 100f, Util.OppositeFaction(agent.faction), ProcessPath);
+        if (defensive)
+            PathfindingManager.RequestPath(agent.position, target, agent.Cost, 100f, Util.OppositeFaction(agent.faction), ProcessPath);
+        else
+            PathfindingManager.RequestPath(agent.position, target, agent.Cost, 100f, Faction.C, ProcessPath);
     }
 
     override
@@ -57,7 +63,7 @@ public class GoTo : Task {
         if (pathF.path != null) {
             if (Time.fixedTime - timeStamp > 2) {
                 timeStamp = Time.fixedTime;
-				PathfindingManager.RequestPath(agent.position, target, agent.Cost, 100f, Util.OppositeFaction(agent.faction), ProcessPath);
+                PathfindingManager.RequestPath(agent.position, target, agent.Cost, 100f, Faction.B, ProcessPath);
             }
 
             return pathF.GetSteering();

@@ -60,17 +60,19 @@ public class AStar {
                     }*/
 
                     if (enemy > 0.3) {
-                        r = 1000;
+                        r = 0;
+                       // Debug.Log("Node enemy "+enemy);
                     } 
-                    else if (ally > 0.3) {
+                   /* else if (ally > 0.3) {
+                        r = 0;
+                    }*/
+                    else {
                         r = 0;
                     }
-                    else {
-                        r = 20;
-                    }
+
 
                     //r = (1f / (z * z * z)) * influenceFactor;
-                    Debug.Assert(enemy <= 1 && enemy >= 0);
+
                     //This penaly for the terrain is based on the idea that if you move from road to forest is slower than from forest to road
                     float newMovementCostToNeighbour = currentNode.gCost 
                                                         + PathUtil.realDist(currentNode, neighbour) * cost[neighbour.type]

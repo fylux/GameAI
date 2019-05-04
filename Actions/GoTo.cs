@@ -44,7 +44,7 @@ public class GoTo : Task {
             Vector2 offsetXY = UnityEngine.Random.insideUnitCircle * offset;
 
             target = new Vector3(new_target.x + offsetXY[0], 1f, new_target.z + offsetXY[1]);
-        } while(!Map.NodeFromPosition(target).isWalkable());
+        } while(!Map.NodeFromPosition(target, true).isWalkable());
 
         pathF.path = null;
         PathfindingManager.RequestPath(agent.position, target, agent.Cost, 100f, Util.OppositeFaction(agent.faction), ProcessPath);
@@ -55,7 +55,7 @@ public class GoTo : Task {
         if (IsFinished()) callback(true);
 
         if (pathF.path != null) {
-            if (Time.fixedTime - timeStamp > 5) {
+            if (Time.fixedTime - timeStamp > 2) {
                 timeStamp = Time.fixedTime;
                 PathfindingManager.RequestPath(agent.position, target, agent.Cost, 100f, Faction.B, ProcessPath);
             }

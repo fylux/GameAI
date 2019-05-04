@@ -47,7 +47,7 @@ public class GoTo : Task {
         } while(!Map.NodeFromPosition(target).isWalkable());
 
         pathF.path = null;
-        PathfindingManager.RequestPath(agent.position, target, agent.Cost, 100f, Faction.B, ProcessPath);
+        PathfindingManager.RequestPath(agent.position, target, agent.Cost, 100f, Util.OppositeFaction(agent.faction), ProcessPath);
     }
 
     override

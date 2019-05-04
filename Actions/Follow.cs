@@ -19,16 +19,16 @@ public class Follow : Task {
     }
 
     bool ReconsiderPath() {
-        if (Util.HorizontalDist(lastTargetPosition, GetFutureTargetPosition()) > 0.2) {
+        if (Util.HorizontalDist(lastTargetPosition, target.position) > 0.4) {
             goTo.SetNewTarget(GetFutureTargetPosition());
-            lastTargetPosition = GetFutureTargetPosition();
+            lastTargetPosition = target.position;
             return true;
         }
         return false;
     }
 
     Vector3 GetFutureTargetPosition() {
-        float lookAhead = Util.HorizontalDist(agent.position, target.position) / 2f ;
+        float lookAhead = Mathf.Clamp(Util.HorizontalDist(agent.position, target.position) / 2f, 0, 3);
         Vector3 futurePosition = target.position + target.velocity * lookAhead;
         //Only predict if it is not too close and the prediction is a walkable place
         if (Util.HorizontalDist(agent.position, target.position) > 4f && Map.NodeFromPosition(futurePosition, true).isWalkable())
@@ -44,14 +44,12 @@ public class Follow : Task {
             return st;
         }
 
-        float realDistance = Util.HorizontalDist(agent.position, target.position);
-
         // If has reached range or fixed time reconsider path
-        if ( (!inRange && IsNearEnough()) || Time.fixedTime - timeStamp > 2) {
+        if ( (!inRange && IsNearEnoughLastPosition()) || Time.fixedTime - timeStamp > 2) {
             timeStamp = Time.fixedTime;
             bool changed_path = ReconsiderPath();
             //If the path has not changed and we are on range
-            if (!changed_path && IsNearEnough()) {
+            if (!changed_path && IsNearEnoughLastPosition()) {
                 //Debug.Log("Enemy in attack range");
                 inRange = true;
                 goTo.FinishPath();
@@ -59,7 +57,7 @@ public class Follow : Task {
             }
         }
         //If the enemy it goes out of range
-        else if (inRange && realDistance > agent.attackRange * 1.1) {
+        else if (inRange && IsFarEnough()) {
             //Debug.Log("Enemy goes out of range");
             inRange = false;
             ReconsiderPath();
@@ -77,6 +75,16 @@ public class Follow : Task {
 
     private bool IsNearEnough() {
         float distanceToTarget = Util.HorizontalDist(agent.position, target.position);
+        return distanceToTarget < agent.attackRange * 0.9;
+    }
+
+    private bool IsFarEnough() {
+        float realDistance = Util.HorizontalDist(agent.position, target.position);
+        return realDistance > agent.attackRange * 1.1;
+    }
+
+    private bool IsNearEnoughLastPosition() {
+        float distanceToTarget = Util.HorizontalDist(agent.position, lastTargetPosition);
         return distanceToTarget < agent.attackRange * 0.9;
     }
 

@@ -18,7 +18,7 @@ public class DefendZone : HostileTask {
         this.rangeRadius = rangeRadius;
         targetEnemy = null;
         attack = null;
-        goTo = new GoTo(agent, center, rangeRadius / 3, (_) => {
+        goTo = new GoTo(agent, center, Mathf.Infinity, rangeRadius / 3, false, (_) => {
             returning = false;
             goTo.SetVisiblePath(false);
             agent.RequestStopMoving();

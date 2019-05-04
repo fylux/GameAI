@@ -9,10 +9,12 @@ public class GoTo : Task {
     Vector3 target;
     float offset;
     bool defensive;
+    float reconsiderSeconds;
 
-    public GoTo(AgentUnit agent, Vector3 target, float offset, bool defensive, Action<bool> callback) : base(agent,callback) {
+    public GoTo(AgentUnit agent, Vector3 target, float reconsiderSeconds, float offset, bool defensive, Action<bool> callback) : base(agent,callback) {
         this.offset = offset;
         this.defensive = defensive;
+        this.reconsiderSeconds = reconsiderSeconds;
 
         empty = new GameObject();
         empty.transform.parent = agent.gameObject.transform;
@@ -25,9 +27,7 @@ public class GoTo : Task {
         SetNewTarget(target);
     }
 
-    public GoTo(AgentUnit agent, Vector3 target, float offset, Action<bool> callback) : this(agent, target, 0f, false, callback) { }
-
-    public GoTo(AgentUnit agent, Vector3 target, Action<bool> callback) : this(agent, target, 0f, false, callback) { }
+    public GoTo(AgentUnit agent, Vector3 target, Action<bool> callback) : this(agent, target, Mathf.Infinity, 0f, false, callback) { }
 
     private void ProcessPath(Vector3[] newPath, bool pathSuccessful) {
         if (pathSuccessful) {
@@ -61,7 +61,7 @@ public class GoTo : Task {
         if (IsFinished()) callback(true);
 
         if (pathF.path != null) {
-            if (Time.fixedTime - timeStamp > 2) {
+            if (Time.fixedTime - timeStamp > reconsiderSeconds) {
                 timeStamp = Time.fixedTime;
                 PathfindingManager.RequestPath(agent.position, target, agent.Cost, 100f, Faction.B, ProcessPath);
             }

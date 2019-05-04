@@ -102,7 +102,7 @@ public class SchedulerDefHalf : SchedulerStrategy {
 
         foreach (var ally in alliesToDefendBridge) {
             Debug.Assert(!ally.HasTask<DefendZone>());
-            ally.SetTask(new GoTo(ally, Info.GetWaypoint("mid", allyFaction), 1.3f, (bool success) => {
+            ally.SetTask(new GoTo(ally, Info.GetWaypoint("mid", allyFaction), Mathf.Infinity, 1.3f, false, (bool success) => {
                 ally.SetTask(new DefendZone(ally, ally.position, 6f, (_) => {
                 }));
             }));

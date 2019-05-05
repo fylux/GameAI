@@ -8,7 +8,12 @@ public class StrategyManager : MonoBehaviour {
     [SerializeField]
     Faction faction;
 
-    public bool test; //TESTGGG para permitir las pruebas con cambios de estrategia
+    public bool forceStrats; //TESTGGG para permitir las pruebas con cambios de estrategia
+	public bool onlyOne;
+	bool block = false;
+
+	[SerializeField]
+	float atkbase, defbase, atkhalf, defhalf; //Valores iniciales
 
     [SerializeField]
     float offensiveFactor;
@@ -30,7 +35,7 @@ public class StrategyManager : MonoBehaviour {
             strategySchedulers[strategy].Initialize(faction);
         }
 
-        militaryResourceAllocator = new MilitaryResourcesAllocator(faction);
+		militaryResourceAllocator = new MilitaryResourcesAllocator(faction, atkbase, defbase, atkhalf, defhalf);
         militaryResourceAllocator.SetOffensiveFactor(offensiveFactor);
 	}
 
@@ -38,8 +43,9 @@ public class StrategyManager : MonoBehaviour {
     void Update() {
         if (Time.frameCount % 120 == 0) {
             //Layer1
-            if (strategyLayer.Apply() || test == true) {
-                test = false; // TESTGGG todo lo relacionado con la variable test se eliminará
+			if ((strategyLayer.Apply() || forceStrats == true) && block == false) { //TESTGGG eliminar lo del block
+				if (onlyOne) block = true;
+				forceStrats = false; // TESTGGG todo lo relacionado con la variable forceStrats se eliminará
                 Debug.Log("HAN CAMBIADO LOS VALORES DE ESTRATEGIA, REASIGNANDO TROPAS");
                 //Layer 2
                 militaryResourceAllocator.SetPriority(strategyLayer.GetPriority()); //TESTGGG DESACTIVAR MIENTRAS ESTEMOS HACIENDO PRUEBAS

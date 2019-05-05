@@ -11,7 +11,7 @@ public class MilitaryResourcesAllocator {
          { StrategyT.DEF_BASE, new HashSet<AgentUnit>() },
          { StrategyT.DEF_HALF, new HashSet<AgentUnit>() }
      };*/
-
+	
     Dictionary<StrategyT, float> importanceWeigth;
     public Dictionary<StrategyT, float> priority; //TESTGGG cambiar la visibilidad a privado
     Dictionary<StrategyT, float> offensiveWeight = new Dictionary<StrategyT, float>() {
@@ -31,14 +31,14 @@ public class MilitaryResourcesAllocator {
 
     public Faction faction;
 
-    public MilitaryResourcesAllocator(Faction faction) {
+	public MilitaryResourcesAllocator(Faction faction, float atkbase, float defbase, float atkhalf, float defhalf) {
         this.faction = faction;
 
         priority = new Dictionary<StrategyT, float>() {
-            { StrategyT.ATK_BASE, 0},
-            { StrategyT.ATK_HALF, 0f},
-            { StrategyT.DEF_BASE, 0.0f},
-            { StrategyT.DEF_HALF, 1}
+            { StrategyT.ATK_BASE, atkbase},
+			{ StrategyT.ATK_HALF, atkhalf},
+			{ StrategyT.DEF_BASE, defbase},
+			{ StrategyT.DEF_HALF, defhalf}
         };
 
         importanceWeigth = new Dictionary<StrategyT, float>() {
@@ -160,7 +160,7 @@ public class MilitaryResourcesAllocator {
             Console.Log("Strategy: " + strategy.ToString() + " = " + unitsAssignedToStrategy[strategy].Count + " units");
 
             foreach (AgentUnit unit in unitsAssignedToStrategy[strategy]) {
-                unit.GetComponent<Renderer>().material.color = strategyColor[strategy];
+                unit.hat.GetComponent<Renderer>().material.color = strategyColor[strategy];
                 if (unit.strategy != strategy) {
                     unit.ResetTask();
                 }

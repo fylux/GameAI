@@ -13,6 +13,8 @@ public abstract class AgentUnit : AgentNPC {
     public GameObject SelectCircle;
     public float attackRange = 5f;
 
+	public GameObject hat;
+
     public MilitarComponent militar = new MilitarComponent();
 
 

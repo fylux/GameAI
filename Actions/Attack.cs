@@ -50,4 +50,8 @@ public class Attack : Task {
     public string ToString() {
         return "Attack ->" + targetEnemy.name;
     }
+
+	public AgentUnit GetTargetEnemy(){
+		return targetEnemy;
+	}
 }

@@ -39,7 +39,16 @@ public class SchedulerDefHalf : SchedulerStrategy {
         //Units with low l1evel of health should try to go to a healing point
         var damagedAllies = usableUnits.Where(unit => unit.militar.health < minimunHealth && !unit.HasTask<RestoreHealth>());
         foreach (var ally in damagedAllies) {
-            ally.SetTask(new RestoreHealth(ally, (_) => { }));
+			bool winning = false;
+
+			if (ally.HasTask<Attack>()) {
+				Attack task = (Attack)ally.GetTask ();
+				AgentUnit targetEnemy = task.GetTargetEnemy ();
+				if (targetEnemy.militar.health <= ally.militar.health)
+					winning = true;
+			}
+			if (winning == false)
+				ally.SetTask(new RestoreHealth(ally, (_) => { }));
         }
 
         var remainingUnits = new HashSet<AgentUnit>(usableUnits.Where(unit => !unit.HasTask<RestoreHealth>()));

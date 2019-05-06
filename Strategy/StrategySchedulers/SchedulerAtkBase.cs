@@ -60,9 +60,19 @@ public class SchedulerAtkBase : SchedulerStrategy
                 {
                     if (strong == false && unit.militar.health < unit.militar.maxHealth && (heal.Contains(unit) == false || !unit.HasTask<RestoreHealth>()))
                     {
-                        AddGroup(unit, "heal");
-                       // Debug.Log("Añadadida unidad a heal");
-                        unit.SetTask(new RestoreHealth(unit, (bool success) => { }));          
+						bool winning = false;
+
+						if (unit.HasTask<Attack>()) {
+							Attack task = (Attack)unit.GetTask ();
+							AgentUnit targetEnemy = task.GetTargetEnemy ();
+							if (targetEnemy.militar.health <= unit.militar.health)
+								winning = true;
+						}
+						if (winning == false) { // Estara a false siempre que no estemos peleando, o estemos peleando pero no llevemos ventaja
+							AddGroup(unit, "heal");
+							// Debug.Log("Añadadida unidad a heal");
+							unit.SetTask(new RestoreHealth(unit, (bool success) => { }));
+						}         
                     }
                     else if ((strong == true || unit.militar.health == unit.militar.maxHealth) && (regr.Contains(unit) == false || !unit.HasTask<GoTo>() && Util.HorizontalDist(unit.position, Info.GetWaypoint("front", enemyFaction)) >= 15))
                     {

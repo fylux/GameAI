@@ -103,6 +103,13 @@ public class AStar {
         if (pathSuccess) {
             nodesPath = RetracePath();
             waypoints = PathUtil.SimplifyPath(nodesPath);
+            //To prevent units from going through the exact same path
+            float offsetX = UnityEngine.Random.Range(-0.5f, 0.5f);
+            float offsetY = UnityEngine.Random.Range(-0.5f, 0.5f);
+            for (int i = 0; i < waypoints.Count; ++i) {
+                waypoints[i] += new Vector3(offsetX, 0, offsetY);
+            }
+
             waypoints.Add(targetPos);
         }
 

@@ -10,7 +10,7 @@ public abstract class AgentUnit : AgentNPC {
 
     public StrategyT strategy;
     public Faction faction = Faction.A;
-    public GameObject SelectCircle;
+    public GameObject selectCircle;
     public float attackRange = 5f;
 
     public MilitarComponent militar = new MilitarComponent();

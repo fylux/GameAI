@@ -21,7 +21,12 @@ public class HealingPoint : Body {
         if (Time.time > nextHealingTime) {
             nextHealingTime += period;
 
+            units.Remove(null); //Remove units that may died
             foreach (AgentUnit unit in units) {
+                if (unit == null) {
+                    units.Remove(unit);
+                    continue;
+                }
                 if (unit.militar.health < unit.militar.maxHealth) {
                     unit.militar.health += 1;
                     Console.Log("Unit " + unit.name + " restored health");

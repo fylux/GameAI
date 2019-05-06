@@ -81,9 +81,9 @@ public class Select : MonoBehaviour {
 
     public void AddUnit(AgentUnit unit, bool updateText = true) {
         selectedUnits.Add(unit);
-        if (unit.SelectCircle == null) {
-            unit.SelectCircle = Instantiate(prefabSelectCircle, unit.transform);
-            unit.SelectCircle.transform.position = new Vector3(unit.transform.position.x, 0.1f, unit.transform.position.z);
+        if (unit.selectCircle == null) {
+            unit.selectCircle = Instantiate(prefabSelectCircle, unit.transform);
+            unit.selectCircle.transform.position = new Vector3(unit.transform.position.x, 0.1f, unit.transform.position.z);
         }
 
         if (updateText)
@@ -93,8 +93,8 @@ public class Select : MonoBehaviour {
     public void RemoveUnit(AgentUnit unit, bool updateText = true) {
         selectedUnits.Remove(unit);
 
-        Destroy(unit.SelectCircle);
-        unit.SelectCircle = null;
+        Destroy(unit.selectCircle);
+        unit.selectCircle = null;
 
         if (updateText)
             UpdateSelectionText();
@@ -115,8 +115,8 @@ public class Select : MonoBehaviour {
 
     void FinishSelection() {
         foreach (AgentUnit unit in selectedUnits) {
-            Destroy(unit.SelectCircle);
-            unit.SelectCircle = null;
+            Destroy(unit.selectCircle);
+            unit.selectCircle = null;
         }
         selectedUnits.Clear();
         UpdateSelectionText();

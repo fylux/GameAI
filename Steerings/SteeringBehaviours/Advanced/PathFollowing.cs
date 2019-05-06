@@ -36,10 +36,14 @@ public class PathFollowing : SteeringBehaviour {
                 Debug.LogError("Path is invalid: Out of bounds");
             return new Steering();
         }
-
+        float occupied = Physics.Raycast(path[currentPoint], path[currentPoint] + Vector3.up, 2f, Map.unitsMask) ? 5f : 0;
+        float arrivalRadius2 = arrivalRadius + occupied;
+        if (occupied > 0f) {
+            Debug.Log("ocuppied");
+        }
 
         float distance = Util.HorizontalDist(path[currentPoint], npc.position);
-        if (distance < arrivalRadius) {
+        if (distance < arrivalRadius2) {
             if (type == FollowT.STAY) {
                 currentPoint = Mathf.Min(currentPoint + 1, path.Length - 1); //When it reaches the last stays on it
                 if (currentPoint == path.Length - 1)
@@ -74,7 +78,9 @@ public class PathFollowing : SteeringBehaviour {
     }*/
 
     void OnDrawGizmos() {
-        if (!visibleRays || path == null || currentPoint >= path.Length)
+        if (!(UnityEditor.Selection.Contains(npc.gameObject) || (npc is AgentUnit && ((AgentUnit)npc).selectCircle != null)))
+            return;
+        if (!visibleRays || path == null || currentPoint >= path.Length )
             return;
         Gizmos.color = Color.black;
         Debug.DrawLine(npc.position, path[currentPoint] + Vector3.up, Color.yellow);

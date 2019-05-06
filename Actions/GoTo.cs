@@ -58,7 +58,11 @@ public class GoTo : Task {
 
     override
     public Steering Apply() {
-        if (IsFinished()) callback(true);
+        Steering st = new Steering();
+        if (IsFinished()) {
+            callback(true);
+            return st;
+        }
 
         if (pathF.path != null) {
             if (Time.fixedTime - timeStamp > reconsiderSeconds) {
@@ -66,11 +70,15 @@ public class GoTo : Task {
                 PathfindingManager.RequestPath(agent.position, target, agent.Cost, 100f, Faction.B, ProcessPath);
             }
 
-            return pathF.GetSteering();
+            st= pathF.GetSteering();
         }
             
         else
-            return Seek.GetSteering(target, agent, 50f); //If path has not been solved yet just do Seek.
+            st= Seek.GetSteering(target, agent, 500f); //If path has not been solved yet just do Seek.
+
+        st += GetSeparation(2f);
+
+        return st;
     }
 
     override
@@ -92,4 +100,43 @@ public class GoTo : Task {
     public String ToString() {
         return "GoTo -> "+target;
     }
+
+    public Steering GetSeparation( float decayCoefficient) {
+        Steering steering = new Steering();
+        var units = Info.GetUnitsArea(agent.position, 0.4f);
+        foreach (var unit in units) {
+            Vector3 direction = agent.position - unit.position;
+            float distance = direction.magnitude;
+            if (agent != unit) {
+                if (AngleDir2(new Vector2(agent.velocity.x, agent.velocity.z), new Vector2(-direction.x,-direction.z)) > 0f/*AngleDir(agent.velocity, unit.position - agent.position, Vector3.up) == 1.0f*/) {
+                    direction = Quaternion.Euler(0, 75, 0) * direction.normalized;
+                }
+                else {
+                    direction = Quaternion.Euler(0, -75, 0) * direction.normalized;
+                }
+                steering.linear += 10000f * direction;
+
+            }
+            
+            
+        }
+        if (steering.linear.magnitude > 0) {
+            Debug.DrawRay(agent.position, steering.linear.normalized, Color.blue);
+            agent.GetComponent<Renderer>().material.color = Color.yellow;
+        }
+        else {
+            agent.GetComponent<Renderer>().material.color = Color.red;
+        }
+            //steering.linear *= (-1);
+
+            return steering;
+    }
+
+    public float AngleDir2(Vector2 A, Vector2 B) {
+        return -A.x * B.y + A.y * B.x;
+    }
+
+
 }
+
+

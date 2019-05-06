@@ -62,18 +62,20 @@ public class MilitarComponent : UnitComponent {
     }
 
     public IEnumerator BlinkMesh() {
-        var z = agent.GetComponent<Renderer>();
-        z.enabled = false;
+        agent.SetRenderer(false);
+
         yield return new WaitForSeconds(0.15f);
-        z.enabled = true;
+        agent.SetRenderer(true);
+
         yield return new WaitForSeconds(0.15f);
-        z.enabled = false;
+        agent.SetRenderer(false);
+
         yield return new WaitForSeconds(0.15f);
-        z.enabled = true;
+        agent.SetRenderer(true);
     }
 
     public IEnumerator DestroyUnit() {
-        yield return new WaitForSeconds(0.6f);
+        yield return new WaitForSeconds(0.5f);
         GameObject.Destroy(agent.gameObject);
     }
 }

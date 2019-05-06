@@ -14,4 +14,16 @@ public class Agent : Body {
     {
         
     }
+
+
+    ///
+    public void SetColor(Color color) {
+        foreach (var renderer in GetComponentsInChildren<Renderer>())
+            renderer.material.color = color;
+    }
+
+    public void SetRenderer(bool enabled) {
+        foreach (var renderer in GetComponentsInChildren<Renderer>())
+            renderer.enabled = enabled;
+    }
 }

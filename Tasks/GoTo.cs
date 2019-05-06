@@ -122,10 +122,10 @@ public class GoTo : Task {
         }
         if (steering.linear.magnitude > 0) {
             Debug.DrawRay(agent.position, steering.linear.normalized, Color.blue);
-            agent.GetComponent<Renderer>().material.color = Color.yellow;
+            agent.hat.GetComponent<Renderer>().material.color = Color.yellow;
         }
         else {
-            agent.GetComponent<Renderer>().material.color = Color.red;
+            agent.hat.GetComponent<Renderer>().material.color = MilitaryResourcesAllocator.strategyColor[agent.strategy];
         }
             //steering.linear *= (-1);
 

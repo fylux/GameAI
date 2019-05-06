@@ -22,7 +22,7 @@ public class MilitaryResourcesAllocator {
         };
     float offensiveFactor;
 
-    Dictionary<StrategyT, Color> strategyColor = new Dictionary<StrategyT, Color>() {
+    public static Dictionary<StrategyT, Color> strategyColor = new Dictionary<StrategyT, Color>() {
             { StrategyT.ATK_BASE, Color.magenta},
             { StrategyT.ATK_HALF, Color.red},
             { StrategyT.DEF_BASE, Color.green},

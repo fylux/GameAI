@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 enum FollowT {
@@ -36,7 +37,7 @@ public class PathFollowing : SteeringBehaviour {
                 Debug.LogError("Path is invalid: Out of bounds");
             return new Steering();
         }
-        float occupied = Physics.Raycast(path[currentPoint], path[currentPoint] + Vector3.up, 2f, Map.unitsMask) ? 5f : 0;
+        float occupied = Physics.Raycast(path[currentPoint], path[currentPoint] + Vector3.up, 2f, Map.unitsMask) ? 1f : 0;
         float arrivalRadius2 = arrivalRadius + occupied;
         if (occupied > 0f) {
             Debug.Log("ocuppied");
@@ -78,7 +79,9 @@ public class PathFollowing : SteeringBehaviour {
     }*/
 
     void OnDrawGizmos() {
-        if (!(UnityEditor.Selection.Contains(npc.gameObject) || (npc is AgentUnit && ((AgentUnit)npc).selectCircle != null)))
+        var models = new HashSet<GameObject>(npc.transform.GetComponentsInChildren<Transform>().Select(t => t.gameObject));
+        models.Add(npc.gameObject);
+        if (!(models.Any(model => UnityEditor.Selection.Contains(model)) || (npc is AgentUnit && ((AgentUnit)npc).selectCircle != null)))
             return;
         if (!visibleRays || path == null || currentPoint >= path.Length )
             return;

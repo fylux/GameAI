@@ -19,6 +19,9 @@ public class EconomyManager : MonoBehaviour {
 	[SerializeField]
 	Text goldDisplay;
 
+	[SerializeField]
+	bool goldGeneration;
+
 	int gold;
 
 	// Use this for initialization
@@ -32,7 +35,7 @@ public class EconomyManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (Time.frameCount % 30 == 0) {
+		if (Time.frameCount % 30 == 0 && goldGeneration) {
 			gold+=5;
 
 			if (Map.GetAllies (faction).Count < 20 && gold >= 50) {

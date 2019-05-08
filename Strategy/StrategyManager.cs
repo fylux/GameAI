@@ -10,7 +10,7 @@ public class StrategyManager : MonoBehaviour {
     Faction faction;
 
 	[SerializeField]
-	Text dbt, dht, aht, abt;
+	Text strategies;
 
     public bool forceStrats; //TESTGGG para permitir las pruebas con cambios de estrategia
 	public bool onlyOne;
@@ -77,11 +77,9 @@ public class StrategyManager : MonoBehaviour {
     }
 
 	void DrawStrategyValues (){
-		if (faction == Faction.A) { // Para que solo lo hagan los aliados y no los enemigos
-			dbt.text = "Defend the base: [" + strategyLayer.priority[StrategyT.DEF_BASE] + "]";
-			dht.text = "Defend territory: [" + strategyLayer.priority[StrategyT.DEF_HALF] + "]";
-			aht.text = "Attack territory: [" + strategyLayer.priority[StrategyT.ATK_HALF] + "]";
-			abt.text = "Attack the base: [" + strategyLayer.priority[StrategyT.ATK_BASE] + "]";
-		}
+		strategies.text = "DB " + strategyLayer.priority[StrategyT.DEF_BASE].ToString("F2")
+        + " / DH " + strategyLayer.priority[StrategyT.DEF_HALF].ToString("F2")
+		+ "\nAH " + strategyLayer.priority[StrategyT.ATK_HALF].ToString("F2")
+        + " / AB " + strategyLayer.priority[StrategyT.ATK_BASE].ToString("F2");
 	}
 }

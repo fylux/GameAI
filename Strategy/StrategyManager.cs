@@ -45,11 +45,11 @@ public class StrategyManager : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        if (Time.frameCount % 120 == 0) {
+		if (Time.frameCount % 120 == 0 || forceStrats == true) {
             //Layer1
 			if ((strategyLayer.Apply() || forceStrats == true) && block == false) { //TESTGGG eliminar lo del block
 				if (onlyOne) block = true;
-				forceStrats = false; // TESTGGG todo lo relacionado con la variable forceStrats se eliminará
+				forceStrats = false; // Esta no deberia eliminarse porque la necesitamos para crear unidades 
                 Debug.Log("HAN CAMBIADO LOS VALORES DE ESTRATEGIA, REASIGNANDO TROPAS");
 				DrawStrategyValues();
                 //Layer 2

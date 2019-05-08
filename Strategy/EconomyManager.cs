@@ -1,0 +1,54 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class EconomyManager : MonoBehaviour {
+
+	[SerializeField]
+	StrategyManager stratManager;
+
+	[SerializeField]
+	GameObject melee, ranged, scout, artillery;
+
+	Dictionary<UnitT,GameObject> units;
+
+	[SerializeField]
+	Faction faction;
+
+	[SerializeField]
+	Text goldDisplay;
+
+	int gold;
+
+	// Use this for initialization
+	void Start () {
+		units = new Dictionary<UnitT, GameObject>(){
+			{ UnitT.MELEE, melee },
+			{ UnitT.RANGED, ranged },
+			{ UnitT.SCOUT, scout },
+			{ UnitT.ARTIL, artillery } };
+	}
+	
+	// Update is called once per frame
+	void Update () {
+		if (Time.frameCount % 30 == 0) {
+			gold+=5;
+
+			if (Map.GetAllies (faction).Count < 20 && gold >= 50) {
+				gold -= 50;
+				GenerateUnit (UnitT.MELEE);
+			}
+
+			goldDisplay.text = "Gold: [" + gold + "]";
+		}
+	}
+
+	void GenerateUnit(UnitT type){
+		GameObject created = GameObject.Instantiate(units[type], (Info.GetWaypoint("base", faction) + new Vector3(0,0.5f,0)), Quaternion.identity) as GameObject;
+		AgentUnit newUnit = created.GetComponent<AgentUnit>();
+		Map.unitList.Add (newUnit);
+		Debug.Log ("Generada una unidad de " + type);
+		stratManager.forceStrats = true;
+	}
+}

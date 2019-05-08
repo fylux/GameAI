@@ -64,7 +64,7 @@ public class StrategyLayer {
 			Debug.Log ("BONUS por dominación de territorio!");
 		} else
 			defhalf += 0.2f;
-		Debug.Log("La influencia enemiga en el territorio aliado es de " + terr);
+//		Debug.Log("La influencia enemiga en el territorio aliado es de " + terr);
 		// ***********************************************************
 
 

@@ -73,7 +73,6 @@ public class GoTo : Task {
 			st = pathF.GetSteering ();
 		} else {
 			st= Seek.GetSteering(target, agent, 500f); //If path has not been solved yet just do Seek.
-			st += Face.GetSteering(target,agent,agent.exteriorAngle, agent.interiorAngle, 0.1f,false);
 		}
             
 

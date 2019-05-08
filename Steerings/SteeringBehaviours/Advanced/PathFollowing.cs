@@ -66,7 +66,7 @@ public class PathFollowing : SteeringBehaviour {
             }
         }
 
-		return Seek.GetSteering(path[currentPoint], npc, maxAccel /*50*/, visibleRays) + Face.GetSteering(path[currentPoint],npc,npc.exteriorAngle,npc.interiorAngle,0.1f,visibleRays);
+		return Seek.GetSteering(path[currentPoint], npc, maxAccel /*50*/, visibleRays);
     }
 
     /*public static Steering getSteering(Vector3[] path, ref int currentPoint, float arrivalRadius, Agent npc, float maxAccel, bool visibleRays) {

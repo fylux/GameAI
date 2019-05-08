@@ -9,6 +9,7 @@ public class MilitarComponent : UnitComponent {
     public int health = 10;
     public int attack = 6;
     public int defense = 3;
+    public float attackSpeed = 1;
 
     [SerializeField]
     GameObject projectile;

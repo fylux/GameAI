@@ -23,7 +23,7 @@ public class Attack : Task {
 
 
         if (follow.IsInRange()) {
-            if (Time.fixedTime - timeStamp > 1) {
+            if ((Time.fixedTime - timeStamp) * agent.militar.attackSpeed > 1) {
                 agent.militar.Attack(targetEnemy);
                 timeStamp = Time.fixedTime;
             }

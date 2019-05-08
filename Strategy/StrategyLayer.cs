@@ -9,7 +9,7 @@ public class StrategyLayer {
 
 	bool dbg = false;
 
-	Dictionary<StrategyT, float> priority = new Dictionary<StrategyT, float>() { { StrategyT.DEF_BASE, 0 },
+	public Dictionary<StrategyT, float> priority = new Dictionary<StrategyT, float>() { { StrategyT.DEF_BASE, 0 },
 		{ StrategyT.DEF_HALF, 0 },
 		{ StrategyT.ATK_HALF, 0 },
 		{ StrategyT.ATK_BASE, 0 } };

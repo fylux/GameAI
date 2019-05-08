@@ -64,17 +64,18 @@ public class GoTo : Task {
             return st;
         }
 
-        if (pathF.path != null) {
-            if (Time.fixedTime - timeStamp > reconsiderSeconds) {
-                timeStamp = Time.fixedTime;
-                PathfindingManager.RequestPath(agent.position, target, agent.Cost, 100f, Faction.B, ProcessPath);
-            }
+		if (pathF.path != null) {
+			if (Time.fixedTime - timeStamp > reconsiderSeconds) {
+				timeStamp = Time.fixedTime;
+				PathfindingManager.RequestPath (agent.position, target, agent.Cost, 100f, Faction.B, ProcessPath);
+			}
 
-            st= pathF.GetSteering();
-        }
+			st = pathF.GetSteering ();
+		} else {
+			st= Seek.GetSteering(target, agent, 500f); //If path has not been solved yet just do Seek.
+			st += Face.GetSteering(target,agent,agent.exteriorAngle, agent.interiorAngle, 0.1f,false);
+		}
             
-        else
-            st= Seek.GetSteering(target, agent, 500f); //If path has not been solved yet just do Seek.
 
         st += GetSeparation(2f);
 

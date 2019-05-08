@@ -14,12 +14,15 @@ public class Body : MonoBehaviour {
     public float rotation;
     public Vector3 velocity;
 
+	[SerializeField]
+	bool useOrientation; // If true, uses the Body.Orientation. If false, uses the Transform.rotation
     bool stopMoving = false;
 
     protected void Start() {
       //  velocity = Vector3.zero;
       //  rotation = 0;
-        orientation = transform.eulerAngles.y;
+		if (useOrientation == false)
+       		orientation = transform.eulerAngles.y;
         position = transform.position;
     }
 

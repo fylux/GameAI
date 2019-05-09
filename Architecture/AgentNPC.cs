@@ -15,11 +15,15 @@ public class AgentNPC : Agent {
 
     Vector3 virtualTarget;
 
+
     new
     protected void Start() {
         base.Start();
         steers = new List<SteeringBehaviour>(GetComponents<SteeringBehaviour>());
         task = null;
+
+        MaxRotation = 300;
+        MaxAngular = 6000;
     }
 
 

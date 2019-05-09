@@ -24,6 +24,14 @@ public class EconomyManager : MonoBehaviour {
 
 	int gold;
 
+	GoldManager goldManager = new GoldManager();
+
+	Dictionary <UnitT,float> priority = new Dictionary<UnitT, float>() {
+		{ UnitT.MELEE, 0},
+		{ UnitT.RANGED, 0},
+		{ UnitT.SCOUT, 0},
+		{ UnitT.ARTIL, 0}};
+
 	// Use this for initialization
 	void Start () {
 		units = new Dictionary<UnitT, GameObject>(){

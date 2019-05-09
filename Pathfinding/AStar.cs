@@ -47,33 +47,14 @@ public class AStar {
 
                     float r = 0;
                     if (faction != Faction.C) {
-                        float enemy = neighbour.GetInfluence(faction);//(100 + neighbour.GetInfluence(faction)) / 200f;
-                        float ally = neighbour.GetInfluence(Util.OppositeFaction(faction));//(100 + neighbour.GetInfluence(faction)) / 200f;
-                        /*if (enemy > 0.65) {
-                            r = 1000;
-                        } else if (enemy > 0.4) {
-                            r = 100;
-                        } else if (enemy > 0.3) {
-                            r = 4;
-                        }  else {
-                            r = 1;
-                        }*/
+                        float z = neighbour.GetRawInfluence(faction, Map.clusterInfluence);
 
-                        if (enemy > 0.3) {
-                            r = 0;
-                            // Debug.Log("Node enemy "+enemy);
-                        }
-                        /* else if (ally > 0.3) {
-                             r = 0;
-                         }*/
-                        else {
-                            r = 0;
+                        if (z > 200/3f) {
+                            r = 4;
                         }
                     }
                     
 
-
-                    //r = (1f / (z * z * z)) * influenceFactor;
 
                     //This penaly for the terrain is based on the idea that if you move from road to forest is slower than from forest to road
                     float newMovementCostToNeighbour = currentNode.gCost 
@@ -102,7 +83,7 @@ public class AStar {
         List<Node> nodesPath = new List<Node>();
         if (pathSuccess) {
             nodesPath = RetracePath();
-            waypoints = PathUtil.SimplifyPath(nodesPath);
+            waypoints = new List<Vector3>(nodesPath.Select(n => n.worldPosition));//PathUtil.SimplifyPath(nodesPath);
             //To prevent units from going through the exact same path
             float offsetX = UnityEngine.Random.Range(-0.5f, 0.5f);
             float offsetY = UnityEngine.Random.Range(-0.5f, 0.5f);

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Linq;
 
 public class GoTo : Task {
     GameObject empty;
@@ -22,7 +23,7 @@ public class GoTo : Task {
         pathF = empty.AddComponent<PathFollowing>();
         pathF.SetNPC(agent);
         pathF.visibleRays = true;
-        pathF.maxAccel = 50f;
+        pathF.maxAccel = 700f;
 
         SetNewTarget(target);
     }
@@ -32,6 +33,14 @@ public class GoTo : Task {
     private void ProcessPath(Vector3[] newPath, bool pathSuccessful) {
         if (pathSuccessful) {
             pathF.SetPath(newPath);
+            Vector3 closestPoint = newPath.OrderBy(p => Util.HorizontalDist(p, agent.position)).First();
+            for (int i = 0; i < newPath.Length; ++i) {
+                if (closestPoint == newPath[i]) {
+                    pathF.currentPoint = i;
+                    break;
+                }
+               
+            }
         }
         else {
             Debug.Log("Pathfinding was not successful");
@@ -65,6 +74,16 @@ public class GoTo : Task {
         }
 
 		if (pathF.path != null) {
+            /*if (Time.frameCount % 60 == 0) {
+                Vector3 closestPoint = pathF.path.OrderBy(p => Util.HorizontalDist(p, agent.position)).First();
+                for (int i = 0; i < pathF.path.Length; ++i) {
+                    if (closestPoint == pathF.path[i]) {
+                        pathF.currentPoint = i;
+                        break;
+                    }
+
+                }
+            }*/
 			if (Time.fixedTime - timeStamp > reconsiderSeconds) {
 				timeStamp = Time.fixedTime;
 				PathfindingManager.RequestPath (agent.position, target, agent.Cost, 100f, Faction.B, ProcessPath);
@@ -76,13 +95,14 @@ public class GoTo : Task {
 		}
             
 
-        st += GetSeparation(2f);
+        //st += GetSeparation(2f);
 
         return st;
     }
 
     override
     protected bool IsFinished() {
+        //TODO
         return Util.HorizontalDist(agent.position, target) < 0.3f;
     }
 
@@ -109,10 +129,10 @@ public class GoTo : Task {
             float distance = direction.magnitude;
             if (agent != unit) {
                 if (AngleDir2(new Vector2(agent.velocity.x, agent.velocity.z), new Vector2(-direction.x,-direction.z)) > 0f/*AngleDir(agent.velocity, unit.position - agent.position, Vector3.up) == 1.0f*/) {
-                    direction = Quaternion.Euler(0, 75, 0) * direction.normalized;
+                    direction = Quaternion.Euler(0,45, 0) * direction.normalized;
                 }
                 else {
-                    direction = Quaternion.Euler(0, -75, 0) * direction.normalized;
+                    direction = Quaternion.Euler(0, -45, 0) * direction.normalized;
                 }
                 steering.linear += 10000f * direction;
 

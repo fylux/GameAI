@@ -7,6 +7,8 @@ using UnityEngine.Assertions;
 public class Map {
     public static int mapX, mapY;
     public static Node[,] grid = null;
+    public static Vector2[,] generalInfluence, clusterInfluence, generalRangedInfluence;
+
     static Vector2 gridSize;
 
     public static HashSet<AgentUnit> unitList;
@@ -22,7 +24,11 @@ public class Map {
         mapX = grid.GetLength(0);
         mapY = grid.GetLength(1);
         unitList = new HashSet<AgentUnit>();
-        
+
+        generalInfluence = new Vector2[mapX, mapY];
+        clusterInfluence = new Vector2[mapX, mapY];
+        generalRangedInfluence = new Vector2[mapX, mapY];
+
         foreach (GameObject npc in GameObject.FindGameObjectsWithTag("NPC")) {
             unitList.Add(npc.GetComponent<AgentUnit>());
         }
@@ -102,12 +108,14 @@ public class Map {
     }
 
 
-    public static void SetInfluence() {
+    public static void DrawInfluence() {
+        Debug.Log("draw");
+        var influenceMap = Map.clusterInfluence;
         for (int x = 0; x < mapX; x++) {
             for (int y = 0; y < mapY; y++) {
-                Vector3 size = Vector3.one;
-                float influ = grid[x, y].GetInfluence() / 100f;
-                float otherColor = Mathf.Max(0f,1f - influ * 4f);
+                var mainFaction = grid[x, y].GetMostInfluentFaction(influenceMap);
+                float influ = grid[x, y].GetNetInfluence(mainFaction, influenceMap);
+                float otherColor =  Mathf.Max(0f,1f - influ * 4f);
 
                 //otherColor = Mathf.Round(otherColor * 5f) / 5f; //To discretize the range of colors
                 Dictionary<Faction, Color> colors = new Dictionary<Faction, Color>() {
@@ -116,17 +124,17 @@ public class Map {
                     {Faction.C, Color.gray }
                 };
 
-                float ally = grid[x, y].GetInfluence(Faction.A);
-                float enemy = grid[x, y].GetInfluence(Faction.B);
-                if (ally > 0.3) {
+                float ally = grid[x, y].GetRawInfluence(Faction.A, influenceMap);
+                float enemy = grid[x, y].GetRawInfluence(Faction.B, influenceMap);
+                /*if (ally > 0.3) {
                     grid[x, y].influenceTile.GetComponent<Renderer>().material.color = Color.red;
-                } /*else if (enemy > 0.3) {
-                    grid[x, y].influenceTile.GetComponent<Renderer>().material.color = Color.blue;
-                }*/
+                }
                 else {
                     grid[x, y].influenceTile.GetComponent<Renderer>().material.color = Color.white;
-                }
-               
+                }*/
+
+                grid[x, y].influenceTile.GetComponent<Renderer>().material.color = colors[mainFaction];
+
                 grid[x, y].influenceTile.GetComponent<Renderer>().material.SetFloat("_Glossiness", 0f);
                 //grid[x, y].gameObject.transform.GetChild(0).GetComponent<Renderer>().material.color = colors[grid[x, y].getFaction()];
                 /*Gizmos.color = colors[grid[x, y].getFaction()];
@@ -138,7 +146,9 @@ public class Map {
     public static void ResetInfluence() {
         for (int x = 0; x < mapX; x++) {
             for (int y = 0; y < mapY; y++) {
-                grid[x, y].ResetInfluence();
+                generalInfluence[x, y] *= 0f;
+                clusterInfluence[x, y] *= 0f;
+                generalRangedInfluence[x, y] *= 0f;
             }
         }
 

@@ -97,11 +97,24 @@ public class SchedulerDefHalf : SchedulerStrategy {
         foreach (var cluster in unitsAssignedToClusters) {
             foreach (AgentUnit ally in cluster.Value) {
                 if (ally.HasTask<Attack>()) continue;
-                var closestEnemy = cluster.Key.OrderBy(unit => Util.HorizontalDist(ally.position, unit.position)).First();
-                ally.SetTask(new Attack(ally, closestEnemy, (_) => {
-                    //If you kill an enemy reconsider assignations
-                    ApplyStrategy();
-                }));
+
+                var enemiesByDistance = cluster.Key.OrderBy(unit => Util.HorizontalDist(ally.position, unit.position));
+                var closestEnemy = enemiesByDistance.First();
+                var distanceToEnemy = Util.HorizontalDist(ally.position, closestEnemy.position);
+
+                /*foreach (var unitType in ally.GetPreferredEnemies()) {
+                    var closestEnemyOfType = enemiesByDistance.Where(u => u.GetUnitType() == unitType).FirstOrDefault();
+
+                    if (closestEnemyOfType != null && Util.HorizontalDist(ally.position, closestEnemyOfType.position) < distanceToEnemy + 4){
+                        ally.SetTask(new Attack(ally, closestEnemy, (_) => {
+                            //If you kill an enemy reconsider assignations
+                            ApplyStrategy();
+                        }));
+                        break;
+                    }
+                }*/
+
+
             }
         }
 

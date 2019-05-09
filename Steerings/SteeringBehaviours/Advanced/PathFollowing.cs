@@ -10,10 +10,10 @@ enum FollowT {
 public class PathFollowing : SteeringBehaviour {
 
     [SerializeField]
-    float arrivalRadius = 0.4f;
+    float arrivalRadius = 0.6f;
 
     public Vector3[] path;
-    int currentPoint;
+    public int currentPoint;
     int direction = 1;
     FollowT type = FollowT.STAY;
 
@@ -37,7 +37,7 @@ public class PathFollowing : SteeringBehaviour {
                 Debug.LogError("Path is invalid: Out of bounds");
             return new Steering();
         }
-        float occupied = Physics.Raycast(path[currentPoint], path[currentPoint] + Vector3.up, 2f, Map.unitsMask) ? 1f : 0;
+        float occupied = Physics.Raycast(path[currentPoint], path[currentPoint] + Vector3.up, 2f, Map.unitsMask) ? 2f : 0;
         float arrivalRadius2 = arrivalRadius + occupied;
         if (occupied > 0f) {
             Debug.Log("ocuppied");
@@ -85,6 +85,7 @@ public class PathFollowing : SteeringBehaviour {
             return;
         if (!visibleRays || path == null || currentPoint >= path.Length )
             return;
+
         Gizmos.color = Color.black;
         Debug.DrawLine(npc.position, path[currentPoint] + Vector3.up, Color.yellow);
         for (int i = currentPoint; i < path.Length; ++i) {

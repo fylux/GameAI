@@ -9,6 +9,10 @@ public enum Faction {
     A, B, C
 }
 
+public enum InfluenceT {
+    ACCUMULATE, MAXIMUM
+}
+
 
 public class Node : IHeapItem<Node> {
 
@@ -58,36 +62,31 @@ public class Node : IHeapItem<Node> {
 
 
     //Influence
-    public void SetInfluence(Faction f, float v) {
-        influence[(int)f] += v;   //Incremental influence
-        //influence[(int)f] = Mathf.Max(influence[(int)f],v); //Flooding, max influence
+    public void SetInfluence(Faction f, float v, Vector2[,] influenceMap, InfluenceT type) {
+        if (type == InfluenceT.ACCUMULATE)
+            influenceMap[gridX, gridY][(int)f] += v;
+        else if (type == InfluenceT.MAXIMUM)
+            influenceMap[gridX, gridY][(int)f] = Mathf.Max(influenceMap[gridX, gridY][(int)f], v);
+
+        //100% is the maximun influence
+        influenceMap[gridX, gridY][(int)f] = Mathf.Min(100, influenceMap[gridX, gridY][(int)f]);
     }
 
-    public float GetInfluence(Faction faction) {
-        /*Debug.Assert(faction != Faction.C);
-        int IsStrongest = faction == GetFaction() ? 1 : -1;
-        return GetInfluence() * IsStrongest;*/
-        return Mathf.Min(100f, influence[(int)faction]) / 100f;
+    public float GetRawInfluence(Faction f, Vector2[,] influenceMap) {
+        return influenceMap[gridX, gridY][(int)f] / 100f;
     }
 
-    public float GetInfluence() {
-        return Mathf.Min(100f, Mathf.Abs(influence[0]-influence[1])); //Influence of one faction removes influence of another
-        //return Mathf.Min(100f, Mathf.Max(influence[0], influence[1])); //Influence of one faction does not affect the other
+    public float GetNetInfluence(Faction f, Vector2[,] influenceMap) {
+        return (influenceMap[gridX, gridY][(int)f] - influenceMap[gridX, gridY][1-(int)f]) / 100f;
     }
 
-    public void ResetInfluence() {
-        //influence -= new Vector2(Mathf.Max(0.1f, influence[0] * 0.2f), Mathf.Max(0.1f, influence[1] * 0.2f));
-        influence = Vector2.zero;
-    }
-
-    public Faction GetFaction() {
-        /*if (GetInfluence() < 1f)//(influence[0] < 0.1f && influence[1] < 0.1f)
-            return Faction.C;*/
-        if (influence[0] > influence[1])
+    public Faction GetMostInfluentFaction(Vector2[,] influenceMap) {
+        if (influenceMap[gridX, gridY][(int)Faction.A] >= influenceMap[gridX, gridY][(int)Faction.B])
             return Faction.A;
         else
             return Faction.B;
     }
+
 
     override
     public string ToString() {

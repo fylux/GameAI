@@ -16,9 +16,11 @@ public class InfluenceMap : MonoBehaviour {
         if (Mathf.Floor(Time.fixedTime * 1000) % (1000 * SecondsPerInfluenceUpdate) == 0) { //Time is managed in ms
             Map.ResetInfluence();
             foreach (AgentUnit unit in Map.unitList) {
-                ComputeInfluenceDijkstra(unit);
+                ComputeInfluenceDijkstra(unit, Map.generalInfluence);
+                //ComputeInfluenceDijkstraRanged(unit, Map.generalInfluence);
+                ComputeInfluenceBFS(unit, Map.clusterInfluence);
             }
-            Map.SetInfluence();
+            Map.DrawInfluence();
         }
            
     }
@@ -35,7 +37,7 @@ public class InfluenceMap : MonoBehaviour {
         //Call update minimap camera
     }*/
 
-    public void ComputeInfluenceBFS(AgentUnit unit) {
+    public void ComputeInfluenceBFS(AgentUnit unit, Vector2[,] influenceMap) {
         HashSet<Node> pending = new HashSet<Node>();
         HashSet<Node> visited = new HashSet<Node>();
 
@@ -49,14 +51,14 @@ public class InfluenceMap : MonoBehaviour {
                 if (visited.Contains(p))
                     continue;
                 visited.Add(p);
-                p.SetInfluence(unit.faction, unit.GetDropOff(i));
+                p.SetInfluence(unit.faction, unit.GetDropOff(i), influenceMap, InfluenceT.MAXIMUM);
                 frontier.UnionWith(Map.GetDirectNeighbours(p));
             }
             pending = new HashSet<Node>(frontier);
         }
     }
 
-    public void ComputeInfluenceDijkstra(AgentUnit unit) {
+    public void ComputeInfluenceDijkstra(AgentUnit unit, Vector2[,] influenceMap) {
         Node startNode = Map.NodeFromPosition(unit.position);
         startNode.gCost = 1;
         Heap<Node> openSet = new Heap<Node>(Map.GetMaxSize());
@@ -66,7 +68,7 @@ public class InfluenceMap : MonoBehaviour {
         while (openSet.Count > 0) {
             Node currentNode = openSet.Pop();
             closedSet.Add(currentNode);
-            currentNode.SetInfluence(unit.faction, unit.GetDropOff(currentNode.gCost));
+            currentNode.SetInfluence(unit.faction, unit.GetDropOff(currentNode.gCost), influenceMap, InfluenceT.ACCUMULATE);
 
             if (closedSet.Count > NNodesInfluenceMap) {
                 break;

@@ -12,6 +12,7 @@ public class Melee : AgentUnit
         MaxRotation = 60;
         MaxAngular = 60;
         attackRange = 1.5f;
+        preferredEnemies = new UnitT[] { UnitT.SCOUT, UnitT.RANGED, UnitT.ARTIL, UnitT.MELEE };
 
         cost = new Dictionary<NodeT, float>() {
             { NodeT.ROAD, 1 },

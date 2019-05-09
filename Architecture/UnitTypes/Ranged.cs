@@ -8,6 +8,7 @@ public class Ranged : AgentUnit {
     {
         base.Start();
         // Los atributos de los Ranged son con los que hemos estado trabajando, los default
+        preferredEnemies = new UnitT[] { UnitT.SCOUT, UnitT.MELEE, UnitT.RANGED, UnitT.ARTIL };
 
         cost = new Dictionary<NodeT, float>() {
             { NodeT.ROAD, 1 },

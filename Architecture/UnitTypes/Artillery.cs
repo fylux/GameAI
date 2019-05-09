@@ -12,6 +12,7 @@ public class Artillery : AgentUnit
         MaxAccel = 10;
         MaxRotation = 30;
         MaxAngular = 30;
+        preferredEnemies = new UnitT[] { UnitT.SCOUT, UnitT.RANGED, UnitT.ARTIL, UnitT.MELEE };
 
         cost = new Dictionary<NodeT, float>() {
             { NodeT.ROAD, 1 },

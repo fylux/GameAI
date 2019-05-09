@@ -22,6 +22,7 @@ public class EconomyManager : MonoBehaviour {
 	[SerializeField]
 	bool goldGeneration;
 
+    [SerializeField]
 	int gold;
 
 	GoldManager goldManager = new GoldManager();

@@ -13,7 +13,7 @@ public abstract class AgentUnit : AgentNPC {
     public GameObject selectCircle;
     public float attackRange = 5f;
 
-	public GameObject hat;
+    public GameObject hat;
 
     public MilitarComponent militar = new MilitarComponent();
 
@@ -28,11 +28,24 @@ public abstract class AgentUnit : AgentNPC {
 
     public static float[,] atkTable = new float[4, 4] {
             //Melee Ranged  Scout   Artill
-            {1,     1.5f,   2 ,     1 	}, //Melee
-            {1, 	0.8f, 	1.5f, 	0.5f}, //Ranged
-            {0.75f,	1.25f, 	1, 		0.5f}, //Scout
-            { 0.8f, 1.25f, 	1.5f, 	1	}  //Artill
+            {1,     1.5f,   2 ,     1   }, //Melee
+            {1,     0.8f,   1.5f,   0.5f}, //Ranged
+            {0.75f, 1.25f,  1,      0.5f}, //Scout
+            { 0.8f, 1.25f,  1.5f,   1   }  //Artill
         };
+
+    Dictionary<UnitT, UnitT[]> preferredEnemies = new Dictionary<UnitT, UnitT[]>()
+    {
+        {UnitT.MELEE, new UnitT[] {UnitT.SCOUT, UnitT.RANGED, UnitT.ARTIL, UnitT.MELEE } },
+        {UnitT.RANGED, new UnitT[] {UnitT.SCOUT, UnitT.MELEE, UnitT.RANGED, UnitT.ARTIL } },
+        {UnitT.SCOUT, new UnitT[] {UnitT.RANGED, UnitT.SCOUT, UnitT.MELEE, UnitT.ARTIL } },
+        {UnitT.ARTIL, new UnitT[] {UnitT.SCOUT, UnitT.RANGED, UnitT.ARTIL, UnitT.MELEE } },
+    };
+
+    public UnitT[] GetPreferredEnemies(UnitT unit)
+    {
+        return preferredEnemies[unit];
+    }
 
     abstract public UnitT GetUnitType();
 

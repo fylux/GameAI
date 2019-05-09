@@ -25,7 +25,7 @@ public class EconomyManager : MonoBehaviour {
     [SerializeField]
 	int gold;
 
-	GoldManager goldManager = new GoldManager();
+	GenerationManager generationManager;
 
 	Dictionary <UnitT,float> priority = new Dictionary<UnitT, float>() {
 		{ UnitT.MELEE, 0},
@@ -40,16 +40,19 @@ public class EconomyManager : MonoBehaviour {
 			{ UnitT.RANGED, ranged },
 			{ UnitT.SCOUT, scout },
 			{ UnitT.ARTIL, artillery } };
-	}
+
+        generationManager = new GenerationManager(stratManager);
+
+    }
 	
 	// Update is called once per frame
 	void Update () {
 		if (Time.frameCount % 30 == 0 && goldGeneration) {
-			gold+=5;
+			gold+=20;
 
 			if (Map.GetAllies (faction).Count < 20 && gold >= 50) {
 				gold -= 50;
-				GenerateUnit (UnitT.MELEE);
+				GenerateUnit (generationManager.GetMostImportantUnit());
 			}
 
 			goldDisplay.text = "Gold: [" + gold + "]";

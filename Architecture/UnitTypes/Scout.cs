@@ -6,7 +6,7 @@ public class Scout : AgentUnit {
 
     protected new void Start() {
         base.Start();
-        MaxVelocity = 5;
+        MaxVelocity = 4;
         MaxAccel = 30;
         MaxRotation = 70;
         MaxAngular = 70;

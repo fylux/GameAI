@@ -6,8 +6,7 @@ using UnityEngine.UI;
 
 public class StrategyManager : MonoBehaviour {
 
-    [SerializeField]
-    Faction faction;
+    public Faction faction;
 
 	[SerializeField]
 	Text strategies;
@@ -82,4 +81,9 @@ public class StrategyManager : MonoBehaviour {
 		+ "\nAH " + strategyLayer.priority[StrategyT.ATK_HALF].ToString("F2")
         + " / AB " + strategyLayer.priority[StrategyT.ATK_BASE].ToString("F2");
 	}
+
+    public StrategyLayer GetStrategyLayer()
+    {
+        return strategyLayer;
+    }
 }

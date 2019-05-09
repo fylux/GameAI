@@ -36,14 +36,6 @@ public abstract class AgentUnit : AgentNPC {
 
     protected UnitT[] preferredEnemies;
 
-   /* Dictionary<UnitT, UnitT[]> preferredEnemies = new Dictionary<UnitT, UnitT[]>()
-    {
-        {UnitT.MELEE, new UnitT[] {UnitT.SCOUT, UnitT.RANGED, UnitT.ARTIL, UnitT.MELEE } },
-        {UnitT.RANGED, new UnitT[] {UnitT.SCOUT, UnitT.MELEE, UnitT.RANGED, UnitT.ARTIL } },
-        {UnitT.SCOUT, new UnitT[] {UnitT.RANGED, UnitT.SCOUT, UnitT.MELEE, UnitT.ARTIL } },
-        {UnitT.ARTIL, new UnitT[] {UnitT.SCOUT, UnitT.RANGED, UnitT.ARTIL, UnitT.MELEE } },
-    };*/
-
     public UnitT[] GetPreferredEnemies()
     {
         return preferredEnemies;

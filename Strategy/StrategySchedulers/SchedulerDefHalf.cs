@@ -102,17 +102,19 @@ public class SchedulerDefHalf : SchedulerStrategy {
                 var closestEnemy = enemiesByDistance.First();
                 var distanceToEnemy = Util.HorizontalDist(ally.position, closestEnemy.position);
 
-                /*foreach (var unitType in ally.GetPreferredEnemies()) {
+                foreach (var unitType in ally.GetPreferredEnemies()) {
                     var closestEnemyOfType = enemiesByDistance.Where(u => u.GetUnitType() == unitType).FirstOrDefault();
+					Debug.Log ("El enemigo más cercano del tipo " + unitType + " es " + closestEnemyOfType);
 
-                    if (closestEnemyOfType != null && Util.HorizontalDist(ally.position, closestEnemyOfType.position) < distanceToEnemy + 4){
-                        ally.SetTask(new Attack(ally, closestEnemy, (_) => {
-                            //If you kill an enemy reconsider assignations
-                            ApplyStrategy();
-                        }));
-                        break;
-                    }
-                }*/
+					if (closestEnemyOfType != null && Util.HorizontalDist (ally.position, closestEnemyOfType.position) < distanceToEnemy + 4) {
+						ally.SetTask (new Attack (ally, closestEnemyOfType, (_) => {
+							//If you kill an enemy reconsider assignations
+							ApplyStrategy ();
+						}));
+						break;
+					} else
+						Debug.Log ("Pero estaba muy lejos del enemigo más cercano :(");
+                }
 
 
             }

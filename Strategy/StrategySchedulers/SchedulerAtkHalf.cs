@@ -72,13 +72,24 @@ public class SchedulerAtkHalf : SchedulerStrategy {
                 foreach (AgentUnit ally in remainingUnits)
                 {
                     if (ally.GetTask() is Attack) continue;
-                    AgentUnit closestEnemy = selectedCluster.OrderBy(unit => Util.HorizontalDist(ally.position, unit.position)).First();
-                    //Debug.Log (ally.name + " esta atacando a " + closestEnemy.name + " y su task es " + ally.GetTask());
-                    ally.SetTask(new Attack(ally, closestEnemy, (_) =>
+
+                    var enemiesByDistance = selectedCluster.OrderBy(unit => Util.HorizontalDist(ally.position, unit.position));
+                    AgentUnit closestEnemy = enemiesByDistance.First();
+                    var distanceToEnemy = Util.HorizontalDist(ally.position, closestEnemy.position);
+
+                    foreach (var unitType in ally.GetPreferredEnemies())
                     {
-                        //If you kill an enemy reconsider assignations
-                        ApplyStrategy();
-                    }));
+                        var closestEnemyOfType = enemiesByDistance.Where(u => u.GetUnitType() == unitType).FirstOrDefault();
+
+                        if (closestEnemyOfType != null && Util.HorizontalDist(ally.position, closestEnemyOfType.position) < distanceToEnemy + 4)
+                        {
+                            ally.SetTask(new Attack(ally, closestEnemyOfType, (_) => {
+                                //If you kill an enemy reconsider assignations
+                                ApplyStrategy();
+                            }));
+                            break;
+                        }
+                    }
                 }
             }
         }

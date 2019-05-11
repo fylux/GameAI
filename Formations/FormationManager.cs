@@ -18,8 +18,8 @@ public class FormationManager : MonoBehaviour {
     {
         if (Input.GetKeyDown(KeyCode.G))
         {
-            foreach (GameObject go in GameObject.FindGameObjectsWithTag("NPC")){
-                AddCharacter(go.GetComponent<AgentUnit>());
+			foreach (AgentUnit unit in Map.GetAllies(Faction.A)){ //Solo usaremos la faccion A como aliada
+                AddCharacter(unit);
             }
         }
 
@@ -39,12 +39,14 @@ public class FormationManager : MonoBehaviour {
         int occupiedSlots = slotAssignments.Count;
         if (!pattern.SupportsSlots(occupiedSlots + 1) || character == pattern.leader)
         {
+			Debug.Log ("NOT Added " + character.name);
             return false;
         }
         SlotAssignment sa = new SlotAssignment();
         sa.character = character;
         slotAssignments.Add(sa);
         UpdateSlotAssignments();
+		Debug.Log ("Added " + character.name);
         return true;
     }
 
@@ -62,13 +64,15 @@ public class FormationManager : MonoBehaviour {
         float orientation = leader.orientation;
         foreach (SlotAssignment sa in slotAssignments)
         {
+			Debug.Log ("Analizando Slot Assignment #" + sa.slotIndex);
             AgentUnit character = sa.character.GetComponent<AgentUnit>();
 
             if (character != leader) // Tiene sentido que el lider no se mueva
             {
+				Debug.Log ("Analizando slot de " + character.name);
                 Vector3 slotPos = pattern.GetSlotLocation(sa.slotIndex).position;
                 Vector3 relPos = anchor + leader.transform.TransformDirection(slotPos);
-                //    Debug.Log(sa.slotIndex + ". SlotPos: " + slotPos + ", relPos: " + relPos);
+                    Debug.Log(sa.slotIndex + ". SlotPos: " + slotPos + ", relPos: " + relPos);
                    Location charDrift = new Location(relPos, orientation);
                 //   charDrift.position += driftOffset.position;
                 Debug.Log("driftOffset.position = " + driftOffset.position);

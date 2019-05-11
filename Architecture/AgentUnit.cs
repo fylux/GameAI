@@ -82,16 +82,16 @@ public abstract class AgentUnit : AgentNPC {
     }*/
 
     public void SetFormation(Vector3 position, float orientation) {
-        /*GoTo go = gameObject.GetComponent<GoTo>();
+		GoForm go = gameObject.GetComponent<GoForm>();
         if (go == null) {
-            go = gameObject.AddComponent<GoTo>();
+			go = gameObject.AddComponent<GoForm>();
             go.Init(position, orientation);
             steers.Add(go);
         } else {
             go.target = position;
             go.orientation = orientation;
             go.active = true;
-        }*/
+        }
     }
 
     public void SetTarget(Vector3 targetPosition) {

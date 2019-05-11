@@ -24,6 +24,9 @@ public class LoadMap : MonoBehaviour {
     will be in (-0.5,-0.5). Since we want the terrain to be in the range from 0 to gridSize, we need to add an offset*/
     Vector3 offset;
 
+    [SerializeField]
+    bool disableInfoManager; // If "true", does not create infoManager TESTGGG En el juego final esto ya no hace falta
+
 
     /*private void OnDrawGizmosSelected()
     {
@@ -52,7 +55,9 @@ public class LoadMap : MonoBehaviour {
             }
 
         Map.Init(BuildMap(), gridSize);
-        Info.Init();
+
+        if (!disableInfoManager)
+            Info.Init();
     }
 
     Node[,] BuildMap() {

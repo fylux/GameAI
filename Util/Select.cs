@@ -22,6 +22,8 @@ public class Select : MonoBehaviour {
 
     public HashSet<AgentUnit> selectedUnits = new HashSet<AgentUnit>();
 
+	GameObject cube;
+
     [SerializeField]
     Text selectionText;
 
@@ -62,18 +64,34 @@ public class Select : MonoBehaviour {
             if (Physics.Raycast(ray, out hit, Mathf.Infinity, unitMask)) {
                 Console.Log(selectedUnits.Count + " Units going to attack target");
                 foreach (AgentUnit unit in selectedUnits) {
-                    unit.AttackEnemy(hit.transform.GetComponent<AgentUnit>());
+					unit.SetTask (new Attack (unit, hit.transform.GetComponent<AgentUnit>(), (_) => {}));
                 }
             }
             else if (Physics.Raycast(ray, out hit, Mathf.Infinity, terrainMask)) {
-                GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+
+				if (cube != null)
+					Destroy (cube);
+
+                cube = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
                 cube.transform.position = hit.point;
                 cube.transform.localScale = new Vector3(0.4f, 0.1f, 0.4f);
 
                 Console.Log(selectedUnits.Count + " Units moving to target");
+
+				float offset = 0.75f;
+
+				if (selectedUnits.Count == 1)
+					offset = 0; 
+
                 foreach (AgentUnit unit in selectedUnits) {
-                    /*if (unit.faction == Faction.A)*/
-                        unit.SetTarget(hit.point);
+					unit.SetTask(new GoTo(unit, hit.point, Mathf.Infinity, offset, false, true, (bool success) =>
+						{
+							Destroy(cube);
+							cube = null;
+							Debug.Log("Dandole a " + unit + " la orden de DEFENDER LA ZONA");
+							unit.SetTask(new DefendZone(unit, hit.point, 8, (_) => { }));
+						}));
+
                 }
             }
         }

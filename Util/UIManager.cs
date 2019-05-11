@@ -15,12 +15,11 @@ public class UIManager : MonoBehaviour {
 
 	public static UnitT unitToGenerate = UnitT.MELEE;
 
-	public void ChangeGeneration(){
-		modeGen++;
-		modeGen = modeGen % 4;
+	[SerializeField]
+	PlayerEconomy playerEconomy;
 
-		unitToGenerate =(UnitT)modeGen;
-		generationButton.text = "NEXT -> " + unitToGenerate;
+	public void ChangeGeneration(){
+		generationButton.text = "NEXT -> " + playerEconomy.ChangeGeneration();
 	}
 
 	public void ChangeMinimap(){

@@ -68,7 +68,8 @@ public class SchedulerDefHalf : SchedulerStrategy {
             foreach (AgentUnit closestAlly in closestAllies) {
                 unitsCluster.Add(closestAlly);
                 //Till the balance between the cluster and the assign allies is positive
-                if (Info.MilitaryAdvantage(unitsCluster, allyFaction) > 1) {
+				if (Info.MilitaryAdvantage(unitsCluster, allyFaction) > 1) {
+					Debug.Log ("Enviamos a la unidad " + closestAlly.name + " a atacar al cluster que tiene " + unitsCluster.Count + ", con una ventaja aliada de " + Info.MilitaryAdvantage(unitsCluster, allyFaction));
                     var alliesToCluster = new HashSet<AgentUnit>(unitsCluster.Where(unit => unit.faction == allyFaction));
                     unitsAssignedToClusters.Add(cluster, alliesToCluster);
                     remainingUnits.ExceptWith(alliesToCluster);
@@ -104,7 +105,7 @@ public class SchedulerDefHalf : SchedulerStrategy {
 
                 foreach (var unitType in ally.GetPreferredEnemies()) {
                     var closestEnemyOfType = enemiesByDistance.Where(u => u.GetUnitType() == unitType).FirstOrDefault();
-					Debug.Log ("El enemigo más cercano del tipo " + unitType + " es " + closestEnemyOfType);
+				//	Debug.Log ("El enemigo más cercano del tipo " + unitType + " es " + closestEnemyOfType);
 
 					if (closestEnemyOfType != null && Util.HorizontalDist (ally.position, closestEnemyOfType.position) < distanceToEnemy + 4) {
 						ally.SetTask (new Attack (ally, closestEnemyOfType, (_) => {
@@ -112,8 +113,8 @@ public class SchedulerDefHalf : SchedulerStrategy {
 							ApplyStrategy ();
 						}));
 						break;
-					} else
-						Debug.Log ("Pero estaba muy lejos del enemigo más cercano :(");
+					} //else
+					//	Debug.Log ("Pero estaba muy lejos del enemigo más cercano :(");
                 }
 
 
@@ -122,11 +123,30 @@ public class SchedulerDefHalf : SchedulerStrategy {
 
 
         //Remaining units go to defend the bridge
-        var alliesToDefendBridge = remainingUnits.Where(unit => !unit.HasTask<GoTo>() && !unit.HasTask<DefendZone>());
+		var alliesToDefendBridge = remainingUnits.Where(unit => !unit.HasTask<GoTo>() && !unit.HasTask<DefendZone>());
+
+		Vector3 destiny = Info.GetWaypoint ("mid", allyFaction);
+
+		float midInfl = Info.GetAreaInfluence(enemyFaction, Info.GetWaypoint ("mid", allyFaction), 10);
+		float frontInfl = Info.GetAreaInfluence(enemyFaction, Info.GetWaypoint ("mid", allyFaction), 10);
+
+	//	Debug.Log ("Las influencias son: mid -> " + midInfl + ", front -> " + frontInfl);
+		string dest = "mid";
+		if (midInfl > 0.5) { // TODO Numero tentativo a cambios
+			if (frontInfl > 0.5) {
+				destiny = allyBase;
+				dest = "base";
+			} else {
+				destiny = Info.GetWaypoint ("front", allyFaction);
+				dest = "front";
+			}
+		}
+
+	//	Debug.Log ("El destino al que deben ir es " + dest);
 
         foreach (var ally in alliesToDefendBridge) {
             Debug.Assert(!ally.HasTask<DefendZone>());
-            ally.SetTask(new GoTo(ally, Info.GetWaypoint("mid", allyFaction), Mathf.Infinity, 1.3f, false, (bool success) => {
+            ally.SetTask(new GoTo(ally, destiny, Mathf.Infinity, 1.3f, false, (bool success) => {
                 ally.SetTask(new DefendZone(ally, ally.position, 6f, (_) => {
                 }));
             }));

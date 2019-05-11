@@ -54,11 +54,6 @@ public class MilitaryResourcesAllocator {
         //  ClearUnitSets(); // Vaciamos los sets que contienen las unidades de cada estrategia
         HashSet<AgentUnit> availableUnits = new HashSet<AgentUnit>(Map.unitList.Where(unit => unit.faction == faction));
 
-
-		foreach (AgentUnit unit in availableUnits) {
-			Debug.Log ("Unidad disponible -> " + unit.name);
-		}
-
         int nTotalAvailableUnits = availableUnits.Count;
 
         //All strategies must have a set, even if it is empty

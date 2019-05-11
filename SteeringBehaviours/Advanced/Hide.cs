@@ -18,9 +18,9 @@ public class Hide : SteeringBehaviourTarget {
     [SerializeField]
     float evadePrediction;
 
-    static Vector3 GetHidingPosition(Agent obstacle, Vector3 targetPosition, float distanceBoundary)
+	static Vector3 GetHidingPosition(Body obstacle, float interiorRadius, Vector3 targetPosition, float distanceBoundary)
     {
-        float distAway = obstacle.interiorRadius + distanceBoundary;
+        float distAway = interiorRadius + distanceBoundary;
 
         Vector3 direction = obstacle.position - targetPosition;  //La direccion entre el enemigo del que nos queremos esconder y el muro
         direction.Normalize();
@@ -39,11 +39,12 @@ public class Hide : SteeringBehaviourTarget {
         Vector3 bestHidingSpot = Vector3.zero;
         bool changed = false;
 
-        int layerMask = 1 << 8;
-        Collider[] hits = Physics.OverlapSphere(npc.position, minDist + distanceBoundary + 0.5f, layerMask);
+		LayerMask obstacleMask = LayerMask.GetMask ("Wall");
+
+        Collider[] hits = Physics.OverlapSphere(npc.position, minDist + distanceBoundary + 0.5f, obstacleMask);
         foreach (Collider coll in hits)
         {
-            Vector3 hidingSpot = Hide.GetHidingPosition(coll.GetComponent<Agent>(), target.position, distanceBoundary);
+            Vector3 hidingSpot = Hide.GetHidingPosition(coll.GetComponent<Body>(), npc.interiorRadius, target.position, distanceBoundary);
             float distance = Vector3.Distance(hidingSpot, npc.position);
             if (distance < minDist)
             {

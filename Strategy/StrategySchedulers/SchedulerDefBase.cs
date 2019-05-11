@@ -16,7 +16,7 @@ public class SchedulerDefBase : SchedulerStrategy
         var unitsOutsideBase = usableUnits.Where(unit => !InBase(unit.position) && !unit.HasTask<GoTo>());
         foreach (AgentUnit unit in unitsOutsideBase) {
             Debug.Log("Dandole a " + unit + " la orden de MOVERSE A LA BASE");
-            unit.SetTask(new GoTo(unit, allyBase, (bool success) =>
+			unit.SetTask(new GoTo(unit, allyBase, Mathf.Infinity, 10, false, false, (bool success) =>
             {
                 Debug.Log("Dandole a " + unit + " la orden de DEFENDER LA ZONA");
                 unit.SetTask(new DefendZone(unit, allyBase, 15, (_) => { }));

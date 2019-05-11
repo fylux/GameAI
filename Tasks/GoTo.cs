@@ -11,11 +11,13 @@ public class GoTo : Task {
     float offset;
     bool defensive;
     float reconsiderSeconds;
+	bool random;
 
-    public GoTo(AgentUnit agent, Vector3 target, float reconsiderSeconds, float offset, bool defensive, Action<bool> callback) : base(agent,callback) {
+    public GoTo(AgentUnit agent, Vector3 target, float reconsiderSeconds, float offset, bool defensive, bool random, Action<bool> callback) : base(agent,callback) {
         this.offset = offset;
         this.defensive = defensive;
         this.reconsiderSeconds = reconsiderSeconds;
+		this.random = random;
 
         empty = new GameObject();
         empty.transform.parent = agent.gameObject.transform;
@@ -28,7 +30,8 @@ public class GoTo : Task {
         SetNewTarget(target);
     }
 
-    public GoTo(AgentUnit agent, Vector3 target, Action<bool> callback) : this(agent, target, Mathf.Infinity, 0f, false, callback) { }
+	public GoTo(AgentUnit agent, Vector3 target, Action<bool> callback) : this(agent, target, Mathf.Infinity, 0f, false, false, callback) { }
+	public GoTo(AgentUnit agent, Vector3 target, float reconsiderSeconds, float offset, bool defensive, Action<bool> callback) : this(agent, target, reconsiderSeconds, offset, defensive, false, callback) { }
 
     private void ProcessPath(Vector3[] newPath, bool pathSuccessful) {
         if (pathSuccessful) {
@@ -52,11 +55,19 @@ public class GoTo : Task {
     }
 
     public void SetNewTarget(Vector3 new_target) {
-        do {
-            Vector2 offsetXY = UnityEngine.Random.insideUnitCircle * offset;
+		if (random) {
+			do {
+				Vector2 offsetXY = UnityEngine.Random.insideUnitCircle * offset;
 
-            target = new Vector3(new_target.x + offsetXY[0], 1f, new_target.z + offsetXY[1]);
-        } while(!Map.NodeFromPosition(target, true).isWalkable());
+				target = new Vector3 (new_target.x + offsetXY [0], 1f, new_target.z + offsetXY [1]);
+			} while(!Map.NodeFromPosition (target, true).isWalkable ());
+		} else {
+			Vector3 A = agent.position;
+			Vector3 B = new_target;
+			Vector3 AB = B - A;
+			AB = AB.normalized;
+			target = B - (offset * AB);
+		}
 
         pathF.path = null;
         if (defensive)

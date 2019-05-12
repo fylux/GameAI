@@ -132,7 +132,7 @@ public class SchedulerDefHalf : SchedulerStrategy {
         //Remaining units go to defend the bridge
 		var alliesToDefendBridge = remainingUnits.Where(unit => !unit.HasTask<GoTo>() && !unit.HasTask<DefendZone>());
 
-		Debug.Log ("Para defender el puente, tenemos " + alliesToDefendBridge.Count () + " unidades");
+	//	Debug.Log ("Para defender el puente, tenemos " + alliesToDefendBridge.Count () + " unidades");
 
 		Vector3 destiny = Info.GetWaypoint ("mid", allyFaction);
 

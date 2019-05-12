@@ -112,7 +112,8 @@ public static class Info {
             unitGroups[unit.GetUnitType()] += new Vector2(index, 1 - index);
         }
         Vector2 adv = new Vector2(GetAvgAdvantage(unitGroups, 1), GetAvgAdvantage(unitGroups, 0));
-        
+
+
         /*if (dbg)*/ Debug.Log("Numero de unidades de A: " + number[0] + ", y de B: " + number[1]);
         /* Debug.Log("HP de A: " + HP[0] + ", y de B: " + HP[1]);
          Debug.Log("ATK de A: " + ATK[0] + ", y de B: " + ATK[1]);
@@ -153,7 +154,24 @@ public static class Info {
 		return HP * ATK;
 	}*/
 
-    public static float GetAvgAdvantage(Dictionary<UnitT, Vector2> unitGroups, int factionIndex) {
+	public static float GetAvgAdvantage(Dictionary<UnitT, Vector2> unitGroups, int factionIndex) {
+        float totalAdv = 0;
+        var nEnemies = unitGroups.Sum(z => z.Value[factionIndex]);
+        var nAllies = unitGroups.Sum(z => z.Value[1 - factionIndex]);
+
+        if (nAllies == 0 || nEnemies == 0) return 1;
+
+        foreach (var z in unitGroups) {
+            float advOfType = 0;
+            foreach (UnitT type in Enum.GetValues(typeof(UnitT))) {
+                advOfType += AgentUnit.atkTable[(int)z.Key,(int)type] * unitGroups[type][factionIndex];
+            }
+            totalAdv += (advOfType / nEnemies) * z.Value[1 - factionIndex];
+        }
+        return totalAdv / nAllies;
+    }
+	
+    /*public static float GetAvgAdvantage(Dictionary<UnitT, Vector2> unitGroups, int factionIndex) {
         float adv = 0f;
         float nTotalUnits = 0;
         foreach (UnitT type in Enum.GetValues(typeof(UnitT))) {
@@ -163,7 +181,7 @@ public static class Info {
         }
         if (nTotalUnits == 0) return 50000;
         return adv / nTotalUnits;
-    }
+    }*/
 
     public static Body GetClosestHealingPoint(Vector3 position, float areaSize) {
         int nFound = Physics.OverlapSphereNonAlloc(position, areaSize, hits, Map.healingMask);

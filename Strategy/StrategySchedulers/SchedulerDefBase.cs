@@ -22,7 +22,7 @@ public class SchedulerDefBase : SchedulerStrategy
                 unit.SetTask(new DefendZone(unit, allyBase, 15, (_) => { }));
             }));
         }
-        var unitsInsideBase = usableUnits.Where(unit => InBase(unit.position) && !unit.HasTask<DefendZone>() && !unit.HasTask<GoTo>());
+        var unitsInsideBase = usableUnits.Where(unit => InBase(unit.position) && !unit.HasTask<DefendZone,GoTo>());
         foreach (AgentUnit unit in unitsInsideBase)
         {
             Debug.Log("Dandole a " + unit + " la orden de DEFENDER LA ZONA");

@@ -37,4 +37,9 @@ public class Steering {
         steering.angular *= priority;
         return steering;
     }
+
+    override
+    public string ToString() {
+        return linear + "|" + angular;
+    }
 }

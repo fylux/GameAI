@@ -90,8 +90,13 @@ public class AgentNPC : Agent {
     public Task GetTask() {
         return task;
     }
-
     public bool HasTask<T>() {
         return task is T;
+    }
+    public bool HasTask<A, B>() {
+        return task is A || task is B;
+    }
+    public bool HasTask<A, B, C>() {
+        return task is A || task is B || task is C;
     }
 }

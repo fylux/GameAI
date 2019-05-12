@@ -41,12 +41,12 @@ public class GoToAggresive : HostileTask {
             fighting = true;
         }
         else {
-            defendZone.Apply();
+            defendZone.Apply(); //We don't want to return to the base but yes to keep checking for enemies
             if (fighting) {
                 goTo.SetNewTarget(target);
+                fighting = false;
             }
             st = goTo.Apply();
-            fighting = false;
         }
 
         //Attack any units that it sees in range
@@ -64,5 +64,10 @@ public class GoToAggresive : HostileTask {
     public void Terminate() {
         if (defendZone != null) defendZone.Terminate();
         if (goTo != null) goTo.Terminate();
+    }
+
+    override
+    public String ToString() {
+        return "GoToAggresive -> " + target;
     }
 }

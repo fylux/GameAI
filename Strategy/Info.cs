@@ -90,6 +90,10 @@ public static class Info {
         return MilitaryAdvantage(GetUnitsArea(center, areaSize), fact);
     }
 
+	public static float MilitaryPowerArea(Vector3 center, float areaSize, Faction fact) {
+		return MilitaryRawPower(GetUnitsFactionArea(center, areaSize, fact));
+	}
+
     public static float MilitaryAdvantage(HashSet<AgentUnit> units, Faction fact) {
         Debug.Assert(fact == Faction.A || fact == Faction.B);
 
@@ -109,13 +113,13 @@ public static class Info {
         }
         Vector2 adv = new Vector2(GetAvgAdvantage(unitGroups, 1), GetAvgAdvantage(unitGroups, 0));
         
-        if (dbg) Debug.Log("Numero de unidades de A: " + number[0] + ", y de B: " + number[1]);
+        /*if (dbg)*/ Debug.Log("Numero de unidades de A: " + number[0] + ", y de B: " + number[1]);
         /* Debug.Log("HP de A: " + HP[0] + ", y de B: " + HP[1]);
          Debug.Log("ATK de A: " + ATK[0] + ", y de B: " + ATK[1]);
          Debug.Log("Melees de A: " + melee[0] + ", rangeds: " + ranged[0] + ", scouts: " + scouts[0] + ", y artilleria: " + artill[0]);
          Debug.Log("Melees de B: " + melee[1] + ", rangeds: " + ranged[1] + ", scouts: " + scouts[1] + ", y artilleria: " + artill[1]);*/
 
-        if (dbg) Debug.Log("La ventaja gracias a las tablas de A es de " + adv[0] + ", y la de B es " + adv[1]);
+        /*if (dbg)*/ Debug.Log("La ventaja gracias a las tablas de A es de " + adv[0] + ", y la de B es " + adv[1]);
 
         int i = (int)fact;
         int j = 1 - i;
@@ -123,10 +127,24 @@ public static class Info {
         if (number[j] == 0) return 50000;
         float result = Mathf.Sqrt(HP[i] / HP[j] * (ATK[i] + adv[i]) / (ATK[j] + adv[j]));
 
-        if (dbg) Debug.Log("La ventaja total de "+fact.ToString()+" es de :" + result);
+        /*if (dbg)*/ Debug.Log("La ventaja total de "+fact.ToString()+" es de :" + result);
 
         return result;
     }
+
+	public static float MilitaryRawPower(HashSet<AgentUnit> units) {
+		int HP = 0;
+		int ATK = 0;
+
+	//	Debug.Log ("Vamos a sacar la potencia del grupo de " + units.Count);
+
+		foreach (AgentUnit unit in units) {
+			HP += unit.militar.health;
+			ATK += unit.militar.attack;
+		}
+
+		return HP * ATK;
+	}
 
     public static float GetAvgAdvantage(Dictionary<UnitT, Vector2> unitGroups, int factionIndex) {
         float adv = 0f;

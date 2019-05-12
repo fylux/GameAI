@@ -9,7 +9,7 @@ public class SchedulerDefHalf : SchedulerStrategy {
     public float GetMilitaryBalanceCluster(HashSet<AgentUnit> cluster) {
 
 		float strength = Info.MilitaryAdvantageArea(Info.GetClusterCenter(cluster), 10f, allyFaction, true); // En condiciones normales retorna siempre 0
-		Debug.Log ("Potencia del cluster = " + strength);
+		//Debug.Log ("Potencia del cluster = " + strength);
 		return strength;
     }
 
@@ -41,7 +41,7 @@ public class SchedulerDefHalf : SchedulerStrategy {
     {
         //Units with low l1evel of health should try to go to a healing point
 
-		Debug.Log ("Tenemos ahora mismo " + usableUnits.Count + " unidades");
+		//Debug.Log ("Tenemos ahora mismo " + usableUnits.Count + " unidades");
 
         var damagedAllies = usableUnits.Where(unit => unit.militar.health < minimunHealth && !unit.HasTask<RestoreHealth>());
         foreach (var ally in damagedAllies) {
@@ -58,7 +58,7 @@ public class SchedulerDefHalf : SchedulerStrategy {
         }
         var remainingUnits = new HashSet<AgentUnit>(usableUnits.Where(unit => !unit.HasTask<RestoreHealth>()));
 
-		Debug.Log ("Si quitamos las que se tienen que ir a curar, tenemos " + remainingUnits.Count + " unidades");
+		//Debug.Log ("Si quitamos las que se tienen que ir a curar, tenemos " + remainingUnits.Count + " unidades");
 
         var clusters = Info.GetClusters(enemyFaction, allyFaction);
         var clustersByAdvantage = clusters.ToDictionary(c => c, c => GetMilitaryBalanceCluster(c)).OrderByDescending(c => c.Value);
@@ -77,7 +77,7 @@ public class SchedulerDefHalf : SchedulerStrategy {
                 //Till the balance between the cluster and the assign allies is positive
 				if (Info.MilitaryAdvantage(unitsCluster, allyFaction) > 1) {
                     var alliesToCluster = new HashSet<AgentUnit>(unitsCluster.Where(unit => unit.faction == allyFaction));
-					Debug.Log ("Enviamos al grupo de tamaño " + alliesToCluster.Count + " a atacar al cluster que tiene " + (unitsCluster.Count - alliesToCluster.Count) + ", con una ventaja aliada de " + Info.MilitaryAdvantage(unitsCluster, allyFaction));
+					//Debug.Log ("Enviamos al grupo de tamaño " + alliesToCluster.Count + " a atacar al cluster que tiene " + (unitsCluster.Count - alliesToCluster.Count) + ", con una ventaja aliada de " + Info.MilitaryAdvantage(unitsCluster, allyFaction));
                     unitsAssignedToClusters.Add(cluster, alliesToCluster);
                     remainingUnits.ExceptWith(alliesToCluster);
                     break;
@@ -137,9 +137,9 @@ public class SchedulerDefHalf : SchedulerStrategy {
 		Vector3 destiny = Info.GetWaypoint ("mid", allyFaction);
 
 		float midInfl = Info.GetAreaInfluence(enemyFaction, Info.GetWaypoint ("mid", allyFaction), 10);
-		float frontInfl = Info.GetAreaInfluence(enemyFaction, Info.GetWaypoint ("mid", allyFaction), 10);
+		float frontInfl = Info.GetAreaInfluence(enemyFaction, Info.GetWaypoint ("front", allyFaction), 10);
 
-	//	Debug.Log ("Las influencias son: mid -> " + midInfl + ", front -> " + frontInfl);
+		Debug.Log ("Las influencias son: mid -> " + midInfl + ", front -> " + frontInfl);
 		string dest = "mid";
 		if (midInfl > 0.5) { // TODO Numero tentativo a cambios
 			if (frontInfl > 0.5) {

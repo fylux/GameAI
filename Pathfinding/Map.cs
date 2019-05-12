@@ -15,6 +15,8 @@ public class Map {
 
     public static LayerMask unitsMask, healingMask, terrainMask, influenceMask;
 
+    public static Vector2[,] drawnMap;
+
 
     //This is called from load map
     public static void Init(Node[,] _grid, Vector2 _gridSize) {
@@ -28,6 +30,8 @@ public class Map {
         generalInfluence = new Vector2[mapX, mapY];
         clusterInfluence = new Vector2[mapX, mapY];
         generalRangedInfluence = new Vector2[mapX, mapY];
+
+        drawnMap = generalInfluence;
 
         foreach (GameObject npc in GameObject.FindGameObjectsWithTag("NPC")) {
             unitList.Add(npc.GetComponent<AgentUnit>());
@@ -110,7 +114,7 @@ public class Map {
 
     public static void DrawInfluence() {
         Debug.Log("draw");
-        var influenceMap = Map.clusterInfluence;
+        var influenceMap = Map.drawnMap;
         for (int x = 0; x < mapX; x++) {
             for (int y = 0; y < mapY; y++) {
                 var mainFaction = grid[x, y].GetMostInfluentFaction(influenceMap);
@@ -152,5 +156,15 @@ public class Map {
             }
         }
 
+    }
+
+    public static void ChangeDrawnMap(string map)
+    {
+        if (map == "cluster")
+            drawnMap = clusterInfluence;
+        else if (map == "general")
+            drawnMap = generalInfluence;
+        else
+            drawnMap = generalRangedInfluence;
     }
 }

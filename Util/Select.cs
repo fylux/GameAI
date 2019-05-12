@@ -61,17 +61,18 @@ public class Select : MonoBehaviour {
         }
 
         if (Input.GetButtonUp("Fire2") && selectedUnits.Count > 0) {
+			
+			if (cube != null)
+				Destroy (cube);
+			
             if (Physics.Raycast(ray, out hit, Mathf.Infinity, unitMask)) {
                 Console.Log(selectedUnits.Count + " Units going to attack target");
                 foreach (AgentUnit unit in selectedUnits) {
 					unit.SetTask (new Attack (unit, hit.transform.GetComponent<AgentUnit>(), (_) => {}));
+					unit.SetTask(new DefendZone(unit, hit.point, 8, (_) => { }));
                 }
             }
             else if (Physics.Raycast(ray, out hit, Mathf.Infinity, terrainMask)) {
-
-				if (cube != null)
-					Destroy (cube);
-
                 cube = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
                 cube.transform.position = hit.point;
                 cube.transform.localScale = new Vector3(0.4f, 0.1f, 0.4f);

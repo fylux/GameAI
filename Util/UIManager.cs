@@ -24,10 +24,23 @@ public class UIManager : MonoBehaviour {
 
 	public void ChangeMinimap(){
 		if (string.Equals (minimapButton.text, "General"))
-			minimapButton.text = "Cluster";
-		else
-			minimapButton.text = "General";
+        {
+            minimapButton.text = "Cluster";
+            Map.ChangeDrawnMap("cluster");
+        }
+			
+		else if (string.Equals(minimapButton.text, "Cluster"))
+        {
+            minimapButton.text = "Archers";
+            Map.ChangeDrawnMap("ranged");
+        }
+        else
+        {
+            minimapButton.text = "General";
+            Map.ChangeDrawnMap("general");
+        }
 
-		// Change influence map
-	}
+        Map.DrawInfluence();
+        // Change influence map
+    }
 }

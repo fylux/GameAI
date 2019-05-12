@@ -8,7 +8,7 @@ public class SchedulerDefHalf : SchedulerStrategy {
 
     public float GetMilitaryBalanceCluster(HashSet<AgentUnit> cluster) {
 
-		float strength = Info.MilitaryPowerArea(Info.GetClusterCenter(cluster), 10f, enemyFaction); // En condiciones normales retorna siempre 0
+		float strength = Info.MilitaryAdvantageArea(Info.GetClusterCenter(cluster), 10f, allyFaction, true); // En condiciones normales retorna siempre 0
 		Debug.Log ("Potencia del cluster = " + strength);
 		return strength;
     }

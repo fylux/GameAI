@@ -86,15 +86,15 @@ public static class Info {
     }
 
     // Obtiene un numero que indica la ventaja militar en un area
-    public static float MilitaryAdvantageArea(Vector3 center, float areaSize, Faction fact) {
-        return MilitaryAdvantage(GetUnitsArea(center, areaSize), fact);
+	public static float MilitaryAdvantageArea(Vector3 center, float areaSize, Faction fact, bool power = false) {
+        return MilitaryAdvantage(GetUnitsArea(center, areaSize), fact, power);
     }
 
-	public static float MilitaryPowerArea(Vector3 center, float areaSize, Faction fact) {
+/*	public static float MilitaryPowerArea(Vector3 center, float areaSize, Faction fact) {
 		return MilitaryRawPower(GetUnitsFactionArea(center, areaSize, fact));
-	}
+	}*/
 
-    public static float MilitaryAdvantage(HashSet<AgentUnit> units, Faction fact) {
+	public static float MilitaryAdvantage(HashSet<AgentUnit> units, Faction fact, bool power = false) {
         Debug.Assert(fact == Faction.A || fact == Faction.B);
 
         Vector2 number = new Vector2(0, 0);
@@ -121,18 +121,25 @@ public static class Info {
 
         /*if (dbg)*/ Debug.Log("La ventaja gracias a las tablas de A es de " + adv[0] + ", y la de B es " + adv[1]);
 
+
+		float result;
         int i = (int)fact;
         int j = 1 - i;
         if (number[i] == 0) return 0;
-        if (number[j] == 0) return 50000;
-        float result = Mathf.Sqrt(HP[i] / HP[j] * (ATK[i] + adv[i]) / (ATK[j] + adv[j]));
+		if (power == false) {
+			if (number [j] == 0)
+				return 50000;
+			result = Mathf.Sqrt (HP [i] / HP [j] * (ATK [i] + adv [i]) / (ATK [j] + adv [j]));
+		} else {
+			result = Mathf.Sqrt ((HP [i] * (ATK [i] + adv [i])) -  (HP [j] * (ATK [j] + adv [j])));
+		}
 
         /*if (dbg)*/ Debug.Log("La ventaja total de "+fact.ToString()+" es de :" + result);
 
         return result;
     }
 
-	public static float MilitaryRawPower(HashSet<AgentUnit> units) {
+	/*public static float MilitaryRawPower(HashSet<AgentUnit> units) {
 		int HP = 0;
 		int ATK = 0;
 
@@ -144,7 +151,7 @@ public static class Info {
 		}
 
 		return HP * ATK;
-	}
+	}*/
 
     public static float GetAvgAdvantage(Dictionary<UnitT, Vector2> unitGroups, int factionIndex) {
         float adv = 0f;

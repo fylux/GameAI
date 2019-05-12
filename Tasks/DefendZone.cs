@@ -30,10 +30,14 @@ public class DefendZone : HostileTask {
     //If you are attacked by a different unit you will start figthing with it unless that you are already figthing or very close to your target
     override
     public void ReceiveAttack(AgentUnit enemy) {
+        if (targetEnemy == null) {
+            AttackEnemy(enemy);
+            return;
+        }
         //It would be uncommon that targetEnemy is null unless that the range of the enemy is greater than the range of defend zone
         bool inRange = Util.HorizontalDist(targetEnemy.position, center) /* + Attack range*/ > rangeRadius;
         bool targetNear = Util.HorizontalDist(targetEnemy.position, agent.position) < 3f /*+ AttackRange*/;
-        if (targetEnemy == null || (inRange && !targetNear)) {
+        if (inRange && !targetNear) {
             AttackEnemy(enemy);
         }
     }

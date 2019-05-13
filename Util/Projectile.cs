@@ -11,6 +11,7 @@ public class Projectile : MonoBehaviour {
     float velocity = 5f;
 
     public void SetTarget(AgentUnit target) {
+        velocity = Mathf.Max(3f, Util.HorizontalDist(transform.position, target.position) / 0.7f);
         this.target = target;
 
         transform.LookAt(target.position);

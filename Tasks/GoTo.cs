@@ -5,45 +5,31 @@ using System;
 using System.Linq;
 
 public class GoTo : Task {
-    GameObject empty;
-    PathFollowing pathF;
+    FollowPath followPath;
     Vector3 target;
     float offset;
     bool defensive;
     float reconsiderSeconds;
-	bool random;
 
-    public GoTo(AgentUnit agent, Vector3 target, float reconsiderSeconds, float offset, bool defensive, bool random, Action<bool> callback) : base(agent,callback) {
+    bool finished = false;
+
+    public GoTo(AgentUnit agent, Vector3 target, float reconsiderSeconds, float offset, bool defensive, Action<bool> callback) : base(agent,callback) {
         this.offset = offset;
         this.defensive = defensive;
         this.reconsiderSeconds = reconsiderSeconds;
-		this.random = random;
 
-        empty = new GameObject();
-        empty.transform.parent = agent.gameObject.transform;
-
-        pathF = empty.AddComponent<PathFollowing>();
-        pathF.SetNPC(agent);
-        pathF.visibleRays = true;
-        pathF.maxAccel = 700f;
+        followPath = new FollowPath(agent, null, (_) => {
+            finished = true;
+        });
 
         SetNewTarget(target);
     }
 
-	public GoTo(AgentUnit agent, Vector3 target, Action<bool> callback) : this(agent, target, Mathf.Infinity, 0f, false, false, callback) { }
-	public GoTo(AgentUnit agent, Vector3 target, float reconsiderSeconds, float offset, bool defensive, Action<bool> callback) : this(agent, target, reconsiderSeconds, offset, defensive, false, callback) { }
+	public GoTo(AgentUnit agent, Vector3 target, Action<bool> callback) : this(agent, target, Mathf.Infinity, 0f, false, callback) { }
 
     private void ProcessPath(Vector3[] newPath, bool pathSuccessful) {
         if (pathSuccessful) {
-            pathF.SetPath(newPath);
-            Vector3 closestPoint = newPath.OrderBy(p => Util.HorizontalDist(p, agent.position)).First();
-            for (int i = 0; i < newPath.Length; ++i) {
-                if (closestPoint == newPath[i]) {
-                    pathF.currentPoint = i;
-                    break;
-                }
-               
-            }
+            followPath.SetPath(newPath);
         }
         else {
             Debug.Log("Pathfinding was not successful");
@@ -51,29 +37,25 @@ public class GoTo : Task {
     }
 
     public void FinishPath() {
-        pathF.SetPath(null);
+        followPath.SetPath(null);
     }
 
-    public void SetNewTarget(Vector3 new_target) {
-		if (random) {
-			do {
-				Vector2 offsetXY = UnityEngine.Random.insideUnitCircle * offset;
+    public void SetVisiblePath(bool visible) {
+        followPath.SetVisiblePath(visible);
+    }
 
-				target = new Vector3 (new_target.x + offsetXY [0], 1f, new_target.z + offsetXY [1]);
-			} while(!Map.NodeFromPosition (target, true).isWalkable ());
-		} else {
-			Vector3 A = agent.position;
-			Vector3 B = new_target;
-			Vector3 AB = B - A;
-			AB = AB.normalized;
-			target = B - (offset * AB);
-		}
-
-        pathF.path = null;
+    public void SetNewTarget(Vector3 new_target, bool modify = true) {
+        if (modify) {
+            do {
+                Vector2 offsetXY = UnityEngine.Random.insideUnitCircle * offset;
+                target = new Vector3(new_target.x + offsetXY[0], 1f, new_target.z + offsetXY[1]);
+            } while (!Map.NodeFromPosition(target, true).isWalkable());
+        }
+		
         if (defensive)
-            PathfindingManager.RequestPath(agent.position, target, agent.Cost, 100f, Util.OppositeFaction(agent.faction), ProcessPath);
+            PathfindingManager.RequestPath(agent.position, target, agent.Cost, agent.faction, ProcessPath);
         else
-            PathfindingManager.RequestPath(agent.position, target, agent.Cost, 100f, Faction.C, ProcessPath);
+            PathfindingManager.RequestPath(agent.position, target, agent.Cost, Faction.C, ProcessPath);
     }
 
     override
@@ -84,90 +66,36 @@ public class GoTo : Task {
             return st;
         }
 
-		if (pathF.path != null) {
-            /*if (Time.frameCount % 60 == 0) {
-                Vector3 closestPoint = pathF.path.OrderBy(p => Util.HorizontalDist(p, agent.position)).First();
-                for (int i = 0; i < pathF.path.Length; ++i) {
-                    if (closestPoint == pathF.path[i]) {
-                        pathF.currentPoint = i;
-                        break;
-                    }
-
-                }
-            }*/
+		if (followPath.HasPath()) {
 			if (Time.fixedTime - timeStamp > reconsiderSeconds) {
 				timeStamp = Time.fixedTime;
-				PathfindingManager.RequestPath (agent.position, target, agent.Cost, 100f, Faction.B, ProcessPath);
+                SetNewTarget(target, false);
 			}
 
-			st = pathF.GetSteering ();
+			st = followPath.Apply();
 		} else {
 			st= Seek.GetSteering(target, agent, 500f); //If path has not been solved yet just do Seek.
 		}
-            
-
-        //st += GetSeparation(2f);
 
         return st;
     }
 
     override
     protected bool IsFinished() {
-        //TODO
-        return Util.HorizontalDist(agent.position, target) < 0.3f;
+        return finished;
     }
 
     override
     public void Terminate() {
-        if (empty != null) UnityEngine.Object.Destroy(empty);
+        if (followPath != null) followPath.Terminate();
         agent.RequestStopMoving(); //To remove remaining forces of movement
     }
 
-    public void SetVisiblePath(bool visiblePath) {
-        pathF.visibleRays = visiblePath;
-    }
 
     override
     public String ToString() {
         return "GoTo -> "+target;
     }
-
-    public Steering GetSeparation( float decayCoefficient) {
-        Steering steering = new Steering();
-        var units = Info.GetUnitsArea(agent.position, 0.4f);
-        foreach (var unit in units) {
-            Vector3 direction = agent.position - unit.position;
-            float distance = direction.magnitude;
-            if (agent != unit) {
-                if (AngleDir2(new Vector2(agent.velocity.x, agent.velocity.z), new Vector2(-direction.x,-direction.z)) > 0f/*AngleDir(agent.velocity, unit.position - agent.position, Vector3.up) == 1.0f*/) {
-                    direction = Quaternion.Euler(0,45, 0) * direction.normalized;
-                }
-                else {
-                    direction = Quaternion.Euler(0, -45, 0) * direction.normalized;
-                }
-                steering.linear += 10000f * direction;
-
-            }
-            
-            
-        }
-        if (steering.linear.magnitude > 0) {
-            Debug.DrawRay(agent.position, steering.linear.normalized, Color.blue);
-            agent.hat.GetComponent<Renderer>().material.color = Color.yellow;
-        }
-        else {
-            agent.hat.GetComponent<Renderer>().material.color = MilitaryResourcesAllocator.strategyColor[agent.strategy];
-        }
-            //steering.linear *= (-1);
-
-            return steering;
-    }
-
-    public float AngleDir2(Vector2 A, Vector2 B) {
-        return -A.x * B.y + A.y * B.x;
-    }
-
-
 }
 
 

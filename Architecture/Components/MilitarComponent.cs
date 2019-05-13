@@ -63,6 +63,7 @@ public class MilitarComponent : UnitComponent {
     }
 
     public IEnumerator BlinkMesh() {
+        yield return new WaitForSeconds(0.2f);
         agent.SetRenderer(false);
 
         yield return new WaitForSeconds(0.15f);

@@ -45,7 +45,8 @@ public class LRTA  {
         }
 
         bool reachTarget = (currentNode == targetNode);
-        List<Vector3> waypoints = PathUtil.SimplifyPath(PathUtil.RemoveCycles(path), !reachTarget);
+        //List<Vector3> waypoints = PathUtil.SimplifyPath(PathUtil.RemoveCycles(path), !reachTarget);
+        List<Vector3> waypoints = PathUtil.SimplifyPath(PathUtil.RemoveCycles(path).Select(n => n.worldPosition).ToArray(), !reachTarget);
         if (reachTarget) waypoints.Add(targetPos);
 
         return waypoints.ToArray();

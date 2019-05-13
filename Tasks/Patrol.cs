@@ -7,24 +7,16 @@ public class Patrol : HostileTask {
 	Vector3 center;
 	float rangeRadius;
 	AgentUnit targetEnemy;
-	public Attack attack;
-	GoTo goTo;
-	const float followRangeExtra = 1f;
-	bool returning;
+	FollowPath followPath;
+    public Attack attack;
+    const float followRangeExtra = 1f;
 
-	public Patrol(AgentUnit agent, Vector3 center, float rangeRadius, Action<bool> callback) : base(agent,callback) {
+	public Patrol(AgentUnit agent, Vector3[] path, float rangeRadius, Action<bool> callback) : base(agent,callback) {
 		Debug.Assert(followRangeExtra >= 1f);
-		this.center = center;
 		this.rangeRadius = rangeRadius;
 		targetEnemy = null;
 		attack = null;
-		goTo = new GoTo(agent, center, Mathf.Infinity, rangeRadius / 3, false, (_) => {
-			returning = false;
-			goTo.SetVisiblePath(false);
-			agent.RequestStopMoving();
-		}); //The offset should be smaller than the distance when it is consider far
-		goTo.SetVisiblePath(false);
-		returning = false;
+        followPath = new FollowPath(agent, path, FollowT.LOOP, (_) => {});
 	}
 
 	//If you are attacked by a different unit you will start figthing with it unless that you are already figthing or very close to your target
@@ -47,8 +39,6 @@ public class Patrol : HostileTask {
 		if (newEnemy != null) {
 			Debug.Log("Found enemy " + newEnemy.name + " distance " + Util.HorizontalDist(newEnemy.position, agent.position) +" by "+agent.name);
 			targetEnemy = newEnemy;
-			returning = false;
-			goTo.SetVisiblePath(false);
 			attack = new Attack(agent, targetEnemy, (_) => {
 				attack.Terminate();
 				attack = null;
@@ -72,21 +62,11 @@ public class Patrol : HostileTask {
 				.OrderBy(enemy => Util.HorizontalDist(agent.position, enemy.position))
 				.FirstOrDefault();
 
-
 			AttackEnemy(closerEnemy);
-
-			//if it does not find any target that it returns back to the center
-
-			if (closerEnemy == null && !returning && Util.HorizontalDist(agent.position, center) > rangeRadius / 2 ) { 
-				goTo.SetNewTarget(center);
-				goTo.SetVisiblePath(true);
-				returning = true;
-			}
-
 		}
 
 		if (attack != null) st = attack.Apply();
-		else if (returning) st = goTo.Apply();
+		else st = followPath.Apply();
 
 		return st;
 	}
@@ -99,6 +79,7 @@ public class Patrol : HostileTask {
 	override
 	public void Terminate() {
 		if (attack != null) attack.Terminate();
+        if (followPath != null) followPath.Terminate();
 	}
 
 	override

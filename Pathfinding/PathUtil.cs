@@ -9,7 +9,7 @@ public enum DistanceT {
 public class PathUtil : MonoBehaviour {
 
     //Simplfies path and does not add the targetNode, since the last position is no the center of targetNode but targetPos
-    public static List<Vector3> SimplifyPath(List<Node> path, bool includeLast = false) {
+    /*public static List<Vector3> SimplifyPath(List<Node> path, bool includeLast = false) {
         List<Vector3> waypoints = new List<Vector3>();
         Vector2 oldDirection = Vector2.zero;
 
@@ -22,6 +22,23 @@ public class PathUtil : MonoBehaviour {
         }
         if (includeLast)
             waypoints.Add(path[path.Count - 1].worldPosition);
+
+        return waypoints;
+    }*/
+
+    public static List<Vector3> SimplifyPath(Vector3[] path, bool includeLast = false) {
+        List<Vector3> waypoints = new List<Vector3>();
+        Vector2 oldDirection = Vector2.zero;
+
+        for (int i = 1; i < path.Length; i++) {
+            Vector2 newDirection = new Vector2(path[i-1].x - path[i].x, path[i-1].z - path[i].z);
+            if (newDirection != oldDirection) {
+                waypoints.Add(path[i - 1]);
+            }
+            oldDirection = newDirection;
+        }
+        if (includeLast)
+            waypoints.Add(path[path.Length - 1]);
 
         return waypoints;
     }

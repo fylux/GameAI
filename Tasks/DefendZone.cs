@@ -103,6 +103,7 @@ public class DefendZone : HostileTask {
     override
     public void Terminate() {
         if (attack != null) attack.Terminate();
+        if (goTo != null) goTo.Terminate();
     }
 
     override

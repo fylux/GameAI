@@ -85,7 +85,7 @@ public class Select : MonoBehaviour {
 					offset = 0; 
 
                 foreach (AgentUnit unit in selectedUnits) {
-					unit.SetTask(new GoTo(unit, hit.point, Mathf.Infinity, offset, false, true, (bool success) =>
+					unit.SetTask(new GoTo(unit, hit.point, Mathf.Infinity, offset, false, (bool success) =>
 						{
 							Destroy(cube);
 							cube = null;

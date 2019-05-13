@@ -13,7 +13,7 @@ public class AStar {
     PathfindingManager requestManager;
 
 
-    public IEnumerator FindPath(Vector3 startPos, Vector3 targetPos, Dictionary<NodeT, float> cost, float influenceFactor, Faction faction, Action<Vector3[], bool> FinishedProcessing) {
+    public IEnumerator FindPath(Vector3 startPos, Vector3 targetPos, Dictionary<NodeT, float> cost, Faction faction, Action<Vector3[], bool> FinishedProcessing) {
         prev = new Dictionary<Node, Node>();
         bool pathSuccess = false;
 
@@ -47,10 +47,13 @@ public class AStar {
 
                     float r = 0;
                     if (faction != Faction.C) {
-                        float z = neighbour.GetRawInfluence(faction, Map.clusterInfluence);
+                        float z = neighbour.GetRawInfluence(Util.OppositeFaction(faction), Map.clusterInfluence);
 
                         if (z > 200/3f) {
                             r = 4;
+                        }
+                        if (z > 200 / 6f) {
+                            r = 1;
                         }
                     }
                     
@@ -59,7 +62,6 @@ public class AStar {
                     //This penaly for the terrain is based on the idea that if you move from road to forest is slower than from forest to road
                     float newMovementCostToNeighbour = currentNode.gCost 
                                                         + PathUtil.realDist(currentNode, neighbour) * cost[neighbour.type]
-                                                        //+ (100+neighbour.GetInfluence(Util.OppositeFaction(faction))) / 200f * influenceFactor;
                                                         +r ;
 
 

@@ -84,6 +84,6 @@ public class Patrol : HostileTask {
 
 	override
 	public String ToString() {
-		return "DefendZone -> " + center;
+		return "Patrol -> " + center;
 	}
 }

@@ -114,13 +114,13 @@ public static class Info {
         Vector2 adv = new Vector2(GetAvgAdvantage(unitGroups, 1), GetAvgAdvantage(unitGroups, 0));
 
 
-        /*if (dbg)*/ Debug.Log("Numero de unidades de A: " + number[0] + ", y de B: " + number[1]);
+        if (dbg) Debug.Log("Numero de unidades de A: " + number[0] + ", y de B: " + number[1]);
         /* Debug.Log("HP de A: " + HP[0] + ", y de B: " + HP[1]);
          Debug.Log("ATK de A: " + ATK[0] + ", y de B: " + ATK[1]);
          Debug.Log("Melees de A: " + melee[0] + ", rangeds: " + ranged[0] + ", scouts: " + scouts[0] + ", y artilleria: " + artill[0]);
          Debug.Log("Melees de B: " + melee[1] + ", rangeds: " + ranged[1] + ", scouts: " + scouts[1] + ", y artilleria: " + artill[1]);*/
 
-        /*if (dbg)*/ Debug.Log("La ventaja gracias a las tablas de A es de " + adv[0] + ", y la de B es " + adv[1]);
+        if (dbg) Debug.Log("La ventaja gracias a las tablas de A es de " + adv[0] + ", y la de B es " + adv[1]);
 
 
 		float result;
@@ -135,7 +135,7 @@ public static class Info {
 			result = Mathf.Sqrt ((HP [i] * (ATK [i] + adv [i])) -  (HP [j] * (ATK [j] + adv [j])));
 		}
 
-        /*if (dbg)*/ Debug.Log("La ventaja total de "+fact.ToString()+" es de :" + result);
+        if (dbg) Debug.Log("La ventaja total de "+fact.ToString()+" es de :" + result);
 
         return result;
     }

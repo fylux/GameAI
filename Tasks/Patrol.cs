@@ -61,10 +61,10 @@ public class Patrol : HostileTask {
 			AgentUnit closerEnemy = Info.GetUnitsFactionArea(center, rangeRadius + agent.attackRange, Util.OppositeFaction(agent.faction))
 				.OrderBy(enemy => Util.HorizontalDist(agent.position, enemy.position))
 				.FirstOrDefault();
-
 			AttackEnemy(closerEnemy);
 		}
 
+		center = agent.position;
 		if (attack != null) st = attack.Apply();
 		else st = followPath.Apply();
 

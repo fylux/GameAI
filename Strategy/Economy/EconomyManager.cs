@@ -53,11 +53,11 @@ public class EconomyManager : MonoBehaviour {
 		if (Time.frameCount % 30 == 0 && goldGeneration) {
 			gold+=goldPerSecond;
 
-			if (Map.GetAllies (faction).Count < 20 && gold >= 50) {
+			if (Map.GetAllies(faction).Count < 20 && gold >= 50) {
 				gold -= 50;
-				GenerateUnit (generationManager.GetMostImportantUnit());
+				GenerateUnit(generationManager.GetMostImportantUnit());
 			}
-            Debug.Log(goldDisplay);
+
 			goldDisplay.text = faction + " Gold: [" + gold + "]";
 		}
 	}
@@ -65,8 +65,9 @@ public class EconomyManager : MonoBehaviour {
 	void GenerateUnit(UnitT type){
 		GameObject created = GameObject.Instantiate(units[type], (Info.GetWaypoint("base", faction) + new Vector3(-2,0.5f,-2)), Quaternion.identity) as GameObject; // TODO Cambiarlo por un waypoint
 		AgentUnit newUnit = created.GetComponent<AgentUnit>();
-		Map.unitList.Add (newUnit);
+		Map.unitList.Add(newUnit);
 		Debug.Log ("Generada una unidad de " + type);
-		stratManager.forceStrats = true;
+        stratManager.CycleLayer12();
+		//stratManager.forceStrats = true;
 	}
 }

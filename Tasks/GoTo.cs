@@ -46,12 +46,14 @@ public class GoTo : Task {
 
     public void SetNewTarget(Vector3 new_target, bool modify = true) {
         if (modify) {
+            int i = 0;
             do {
                 Vector2 offsetXY = UnityEngine.Random.insideUnitCircle * offset;
                 target = new Vector3(new_target.x + offsetXY[0], 1f, new_target.z + offsetXY[1]);
-            } while (!Map.NodeFromPosition(target, true).isWalkable());
+                i++;
+            } while (!Map.NodeFromPosition(target, true).isWalkable() && i < 10);
         }
-		
+
         if (defensive)
             PathfindingManager.RequestPath(agent.position, target, agent.Cost, agent.faction, ProcessPath);
         else

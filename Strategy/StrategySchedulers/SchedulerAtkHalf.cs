@@ -76,7 +76,7 @@ public class SchedulerAtkHalf : SchedulerStrategy {
                     var enemiesByDistance = selectedCluster.OrderBy(unit => Util.HorizontalDist(ally.position, unit.position));
                     AgentUnit closestEnemy = enemiesByDistance.First();
                     var distanceToEnemy = Util.HorizontalDist(ally.position, closestEnemy.position);
-
+    
                     foreach (var unitType in ally.GetPreferredEnemies())
                     {
                         var closestEnemyOfType = enemiesByDistance.Where(u => u.GetUnitType() == unitType).FirstOrDefault();

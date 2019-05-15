@@ -9,7 +9,6 @@ public class Ranged : AgentUnit {
         base.Start();
         // Los atributos de los Ranged son con los que hemos estado trabajando, los default
         MaxVelocity = 3;
-        preferredEnemies = new UnitT[] { UnitT.SCOUT, UnitT.MELEE, UnitT.RANGED, UnitT.ARTIL };
 
         cost = new Dictionary<NodeT, float>() {
             { NodeT.ROAD, 1 },
@@ -23,5 +22,9 @@ public class Ranged : AgentUnit {
 
     public override UnitT GetUnitType() {
         return UnitT.RANGED;
+    }
+
+    public override UnitT[] GetPreferredEnemies() {
+        return new UnitT[] { UnitT.SCOUT, UnitT.MELEE, UnitT.RANGED, UnitT.ARTIL };
     }
 }

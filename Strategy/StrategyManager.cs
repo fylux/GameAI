@@ -55,8 +55,11 @@ public class StrategyManager : MonoBehaviour {
                 militaryResourceAllocator.SetPriority(strategyLayer.GetPriority()); //TESTGGG DESACTIVAR MIENTRAS ESTEMOS HACIENDO PRUEBAS
                 Dictionary<StrategyT, HashSet<AgentUnit>> unitsToStrategy = militaryResourceAllocator.AllocateResources();
 
+				foreach (var strategy in strategySchedulers.Keys) {
+					strategySchedulers[strategy].Reset();
+				}
+
                 foreach (var strategy in unitsToStrategy.Keys) {
-                    strategySchedulers[strategy].Reset();
                     strategySchedulers[strategy].usableUnits = unitsToStrategy[strategy];
                 }
             }

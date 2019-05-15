@@ -34,12 +34,8 @@ public abstract class AgentUnit : AgentNPC {
             { 0.8f, 1.25f,  1.5f,   1   }  //Artill
         };
 
-    protected UnitT[] preferredEnemies;
-
-    public UnitT[] GetPreferredEnemies()
-    {
-        return preferredEnemies;
-    }
+    public abstract UnitT[] GetPreferredEnemies();
+    
 
     abstract public UnitT GetUnitType();
 

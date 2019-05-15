@@ -10,7 +10,6 @@ public class Scout : AgentUnit {
         MaxAccel = 30;
         MaxRotation = 70;
         MaxAngular = 70;
-        preferredEnemies = new UnitT[] { UnitT.RANGED, UnitT.SCOUT, UnitT.MELEE, UnitT.ARTIL };
 
         cost = new Dictionary<NodeT, float>() {
             { NodeT.ROAD, 1 },
@@ -24,5 +23,9 @@ public class Scout : AgentUnit {
 
     public override UnitT GetUnitType() {
         return UnitT.SCOUT;
+    }
+
+    public override UnitT[] GetPreferredEnemies() {
+        return new UnitT[] { UnitT.RANGED, UnitT.SCOUT, UnitT.MELEE, UnitT.ARTIL };
     }
 }

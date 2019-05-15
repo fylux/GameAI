@@ -57,7 +57,7 @@ public class EconomyManager : MonoBehaviour {
 				gold -= 50;
 				GenerateUnit (generationManager.GetMostImportantUnit());
 			}
-
+            Debug.Log(goldDisplay);
 			goldDisplay.text = faction + " Gold: [" + gold + "]";
 		}
 	}

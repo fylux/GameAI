@@ -101,7 +101,6 @@ public class MilitaryResourcesAllocator {
             nUnitsAllocToStrategy[strategy]++;
         }
 
-
         Dictionary<AgentUnit, Dictionary<StrategyT, float>> strategyAffinity = availableUnits.ToDictionary(u => u, u => Info.GetStrategyPriority(u, faction));
 
         //Assign units with the same strategy

@@ -80,7 +80,7 @@ public class GoTo : Task {
 
 			st = followPath.Apply();
 		} else {
-			st= Seek.GetSteering(target, agent, 500f); //If path has not been solved yet just do Seek.
+			//st= Seek.GetSteering(target, agent, 500f); //If path has not been solved yet just do Seek.
 		}
 
         return st;

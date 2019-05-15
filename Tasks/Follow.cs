@@ -15,13 +15,14 @@ public class Follow : Task {
         this.target = target;
         this.lastTargetPosition = target.position;
         Debug.Assert(Map.NodeFromPosition(target.position).isWalkable());
-        this.goTo = new GoTo(agent, GetFutureTargetPosition(), (_) => {});
+        this.goTo = new GoTo(agent, target.position/*GetFutureTargetPosition()*/, (_) => {});
         inRange = IsNearEnough();
     }
 
     bool ReconsiderPath() {
         if (Util.HorizontalDist(lastTargetPosition, target.position) > 0.4) {
-            goTo.SetNewTarget(GetFutureTargetPosition());
+        	//goTo.SetNewTarget(GetFutureTargetPosition());
+            goTo.SetNewTarget(target.position);
             lastTargetPosition = target.position;
             return true;
         }

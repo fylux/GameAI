@@ -44,7 +44,6 @@ public abstract class AgentUnit : AgentNPC {
         base.Start();
         //path_target = null;
         militar.SetAgent(this);
-		Map.unitList.Add (this);
     }
 
 

@@ -51,8 +51,11 @@ public class GoTo : Task {
                 Vector2 offsetXY = UnityEngine.Random.insideUnitCircle * offset;
                 target = Map.Clamp(new Vector3(new_target.x + offsetXY[0], 1f, new_target.z + offsetXY[1]));
                 i++;
-            } while (!Map.NodeFromPosition(target).isWalkable() && i < 15);
-            Debug.Assert(Map.NodeFromPosition(target).isWalkable());
+            } while (!Map.NodeFromPosition(target).isWalkable() && i < 10);
+            if (!Map.NodeFromPosition(target).isWalkable()) {
+                Debug.LogError(target);
+            }
+            
         }
 
         if (defensive)

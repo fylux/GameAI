@@ -20,7 +20,5 @@ public abstract class SchedulerStrategy {
         enemyBase = Info.GetWaypoint("base", enemyFaction);
     }
 
-    public virtual void Reset() { 
-		usableUnits = new HashSet<AgentUnit>();
-	}
+    public virtual void Reset() { usableUnits = new HashSet<AgentUnit>(); }
 }

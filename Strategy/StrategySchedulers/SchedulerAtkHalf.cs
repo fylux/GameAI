@@ -98,8 +98,6 @@ public class SchedulerAtkHalf : SchedulerStrategy {
             }
         }
 
-        return;
-
 
         //var unitsCluster = new HashSet<AgentUnit>(selectedCluster);
 

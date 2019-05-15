@@ -11,7 +11,7 @@ public class StrategyManager : MonoBehaviour {
 	[SerializeField]
 	Text strategies;
 
-   // public bool forceStrats; //TESTGGG para permitir las pruebas con cambios de estrategia
+    public bool forceStrats; //TESTGGG para permitir las pruebas con cambios de estrategia
 	public bool onlyOne;
 	bool block = false;
 

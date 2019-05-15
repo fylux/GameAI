@@ -30,6 +30,12 @@ public class EconomyManager : MonoBehaviour {
 
 	GenerationManager generationManager;
 
+	Dictionary <UnitT,float> priority = new Dictionary<UnitT, float>() {
+		{ UnitT.MELEE, 0},
+		{ UnitT.RANGED, 0},
+		{ UnitT.SCOUT, 0},
+		{ UnitT.ARTIL, 0}};
+
 	// Use this for initialization
 	void Start () {
 		units = new Dictionary<UnitT, GameObject>(){
@@ -59,10 +65,9 @@ public class EconomyManager : MonoBehaviour {
 	void GenerateUnit(UnitT type){
 		GameObject created = GameObject.Instantiate(units[type], (Info.GetWaypoint("base", faction) + new Vector3(-2,0.5f,-2)), Quaternion.identity) as GameObject; // TODO Cambiarlo por un waypoint
 		AgentUnit newUnit = created.GetComponent<AgentUnit>();
-
         newUnit.transform.parent = transform.parent;
         newUnit.Start();
-        
+
         Map.unitList.Add(newUnit);
 		Debug.Log ("Generada una unidad de " + type);
 

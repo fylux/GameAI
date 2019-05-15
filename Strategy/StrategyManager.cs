@@ -11,7 +11,7 @@ public class StrategyManager : MonoBehaviour {
 	[SerializeField]
 	Text strategies;
 
-    public bool forceStrats; //TESTGGG para permitir las pruebas con cambios de estrategia
+   // public bool forceStrats; //TESTGGG para permitir las pruebas con cambios de estrategia
 	public bool onlyOne;
 	bool block = false;
 
@@ -44,24 +44,10 @@ public class StrategyManager : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-		if (Time.frameCount % 120 == 0 || forceStrats == true) {
+		if (Time.frameCount % 120 == 0 /*|| forceStrats == true*/) {
             //Layer1
-			if ((strategyLayer.Apply() || forceStrats == true) && block == false) { //TESTGGG eliminar lo del block
-				if (onlyOne) block = true;
-				forceStrats = false; // Esta no deberia eliminarse porque la necesitamos para crear unidades 
-                Debug.Log("HAN CAMBIADO LOS VALORES DE ESTRATEGIA, REASIGNANDO TROPAS");
-				DrawStrategyValues();
-                //Layer 2
-                militaryResourceAllocator.SetPriority(strategyLayer.GetPriority()); //TESTGGG DESACTIVAR MIENTRAS ESTEMOS HACIENDO PRUEBAS
-                Dictionary<StrategyT, HashSet<AgentUnit>> unitsToStrategy = militaryResourceAllocator.AllocateResources();
-
-				foreach (var strategy in strategySchedulers.Keys) {
-					strategySchedulers[strategy].Reset();
-				}
-
-                foreach (var strategy in unitsToStrategy.Keys) {
-                    strategySchedulers[strategy].usableUnits = unitsToStrategy[strategy];
-                }
+			if ((strategyLayer.Apply() /*|| forceStrats == true*/) && block == false) { //TESTGGG eliminar lo del block
+				updateStrategies();
             }
         }
 
@@ -77,6 +63,24 @@ public class StrategyManager : MonoBehaviour {
         //Layer 4
         //Each unit will just apply its assigned task
     }
+
+	public void updateStrategies() {
+		if (onlyOne) block = true;
+		//forceStrats = false; // Esta no deberia eliminarse porque la necesitamos para crear unidades 
+		Debug.Log("HAN CAMBIADO LOS VALORES DE ESTRATEGIA, REASIGNANDO TROPAS");
+		DrawStrategyValues();
+		//Layer 2
+		militaryResourceAllocator.SetPriority(strategyLayer.GetPriority()); //TESTGGG DESACTIVAR MIENTRAS ESTEMOS HACIENDO PRUEBAS
+		Dictionary<StrategyT, HashSet<AgentUnit>> unitsToStrategy = militaryResourceAllocator.AllocateResources();
+
+		foreach (var strategy in strategySchedulers.Keys) {
+			strategySchedulers[strategy].Reset();
+		}
+
+		foreach (var strategy in unitsToStrategy.Keys) {
+			strategySchedulers[strategy].usableUnits = unitsToStrategy[strategy];
+		}
+	}
 
 	void DrawStrategyValues (){
 		strategies.text = "DB " + strategyLayer.priority[StrategyT.DEF_BASE].ToString("F2")

@@ -17,7 +17,6 @@ public class Map {
 
     public static Vector2[,] drawnMap;
 
-
     //This is called from load map
     public static void Init(Node[,] _grid, Vector2 _gridSize) {
         

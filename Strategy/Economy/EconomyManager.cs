@@ -25,6 +25,9 @@ public class EconomyManager : MonoBehaviour {
     [SerializeField]
 	int gold;
 
+	[SerializeField]
+	int goldPerSecond;
+
 	GenerationManager generationManager;
 
 	Dictionary <UnitT,float> priority = new Dictionary<UnitT, float>() {
@@ -48,19 +51,19 @@ public class EconomyManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (Time.frameCount % 30 == 0 && goldGeneration) {
-			gold+=20;
+			gold+=goldPerSecond;
 
 			if (Map.GetAllies (faction).Count < 20 && gold >= 50) {
 				gold -= 50;
 				GenerateUnit (generationManager.GetMostImportantUnit());
 			}
 
-			goldDisplay.text = "Gold: [" + gold + "]";
+			goldDisplay.text = faction + " Gold: [" + gold + "]";
 		}
 	}
 
 	void GenerateUnit(UnitT type){
-		GameObject created = GameObject.Instantiate(units[type], (Info.GetWaypoint("base", faction) + new Vector3(0,0.5f,0)), Quaternion.identity) as GameObject;
+		GameObject created = GameObject.Instantiate(units[type], (Info.GetWaypoint("base", faction) + new Vector3(-2,0.5f,-2)), Quaternion.identity) as GameObject; // TODO Cambiarlo por un waypoint
 		AgentUnit newUnit = created.GetComponent<AgentUnit>();
 		Map.unitList.Add (newUnit);
 		Debug.Log ("Generada una unidad de " + type);

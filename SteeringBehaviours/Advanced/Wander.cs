@@ -44,10 +44,10 @@ public class Wander : SteeringBehaviour {
     public static Steering GetSteering(Agent npc, Steering wanderForce, float wanderCooldown, float wanderRate, float wanderOrientation, float offset, float radius, float maxAccel, float timeToTarget, bool visibleRays)
     {
 
-        if (Time.frameCount % wanderCooldown == 0)
-        {
+    //    if (Time.frameCount % wanderCooldown == 0)
+    //    {
             wanderForce = GetRandomWanderForce(npc, wanderForce, wanderRate, wanderOrientation, offset, radius, maxAccel, timeToTarget);
-        }
+     //   }
 
         if (visibleRays)
         {

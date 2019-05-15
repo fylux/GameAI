@@ -11,7 +11,7 @@ public class MilitaryResourcesAllocator {
          { StrategyT.DEF_BASE, new HashSet<AgentUnit>() },
          { StrategyT.DEF_HALF, new HashSet<AgentUnit>() }
      };*/
-	
+
     Dictionary<StrategyT, float> importanceWeigth;
     public Dictionary<StrategyT, float> priority; //TESTGGG cambiar la visibilidad a privado
     Dictionary<StrategyT, float> offensiveWeight = new Dictionary<StrategyT, float>() {
@@ -31,14 +31,14 @@ public class MilitaryResourcesAllocator {
 
     public Faction faction;
 
-	public MilitaryResourcesAllocator(Faction faction, float atkbase, float defbase, float atkhalf, float defhalf) {
+    public MilitaryResourcesAllocator(Faction faction, float atkbase, float defbase, float atkhalf, float defhalf) {
         this.faction = faction;
 
         priority = new Dictionary<StrategyT, float>() {
             { StrategyT.ATK_BASE, atkbase},
-			{ StrategyT.ATK_HALF, atkhalf},
-			{ StrategyT.DEF_BASE, defbase},
-			{ StrategyT.DEF_HALF, defhalf}
+            { StrategyT.ATK_HALF, atkhalf},
+            { StrategyT.DEF_BASE, defbase},
+            { StrategyT.DEF_HALF, defhalf}
         };
 
         importanceWeigth = new Dictionary<StrategyT, float>() {
@@ -64,11 +64,22 @@ public class MilitaryResourcesAllocator {
         WeigthStrategies();
         NormalizeStrategies();
         PruneStrategies();
-        NormalizeStrategies();
 
         if (priority.Count == 0) {
-            Debug.Log("No strategy has enough importance");
+            Debug.Log("No strategy has enough importance. Giving all importance to DEF_BASE");
+            unitsAssignedToStrategy[StrategyT.DEF_BASE] = new HashSet<AgentUnit>(availableUnits);
+
+            foreach (AgentUnit unit in unitsAssignedToStrategy[StrategyT.DEF_BASE]) {
+                unit.hat.GetComponent<Renderer>().material.color = strategyColor[StrategyT.DEF_BASE];
+                if (unit.strategy != StrategyT.DEF_BASE) {
+                    unit.ResetTask();
+                }
+                unit.strategy = StrategyT.DEF_BASE;
+            }
+            return unitsAssignedToStrategy;
         }
+
+        NormalizeStrategies();
 
 
         //Map to number of units
@@ -76,21 +87,20 @@ public class MilitaryResourcesAllocator {
         Dictionary<StrategyT, int> nUnitsAllocToStrategy = priority.ToDictionary(w => w.Key, w => Mathf.FloorToInt(w.Value * nTotalAvailableUnits));
 
         //Asign remaining units to the most important strategy
-        StrategyT mostImportantStrategy = priority.OrderBy(strategy => strategy.Value).Last().Key;
+        /*StrategyT mostImportantStrategy = priority.OrderBy(strategy => strategy.Value).Last().Key;
         nUnitsAllocToStrategy[mostImportantStrategy] += nTotalAvailableUnits - nUnitsAllocToStrategy.Sum(w => w.Value);
-        Debug.Assert(nUnitsAllocToStrategy.Sum(w => w.Value) == nTotalAvailableUnits);
+        Debug.Assert(nUnitsAllocToStrategy.Sum(w => w.Value) == nTotalAvailableUnits);*/
 
-        /*int nRemainingUnits = nTotalAvailableUnits - nUnitsAllocToStrategy.Sum(w => w.Value);
+
+        //Asign remaining units to the strategies with biggest rounding error
+        int nRemainingUnits = nTotalAvailableUnits - nUnitsAllocToStrategy.Sum(w => w.Value);
         var strategiesByAllocResidual = priority.OrderByDescending(s => (s.Value * nTotalAvailableUnits) - Mathf.FloorToInt(s.Value * nTotalAvailableUnits))
                                         .Select(s => s.Key)
                                         .Take(nRemainingUnits);
         foreach (StrategyT strategy in strategiesByAllocResidual) {
             nUnitsAllocToStrategy[strategy]++;
-        }*/
+        }
 
-        /*foreach (var z in nUnitsAllocToStrategy) {
-            Debug.Log(z.Key + " " + z.Value + "; weight: " + priority[z.Key]);
-        }*/
 
         Dictionary<AgentUnit, Dictionary<StrategyT, float>> strategyAffinity = availableUnits.ToDictionary(u => u, u => Info.GetStrategyPriority(u, faction));
 
@@ -110,18 +120,13 @@ public class MilitaryResourcesAllocator {
 
         Debug.Assert(nUnitsAllocToStrategy.Sum(w => w.Value) == availableUnits.Count);
 
-        /*Debug.Log("List available unit");
-        foreach (var unit in availableUnits) {
-            Debug.Log(unit.name);
-        }*/
-
         //Assign units to strategies based on affinity
         while (priority.Keys.Any(s => nUnitsAllocToStrategy[s] > 0)) {
             var remainingStrategies = new HashSet<StrategyT>(priority.Keys.Where(s => nUnitsAllocToStrategy[s] > 0));
             var mostAffineUnit = strategyAffinity.OrderBy(unit => unit.Value.Where(s => remainingStrategies.Contains(s.Key)).Min(s => s.Value)).First().Key;
             var strategy = strategyAffinity[mostAffineUnit].Where(s => remainingStrategies.Contains(s.Key)).OrderBy(s => s.Value).First().Key;
 
-        //    Debug.Log("Most affine unit for " + strategy + " is " + mostAffineUnit.name + ", affinity: " + strategyAffinity[mostAffineUnit][strategy]);
+            //    Debug.Log("Most affine unit for " + strategy + " is " + mostAffineUnit.name + ", affinity: " + strategyAffinity[mostAffineUnit][strategy]);
 
             unitsAssignedToStrategy[strategy].Add(mostAffineUnit);
             strategyAffinity.Remove(mostAffineUnit);
@@ -181,11 +186,13 @@ public class MilitaryResourcesAllocator {
 
     public void NormalizeStrategies() {
         float sum = priority.Sum(w => w.Value);
+        //Debug.Assert(sum > 0f);
+        if (!(sum > 0)) sum = 1f;
         foreach (StrategyT strategy in priority.Keys.ToList()) {
             priority[strategy] /= sum;
         }
     }
-    
+
     //Here we can remove strategies that do not have enough importance or do not fulfill the requirements to be considered
     public void PruneStrategies() {
         foreach (StrategyT strategy in priority.Keys.ToList()) {
@@ -195,36 +202,8 @@ public class MilitaryResourcesAllocator {
         }
     }
 
-
-    /* void ClearUnitSets()
-     {
-         foreach (KeyValuePair<StrategyT,HashSet<AgentUnit>> tuple in strategyUnits)
-         {
-             tuple.Value.Clear();
-         }
-     }
-
-     void CheckUnitsStrategy()
-     {
-         Debug.Log("Unidades --> ");
-         Debug.Log("Defbase tiene " + strategyUnits[StrategyT.DEF_BASE].Count);
-         Debug.Log("Defhalf tiene " + strategyUnits[StrategyT.DEF_HALF].Count);
-         Debug.Log("Atkhalf tiene " + strategyUnits[StrategyT.ATK_HALF].Count);
-         Debug.Log("Atkbase tiene " + strategyUnits[StrategyT.ATK_BASE].Count);
-
-
-         foreach (KeyValuePair<StrategyT, HashSet<AgentUnit>> tuple in strategyUnits)
-         {
-             foreach (AgentUnit unit in tuple.Value)
-             {
-                 Debug.Log("La estrategia " + tuple.Key + " tiene a la unidad " + unit);
-             }
-
-         }
-     }
-     */
     public void SetPriority(Dictionary<StrategyT, float> priority) {
-	this.priority = new Dictionary<StrategyT, float>(priority);
+        this.priority = new Dictionary<StrategyT, float>(priority);
     }
 
     public void SetImportanceWeights(Dictionary<StrategyT, float> weights) {

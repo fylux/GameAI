@@ -14,6 +14,7 @@ public class Follow : Task {
 	public Follow(AgentUnit agent, AgentUnit target, Action<bool> callback) : base(agent,callback) {
         this.target = target;
         this.lastTargetPosition = target.position;
+        Debug.Assert(Map.NodeFromPosition(target.position).isWalkable());
         this.goTo = new GoTo(agent, GetFutureTargetPosition(), (_) => {});
         inRange = IsNearEnough();
     }
@@ -29,9 +30,9 @@ public class Follow : Task {
 
     Vector3 GetFutureTargetPosition() {
         float lookAhead = Mathf.Clamp(Util.HorizontalDist(agent.position, target.position) / 2f, 0, 3);
-        Vector3 futurePosition = target.position + target.velocity * lookAhead;
+        Vector3 futurePosition = Map.Clamp(target.position + target.velocity * lookAhead);
         //Only predict if it is not too close and the prediction is a walkable place
-        if (Util.HorizontalDist(agent.position, target.position) > 4f && Map.NodeFromPosition(futurePosition, true).isWalkable())
+        if (Util.HorizontalDist(agent.position, target.position) > 4f && Map.NodeFromPosition(futurePosition).isWalkable())
             return futurePosition;
         else
             return target.position;

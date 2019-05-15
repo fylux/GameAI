@@ -32,9 +32,9 @@ public class Map {
 
         drawnMap = generalInfluence;
 
-        foreach (GameObject npc in GameObject.FindGameObjectsWithTag("NPC")) {
+        /*foreach (GameObject npc in GameObject.FindGameObjectsWithTag("NPC")) {
             unitList.Add(npc.GetComponent<AgentUnit>());
-        }
+        }*/
 
         unitsMask = LayerMask.GetMask("Unit");
         healingMask = LayerMask.GetMask("Healing");
@@ -94,20 +94,20 @@ public class Map {
         return neighbours;
     }
 
-    public static Node NodeFromPosition(Vector3 nodePosition, bool clamp=false) {
+    public static Node NodeFromPosition(Vector3 nodePosition) {
         float percentX = Mathf.Clamp01(nodePosition.x / gridSize.x);
         float percentY = Mathf.Clamp01(nodePosition.z / gridSize.y);
 
         int x = Mathf.FloorToInt(mapX * percentX);
         int y = Mathf.FloorToInt(mapY * percentY);
 
-        if (clamp) {
-            x = Mathf.Clamp(x, 0, mapX - 1);
-            y = Mathf.Clamp(y, 0, mapY - 1);
-        }
-
         Assert.IsTrue(x < mapX && y < mapY && x >= 0 && y >= 0);
         return grid[x, y];
+    }
+
+
+    public static Vector3 Clamp(Vector3 v) {
+        return new Vector3(Mathf.Clamp(v.x, 0f, mapX), v.y, Mathf.Clamp(v.z, 0f, mapY));
     }
 
 

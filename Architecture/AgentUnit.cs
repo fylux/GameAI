@@ -40,7 +40,7 @@ public abstract class AgentUnit : AgentNPC {
     abstract public UnitT GetUnitType();
 
     new
-    protected void Start() {
+    public void Start() {
         base.Start();
         //path_target = null;
         militar.SetAgent(this);

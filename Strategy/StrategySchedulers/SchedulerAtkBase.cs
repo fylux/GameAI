@@ -93,6 +93,7 @@ public class SchedulerAtkBase : SchedulerStrategy
     override
     public void Reset() // Para limpiar las unidades de las listas cada vez que haya un gran cambio
     {
+        base.Reset();
         regr.Clear();
         atking.Clear();
     }

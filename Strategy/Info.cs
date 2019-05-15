@@ -64,7 +64,7 @@ public static class Info {
     }
 
     public static HashSet<AgentUnit> GetUnitsFactionArea(Vector3 center, float areaSize, Faction fact) {
-        return new HashSet<AgentUnit>(GetUnitsArea(center, areaSize).Select(hit => hit.GetComponent<AgentUnit>()).Where(unit => unit.faction == fact));
+        return new HashSet<AgentUnit>(GetUnitsArea(center, areaSize).Where(unit => unit.faction == fact));
     }
 
     //CUIDADO: Puede devolver null si no hay unidades en ese rango

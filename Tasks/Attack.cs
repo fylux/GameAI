@@ -23,6 +23,9 @@ public class Attack : Task {
 
 
         if (follow.IsInRange()) {
+            follow.Apply(); //Keep detecting if enemy moves
+            agent.RequestStopMoving();
+
             if ((Time.fixedTime - timeStamp) * agent.militar.attackSpeed > 1) {
                 agent.militar.Attack(targetEnemy);
                 timeStamp = Time.fixedTime;
@@ -43,7 +46,7 @@ public class Attack : Task {
 
     override
     public void Terminate() {
-        follow.Terminate();
+        if (follow != null) follow.Terminate();
     }
 
     override

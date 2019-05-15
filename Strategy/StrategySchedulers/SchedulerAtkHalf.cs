@@ -138,10 +138,9 @@ public class SchedulerAtkHalf : SchedulerStrategy {
 
 
         //Remaining units go to defend the bridge
-        var alliesToDefendBridge = remainingUnits.Where(unit => !(unit.GetTask() is GoTo) && !(unit.GetTask() is DefendZone) && !(unit.GetTask() is Attack));
+        var alliesToDefendBridge = remainingUnits.Where(unit => !unit.HasTask<GoTo, DefendZone, Attack>());
 
 		foreach (var ally in alliesToDefendBridge) {
-			Debug.Assert(!(ally.GetTask() is DefendZone));
 			ally.SetTask(new GoTo(ally, Info.GetWaypoint("front", enemyFaction), Mathf.Infinity, 1.3f, false, (bool success) => {
 				ally.SetTask(new DefendZone(ally, ally.position, 6f, (_) => {
 				}));

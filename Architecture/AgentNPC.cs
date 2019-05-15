@@ -16,11 +16,11 @@ public class AgentNPC : Agent {
     Vector3 virtualTarget;
 
 
+    //Start might be called twice
     new
     protected void Start() {
         base.Start();
         steers = new List<SteeringBehaviour>(GetComponents<SteeringBehaviour>());
-        task = null;
 
         MaxRotation = 300;
         MaxAngular = 6000;
@@ -91,12 +91,13 @@ public class AgentNPC : Agent {
         return task;
     }
     public bool HasTask<T>() {
-        return task is T;
+        return task != null && task is T;
     }
     public bool HasTask<A, B>() {
-        return task is A || task is B;
+        return task != null && (task is A || task is B);
     }
     public bool HasTask<A, B, C>() {
-        return task is A || task is B || task is C;
+        return task != null && (task is A || task is B || task is C);
     }
+
 }

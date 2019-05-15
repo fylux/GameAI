@@ -101,6 +101,10 @@ public class Map {
         int x = Mathf.FloorToInt(mapX * percentX);
         int y = Mathf.FloorToInt(mapY * percentY);
 
+        if (!(x < mapX && y < mapY && x >= 0 && y >= 0)) {
+            Debug.Log("posicion erronea "+nodePosition);
+        }
+
         Assert.IsTrue(x < mapX && y < mapY && x >= 0 && y >= 0);
         return grid[x, y];
     }

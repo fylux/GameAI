@@ -47,7 +47,6 @@ public class MilitarComponent : UnitComponent {
         if (IsDead()) {
             Console.Log("Unit died");
             //Update list of units removing this one
-            Map.unitList.Remove(agent);
             agent.StartCoroutine(DestroyUnit());
            
         }
@@ -77,7 +76,10 @@ public class MilitarComponent : UnitComponent {
     }
 
     public IEnumerator DestroyUnit() {
+        agent.ResetTask();
+        Map.unitList.Remove(agent);
+        
         yield return new WaitForSeconds(0.5f);
-        GameObject.Destroy(agent.gameObject);
+        GameObject.DestroyImmediate(agent.gameObject);
     }
 }

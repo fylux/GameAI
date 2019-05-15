@@ -66,6 +66,7 @@ public class EconomyManager : MonoBehaviour {
 		GameObject created = GameObject.Instantiate(units[type], (Info.GetWaypoint("base", faction) + new Vector3(-2,0.5f,-2)), Quaternion.identity) as GameObject; // TODO Cambiarlo por un waypoint
 		AgentUnit newUnit = created.GetComponent<AgentUnit>();
         newUnit.transform.parent = transform.parent;
+        newUnit.gameObject.name += ""+Time.frameCount;
         newUnit.Start();
 
         Map.unitList.Add(newUnit);

@@ -20,13 +20,13 @@ public class Follow : Task {
     }
 
     bool ReconsiderPath() {
-        if (Util.HorizontalDist(lastTargetPosition, target.position) > 0.4) {
+        //if (Util.HorizontalDist(lastTargetPosition, target.position) > 0.4) {
         	//goTo.SetNewTarget(GetFutureTargetPosition());
             goTo.SetNewTarget(target.position);
             lastTargetPosition = target.position;
             return true;
-        }
-        return false;
+        /*}
+        return false;*/
     }
 
     Vector3 GetFutureTargetPosition() {
@@ -47,12 +47,11 @@ public class Follow : Task {
         }
 
         // If has reached range or fixed time reconsider path
-        if ( (!inRange && IsNearEnoughLastPosition()) || Time.fixedTime - timeStamp > 2) {
+        if ( (!inRange && (IsNearEnoughLastPosition() || IsNearEnough())) || Time.fixedTime - timeStamp > 2) {
             timeStamp = Time.fixedTime;
             bool changed_path = ReconsiderPath();
             //If the path has not changed and we are on range
-            if (!changed_path && IsNearEnoughLastPosition()) {
-                //Debug.Log("Enemy in attack range");
+            if (IsNearEnough()) {
                 inRange = true;
                 goTo.FinishPath();
                 agent.RequestStopMoving();
@@ -60,13 +59,15 @@ public class Follow : Task {
         }
         //If the enemy it goes out of range
         else if (inRange && IsFarEnough()) {
-            //Debug.Log("Enemy goes out of range");
             inRange = false;
             ReconsiderPath();
         }
 
-        if (!inRange)
+
+
+        if (!inRange) {
             st = goTo.Apply();
+        }
         return st;
     }
 
@@ -97,6 +98,6 @@ public class Follow : Task {
 
     override
     public void Terminate() {
-        goTo.Terminate();
+        if (goTo != null) goTo.Terminate();
     }
 }

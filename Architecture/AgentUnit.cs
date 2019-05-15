@@ -39,11 +39,18 @@ public abstract class AgentUnit : AgentNPC {
 
     abstract public UnitT GetUnitType();
 
+    //Start might be called twice
     new
     public void Start() {
         base.Start();
         //path_target = null;
         militar.SetAgent(this);
+
+
+
+
+        //TODO Hasta que se corrija que todo dios tiene select circle
+        selectCircle = null;
     }
 
 

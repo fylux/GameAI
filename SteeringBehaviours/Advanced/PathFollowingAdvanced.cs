@@ -30,8 +30,8 @@ public class PathFollowingAdvanced : PathFollowing {
                 near = false;
             }
             currentPoint = Mathf.Min(currentPoint + 1, path.Length - 1); //When it reaches the last stays on it
-            if (currentPoint == path.Length - 2)
-                return Arrive.GetSteering(path[currentPoint], npc, 1f, maxAccel /*50*/);
+            //if (currentPoint == path.Length - 2)
+               // return Arrive.GetSteering(path[currentPoint], npc, 1f, maxAccel /*50*/);
         }
 
 		return Seek.GetSteering(path[currentPoint], npc, maxAccel /*50*/, visibleRays);

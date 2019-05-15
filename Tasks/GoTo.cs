@@ -38,6 +38,7 @@ public class GoTo : Task {
 
     public void FinishPath() {
         followPath.SetPath(null);
+        finished = true;
     }
 
     public void SetVisiblePath(bool visible) {
@@ -51,9 +52,9 @@ public class GoTo : Task {
                 Vector2 offsetXY = UnityEngine.Random.insideUnitCircle * offset;
                 target = Map.Clamp(new Vector3(new_target.x + offsetXY[0], 1f, new_target.z + offsetXY[1]));
                 i++;
-            } while (!Map.NodeFromPosition(target).isWalkable() && i < 10);
+            } while (!Map.NodeFromPosition(target).isWalkable() && i < 20);
             if (!Map.NodeFromPosition(target).isWalkable()) {
-                Debug.LogError(target);
+                Debug.LogError("GoTo target not walkable "+new_target);
             }
             
         }
@@ -62,6 +63,8 @@ public class GoTo : Task {
             PathfindingManager.RequestPath(agent.position, target, agent.Cost, agent.faction, ProcessPath);
         else
             PathfindingManager.RequestPath(agent.position, target, agent.Cost, Faction.C, ProcessPath);
+
+        finished = false;
     }
 
     override
@@ -77,11 +80,12 @@ public class GoTo : Task {
 				timeStamp = Time.fixedTime;
                 SetNewTarget(target, false);
 			}
-
-			st = followPath.Apply();
+            Debug.Log(Time.frameCount + " " + agent.name + " has path");
+            st = followPath.Apply();
 		} else {
-			//st= Seek.GetSteering(target, agent, 500f); //If path has not been solved yet just do Seek.
-		}
+            Debug.Log(Time.frameCount + " " + agent.name + " NO has path");
+            //st= Seek.GetSteering(target, agent, 500f); //If path has not been solved yet just do Seek.
+        }
 
         return st;
     }

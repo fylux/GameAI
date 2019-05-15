@@ -10,7 +10,12 @@ public class FollowPath : Task {
 
     public FollowPath(AgentUnit agent, Vector3[] path, FollowT type, Action<bool> callback) : base(agent,callback) {
         empty = new GameObject();
-        empty.transform.parent = agent.gameObject.transform;
+        if (agent == null) {
+            Debug.Log(agent);
+            Debug.LogError("Follow path en unidad muerta ");
+        }
+        else
+            empty.transform.parent = agent.gameObject.transform;
 
         if (type == FollowT.STAY) {
             pathF = empty.AddComponent<PathFollowingAdvanced>();

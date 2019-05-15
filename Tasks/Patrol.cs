@@ -17,7 +17,9 @@ public class Patrol : HostileTask {
 		targetEnemy = null;
 		attack = null;
         followPath = new FollowPath(agent, path, FollowT.LOOP, (_) => {});
-	}
+        SetCenter(agent.position);
+
+    }
 
 	//If you are attacked by a different unit you will start figthing with it unless that you are already figthing or very close to your target
 	override
@@ -64,7 +66,7 @@ public class Patrol : HostileTask {
 			AttackEnemy(closerEnemy);
 		}
 
-		center = agent.position;
+        SetCenter(agent.position);
 		if (attack != null) st = attack.Apply();
 		else st = followPath.Apply();
 

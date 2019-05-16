@@ -121,4 +121,12 @@ public class SchedulerAtkBase : SchedulerStrategy
             heal.Remove(unit);
         }
     }
+
+	new
+	public void RemoveUnit(AgentUnit unit){
+		base.RemoveUnit (unit);
+		heal.Remove (unit);
+		regr.Remove (unit);
+		atking.Remove (unit);
+	}
 }

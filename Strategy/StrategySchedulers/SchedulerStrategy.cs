@@ -21,4 +21,7 @@ public abstract class SchedulerStrategy {
     }
 
     public virtual void Reset() { usableUnits = new HashSet<AgentUnit>(); }
+	public virtual void RemoveUnit(AgentUnit unit) {
+		usableUnits.Remove (unit);
+	} 
 }

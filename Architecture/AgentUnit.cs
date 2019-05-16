@@ -39,11 +39,19 @@ public abstract class AgentUnit : AgentNPC {
 
     abstract public UnitT GetUnitType();
 
+	public StrategyManager stratManager;
+
     //Start might be called twice
     new
     public void Start() {
         base.Start();
         //path_target = null;
+
+		if (faction == Faction.A)
+			stratManager = GameObject.Find ("downBase").GetComponent<StrategyManager> ();
+		else
+			stratManager = GameObject.Find ("upBase").GetComponent<StrategyManager> ();
+
         militar.SetAgent(this);
 
 

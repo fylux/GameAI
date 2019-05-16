@@ -87,11 +87,17 @@ public class StrategyManager : MonoBehaviour {
         }
     }
    
-void DrawStrategyValues (){
+	void DrawStrategyValues (){
 		strategies.text = "DB " + strategyLayer.priority[StrategyT.DEF_BASE].ToString("F2")
         + " / DH " + strategyLayer.priority[StrategyT.DEF_HALF].ToString("F2")
 		+ "\nAH " + strategyLayer.priority[StrategyT.ATK_HALF].ToString("F2")
         + " / AB " + strategyLayer.priority[StrategyT.ATK_BASE].ToString("F2");
+	}
+
+	public void RemoveUnitFromSchedulers(AgentUnit unit){
+		foreach (SchedulerStrategy sched in strategySchedulers.Values) {
+			sched.RemoveUnit (unit);
+		}
 	}
 
     public StrategyLayer GetStrategyLayer()

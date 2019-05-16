@@ -17,8 +17,10 @@ public class Map {
 
     public static Vector2[,] drawnMap;
 
+	public static int maxUnits;
+
     //This is called from load map
-    public static void Init(Node[,] _grid, Vector2 _gridSize) {
+	public static void Init(Node[,] _grid, Vector2 _gridSize, int maxNumberUnits) {
         
         grid = _grid;
         gridSize = _gridSize;
@@ -31,6 +33,8 @@ public class Map {
         generalRangedInfluence = new Vector2[mapX, mapY];
 
         drawnMap = generalInfluence;
+
+		maxUnits = maxNumberUnits;
 
         foreach (GameObject npc in GameObject.FindGameObjectsWithTag("NPC")) {
             unitList.Add(npc.GetComponent<AgentUnit>());

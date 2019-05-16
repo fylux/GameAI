@@ -11,6 +11,9 @@ public class LoadMap : MonoBehaviour {
     [SerializeField]
     string fileNameToLoad;
 
+	[SerializeField]
+	int maxUnits;
+
     [SerializeField]
     int mapX, mapY;
 
@@ -54,7 +57,7 @@ public class LoadMap : MonoBehaviour {
                 GenerateMap();
             }
 
-        Map.Init(BuildMap(), gridSize);
+		Map.Init(BuildMap(), gridSize, Mathf.Min(maxUnits,20));
 
         if (!disableInfoManager)
             Info.Init();

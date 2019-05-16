@@ -53,7 +53,7 @@ public class EconomyManager : MonoBehaviour {
 		if (Time.frameCount % 30 == 0 && goldGeneration) {
 			gold+=goldPerSecond;
 
-			if (Map.GetAllies(faction).Count < 20 && gold >= 50) {
+			if (Map.GetAllies(faction).Count < Map.maxUnits && gold >= 50) {
 				gold -= 50;
 				GenerateUnit(generationManager.GetMostImportantUnit());
 			}

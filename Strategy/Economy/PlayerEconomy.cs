@@ -38,7 +38,7 @@ public class PlayerEconomy : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (Time.frameCount % 30 == 0 && goldGeneration) {
-			gold+=20;
+			gold+=5;
 
 
 		}

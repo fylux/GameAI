@@ -219,7 +219,7 @@ public class StrategyLayer {
 		HashSet<AgentUnit> far = Info.GetUnitsFactionArea(Info.waypoints[waypoint], 15, enemyFaction);
 
 		far.ExceptWith(near);
-		float result = (nearMult / 20) * near.Count + (farMult / 20) * far.Count;
+		float result = (nearMult / Map.maxUnits) * near.Count + (farMult / Map.maxUnits) * far.Count;
 		if (dbg) Debug.Log("El waypoint " + waypoint + " contribuye a DEFHALF en " + result + " debido a la cercanía de unidades enemigas");
 		return result;
 	}
@@ -252,13 +252,13 @@ public class StrategyLayer {
 		float result = 0;
 
 		foreach (AgentUnit unit in near) {
-			result += ((float)1 / 20); // ¿Deberiamos considerar el "peor caso" antes, o no tiene sentido?
+			result += ((float)1 / Map.maxUnits); // ¿Deberiamos considerar el "peor caso" antes, o no tiene sentido?
 		}
 		foreach (AgentUnit unit in mid) {
-			result += ((float)1 / 20) * 0.75f;
+			result += ((float)1 / Map.maxUnits) * 0.75f;
 		}
 		foreach (AgentUnit unit in far) {
-			result += ((float)1 / 20) * 0.5f;
+			result += ((float)1 / Map.maxUnits) * 0.5f;
 		}
 
 		if (dbg) Debug.Log("La proximidad de unidades enemigas en su territorio contribuye a ATKHALF en " + result);

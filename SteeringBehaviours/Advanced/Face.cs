@@ -25,8 +25,10 @@ public class Face : SteeringBehaviourTarget {
 
         Vector3 direction = targetPosition - npc.position;
 
-        if (direction.magnitude <= 0.0f)
-            return steering;
+		if (direction.magnitude <= 0.0f) {
+			return steering;
+		}
+            
 
         float targetOrientation = Mathf.Atan2(direction.x, direction.z);
         targetOrientation *= Mathf.Rad2Deg;

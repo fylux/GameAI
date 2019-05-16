@@ -83,7 +83,7 @@ public class SchedulerAtkHalf : SchedulerStrategy {
                         
                         if (closestEnemyOfType != null && Util.HorizontalDist(ally.position, closestEnemyOfType.position) < distanceToEnemy + 4)
                         {
-                            Debug.Log(ally + " closest "+closestEnemy);
+//                            Debug.Log(ally + " closest "+closestEnemy);
     
                             ally.SetTask(new Attack(ally, closestEnemyOfType, (_) => {
                                 //If you kill an enemy reconsider assignations

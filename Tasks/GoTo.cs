@@ -80,10 +80,10 @@ public class GoTo : Task {
 				timeStamp = Time.fixedTime;
                 SetNewTarget(target, false);
 			}
-            Debug.Log(Time.frameCount + " " + agent.name + " has path");
+//            Debug.Log(Time.frameCount + " " + agent.name + " has path");
             st = followPath.Apply();
 		} else {
-            Debug.Log(Time.frameCount + " " + agent.name + " NO has path");
+//            Debug.Log(Time.frameCount + " " + agent.name + " NO has path");
             //st= Seek.GetSteering(target, agent, 500f); //If path has not been solved yet just do Seek.
         }
 

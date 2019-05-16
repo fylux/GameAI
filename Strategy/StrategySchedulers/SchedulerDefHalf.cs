@@ -139,7 +139,7 @@ public class SchedulerDefHalf : SchedulerStrategy {
 		float midInfl = Info.GetAreaInfluence(enemyFaction, Info.GetWaypoint ("mid", allyFaction), 10);
 		float frontInfl = Info.GetAreaInfluence(enemyFaction, Info.GetWaypoint ("front", allyFaction), 10);
 
-		Debug.Log ("Las influencias son: mid -> " + midInfl + ", front -> " + frontInfl);
+	//	Debug.Log ("Las influencias son: mid -> " + midInfl + ", front -> " + frontInfl);
 		string dest = "mid";
 		if (midInfl > 0.5) { // TODO Numero tentativo a cambios
 			if (frontInfl > 0.5) {

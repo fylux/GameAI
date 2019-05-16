@@ -72,10 +72,10 @@ public abstract class AgentUnit : AgentNPC {
             tCost = 1;
 
         Steering steering = ApplySteering();
-		steering += Face.GetSteering(velocity, this, interiorAngle, exteriorAngle, 0.1f, visibleRays);
+		float feis = Face.GetSteering(position + velocity, this, interiorAngle, exteriorAngle, 0.1f, true).angular;
 
         velocity += steering.linear * Time.deltaTime / tCost;
-        rotation += steering.angular * Time.deltaTime / tCost;
+		rotation += (feis + steering.angular) * Time.deltaTime / tCost;
         velocity.y = 0;
 
         velocity = Vector3.ClampMagnitude(velocity, (float)MaxVelocity / tCost);

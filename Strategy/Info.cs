@@ -298,9 +298,9 @@ public static class Info {
             { StrategyT.ATK_BASE,
                 Util.HorizontalDist(unit.position, GetWaypoint("base", Util.OppositeFaction(faction))) },
             { StrategyT.ATK_HALF,
-                Util.HorizontalDist(unit.position, GetWaypoint("front", faction)) },
+				Util.HorizontalDist(unit.position, GetWaypoint("front", Util.OppositeFaction(faction))) },
             { StrategyT.DEF_HALF,
-                Util.HorizontalDist(unit.position, GetWaypoint(StrategyLayer.chosenWaypoint, faction)) },
+                Util.HorizontalDist(unit.position, GetWaypoint("front", faction)) },
             { StrategyT.DEF_BASE,
                 Util.HorizontalDist(unit.position,GetWaypoint("base", faction)) }
         };

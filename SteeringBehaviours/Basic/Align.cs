@@ -48,7 +48,7 @@ public class Align : SteeringBehaviourTarget {
         }
 
         if (visibleRays)
-             drawRays(npc.position, Util.OrientationToVector(orienTarget), Color.magenta);
+			drawRays(npc.position, Util.OrientationToVector(orienTarget), Color.black);
 
         return steering;
     }

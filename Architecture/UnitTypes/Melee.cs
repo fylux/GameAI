@@ -7,7 +7,7 @@ public class Melee : AgentUnit
 
     protected new void Start() {
         base.Start();
-        MaxVelocity = 3;
+		MaxVelocity = 1.8f;
         MaxAccel = 20;
         MaxRotation = 60;
         MaxAngular = 60;

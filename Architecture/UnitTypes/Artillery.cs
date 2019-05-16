@@ -8,7 +8,7 @@ public class Artillery : AgentUnit
     protected new void Start()
     {
         base.Start();
-        MaxVelocity = 3;
+		MaxVelocity = 1.5f;
         MaxAccel = 10;
         MaxRotation = 30;
         MaxAngular = 30;

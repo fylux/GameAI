@@ -63,7 +63,7 @@ public class EconomyManager : MonoBehaviour {
 	}
 
 	void GenerateUnit(UnitT type){
-		GameObject created = GameObject.Instantiate(units[type], (Info.GetWaypoint("base", faction) + new Vector3(-2,0.5f,-2)), Quaternion.identity) as GameObject; // TODO Cambiarlo por un waypoint
+		GameObject created = GameObject.Instantiate(units[type], (Info.GetWaypoint("recruit", faction) + new Vector3(0,0.75f,0)), Quaternion.identity) as GameObject; // TODO Cambiarlo por un waypoint
 		AgentUnit newUnit = created.GetComponent<AgentUnit>();
         newUnit.transform.parent = transform.parent;
         newUnit.gameObject.name += ""+Time.frameCount;
@@ -72,6 +72,6 @@ public class EconomyManager : MonoBehaviour {
         Map.unitList.Add(newUnit);
 		Debug.Log ("Generada una unidad de " + type);
 
-		stratManager.forceStrats = true;
+		stratManager.CycleLayer12 ();
 	}
 }

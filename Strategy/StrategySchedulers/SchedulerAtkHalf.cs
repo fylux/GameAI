@@ -140,8 +140,23 @@ public class SchedulerAtkHalf : SchedulerStrategy {
         //Remaining units go to defend the bridge
         var alliesToDefendBridge = remainingUnits.Where(unit => !unit.HasTask<GoTo, DefendZone, Attack>());
 
+		float midInfl = Info.GetAreaInfluence(enemyFaction, Info.GetWaypoint ("mid", enemyFaction), 10);
+		float frontInfl = Info.GetAreaInfluence(enemyFaction, Info.GetWaypoint ("front", enemyFaction), 10);
+
+		//	Debug.Log ("Las influencias son: mid -> " + midInfl + ", front -> " + frontInfl);
+		string dest = "front";
+		Faction destFact = enemyFaction;
+
+		if (frontInfl > 0.5) { // TODO Numero tentativo a cambios
+			if (midInfl > 0.5) {
+				destFact = allyFaction;
+			} else {
+				dest = "mid";
+			}
+		}
+
 		foreach (var ally in alliesToDefendBridge) {
-			ally.SetTask(new GoTo(ally, Info.GetWaypoint("front", enemyFaction), Mathf.Infinity, 1.3f, false, (bool success) => {
+			ally.SetTask(new GoTo(ally, Info.GetWaypoint(dest, destFact), Mathf.Infinity, 1.3f, false, (bool success) => {
 				ally.SetTask(new DefendZone(ally, ally.position, 6f, (_) => {
 				}));
 			}));

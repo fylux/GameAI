@@ -32,9 +32,9 @@ public class Map {
 
         drawnMap = generalInfluence;
 
-        /*foreach (GameObject npc in GameObject.FindGameObjectsWithTag("NPC")) {
+        foreach (GameObject npc in GameObject.FindGameObjectsWithTag("NPC")) {
             unitList.Add(npc.GetComponent<AgentUnit>());
-        }*/
+        }
 
         unitsMask = LayerMask.GetMask("Unit");
         healingMask = LayerMask.GetMask("Healing");

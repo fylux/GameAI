@@ -72,7 +72,7 @@ public abstract class AgentUnit : AgentNPC {
             tCost = 1;
 
         Steering steering = ApplySteering();
-		MaxAngular += Face.GetSteering(position + velocity, this, interiorAngle, exteriorAngle, 0.1f, true).angular;
+		steering.angular += Face.GetSteering(position + velocity, this, interiorAngle, exteriorAngle, 0.1f, true).angular;
 
         velocity += steering.linear * Time.deltaTime / tCost;
 		rotation +=  steering.angular * Time.deltaTime / tCost;

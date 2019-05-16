@@ -28,6 +28,9 @@ public static class Info {
         waypoints.Add("upFront", GameObject.Find("upFront").transform.position);
         waypoints.Add("downFront", GameObject.Find("downFront").transform.position);
 
+		waypoints.Add("upRecruit", GameObject.Find("upRecruit").transform.position);
+		waypoints.Add("downRecruit", GameObject.Find("downRecruit").transform.position);
+
         waypoints.Add("upMid", mid.transform.Find("upMid").transform.position);
         waypoints.Add("downMid", mid.transform.Find("downMid").transform.position);
 
@@ -47,7 +50,8 @@ public static class Info {
             { "mid", faction == Faction.A ? "downMid" : "upMid" },
             { "top", faction == Faction.A ? "downTop" : "upTop"},
             { "base", faction == Faction.A ? "downBase" : "upBase"},
-            { "front", faction == Faction.A ? "downFront" : "upFront"}
+            { "front", faction == Faction.A ? "downFront" : "upFront"},
+			{ "recruit", faction == Faction.A ? "downRecruit" : "upRecruit"}
         };
         Debug.Assert(z.ContainsKey(waypoint));
         return waypoints[z[waypoint]];

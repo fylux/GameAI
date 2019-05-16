@@ -46,7 +46,7 @@ public class PlayerEconomy : MonoBehaviour {
 	}
 
 	public void GenerateUnit(){
-		GameObject created = GameObject.Instantiate(units[unitToGenerate], (Info.GetWaypoint("base", faction) + new Vector3(-2,0.5f,-2)), Quaternion.identity) as GameObject;
+		GameObject created = GameObject.Instantiate(units[unitToGenerate], (Info.GetWaypoint("recruit", faction) + new Vector3(0,0.75f,0)), Quaternion.identity) as GameObject;
 		AgentUnit newUnit = created.GetComponent<AgentUnit>();
 		Map.unitList.Add (newUnit);
 		Debug.Log ("Generada una unidad de " + unitToGenerate);

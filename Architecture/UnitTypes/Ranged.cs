@@ -8,7 +8,7 @@ public class Ranged : AgentUnit {
     {
         base.Start();
         // Los atributos de los Ranged son con los que hemos estado trabajando, los default
-        MaxVelocity = 3;
+        MaxVelocity = 1.8f;
 
         cost = new Dictionary<NodeT, float>() {
             { NodeT.ROAD, 1 },

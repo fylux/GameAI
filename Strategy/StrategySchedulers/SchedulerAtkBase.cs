@@ -45,7 +45,7 @@ public class SchedulerAtkBase : SchedulerStrategy
                         AddGroup(unit, "atking");
 
                         //   Debug.Log("Dandole a " + unit + " la orden de MOVERSE A LA BASE ENEMIGA");
-                        unit.SetTask(new GoTo(unit, Info.GetWaypoint("base", enemyFaction), (bool success) =>
+						unit.SetTask(new GoToAggresive(unit, Info.GetWaypoint("base", enemyFaction), 8, (bool success) =>
                         {
                           //  Debug.Log("Dandole a " + unit + " la orden de DEFENDER LA ZONA");
                             unit.SetTask(new DefendZone(unit, Info.GetWaypoint("base", enemyFaction), 15, (_) => { }));

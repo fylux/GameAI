@@ -14,7 +14,11 @@ public class MainBase : Body {
 	protected void Start(){
 		base.Start ();
 		strat = GetComponent<StrategyManager>();
-		faction = strat.faction;
+
+		if (strat != null)
+			faction = strat.faction;
+		else
+			faction = Faction.A; // Si no hay un strategyManager es porque es el jugador, por tanto Facción A
 	}
 
 	new

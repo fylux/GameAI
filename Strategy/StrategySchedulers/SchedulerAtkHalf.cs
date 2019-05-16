@@ -156,7 +156,7 @@ public class SchedulerAtkHalf : SchedulerStrategy {
 		}
 
 		foreach (var ally in alliesToDefendBridge) {
-			ally.SetTask(new GoTo(ally, Info.GetWaypoint(dest, destFact), Mathf.Infinity, 1.3f, false, (bool success) => {
+			ally.SetTask(new GoTo(ally, Info.GetWaypoint(dest, destFact), Mathf.Infinity, 1.3f, true, (bool success) => {
 				ally.SetTask(new DefendZone(ally, ally.position, 6f, (_) => {
 				}));
 			}));

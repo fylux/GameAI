@@ -1,19 +1,11 @@
 ﻿using UnityEngine;
 
-public class SelectBox : MonoBehaviour {
+public abstract class SelectBox : MonoBehaviour {
 
     public Select select;
 
+	protected abstract void OnTriggerEnter (Collider other);
 
-    void OnTriggerEnter(Collider other) {
-        if (other.gameObject.layer == LayerMask.NameToLayer("Unit") && other.GetComponent<AgentUnit>().faction == Faction.A) {
-            select.AddUnit(other.GetComponent<AgentUnit>());
-        }
-    }
+	protected abstract void OnTriggerExit (Collider other);
 
-    void OnTriggerExit(Collider other) {
-        if (other.gameObject.layer == LayerMask.NameToLayer("Unit") && other.GetComponent<AgentUnit>().faction == Faction.A) {
-            select.RemoveUnit(other.GetComponent<AgentUnit>());
-        }
-    }
 }

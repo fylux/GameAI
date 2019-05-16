@@ -155,7 +155,7 @@ public class SchedulerDefHalf : SchedulerStrategy {
 
         foreach (var ally in alliesToDefendBridge) {
             Debug.Assert(!ally.HasTask<DefendZone>());
-            ally.SetTask(new GoTo(ally, destiny, Mathf.Infinity, 1.3f, false, (bool success) => {
+            ally.SetTask(new GoTo(ally, destiny, Mathf.Infinity, 1.3f, true, (bool success) => {
                 ally.SetTask(new DefendZone(ally, ally.position, 6f, (_) => {
                 }));
             }));

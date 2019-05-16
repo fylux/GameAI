@@ -14,7 +14,7 @@ public class RestoreHealth : Task {
 	public RestoreHealth(AgentUnit agent, Action<bool> callback) : base(agent,callback) {
         healingPoint = Info.GetClosestHealingPoint(agent.position, 100f).position;
 
-        this.goTo = new GoTo(agent, healingPoint, (bool success) => {
+		this.goTo = new GoTo(agent, healingPoint, Mathf.Infinity, 0, true, (bool success) => {
             goTo.Terminate();
             goTo = null;
             defendZone = new DefendZone(agent, agent.position, 3f, (_) => {

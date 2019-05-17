@@ -13,20 +13,23 @@ public class GoForm : SteeringBehaviour {
     {
         this.target = target;
         orientation = orient;
+		npc = GetComponent<Agent>();
     }
 
     public override Steering GetSteering() {
         if (!active)
             return new Steering();
+
+//		Debug.Log ("Vamos a actuar con una orientacion de " + orientation);
         Steering force = Arrive.GetSteering(target, npc, npc.exteriorRadius, maxAccel) + Align.GetSteering(orientation, npc, npc.interiorAngle, npc.exteriorAngle, 0.1f, visibleRays);
       /*  if (Util.HorizontalDistance(target,npc.position) <= 0.1f && Mathf.Abs(orientation - npc.orientation) <= 1.1f)
             GoalReached();*/
-
+	//	Debug.Log ("El GoForm contribuye al angular en " + force.angular);
         return force;
     }
 
-    public static Steering GetSteering(Vector3 target, Agent npc, float slowingRadius, float maxAccel) {
-       return Arrive.GetSteering(target, npc, npc.exteriorRadius, maxAccel);
+	public static Steering GetSteering(Vector3 target, Agent npc, float orientation, float slowingRadius, float maxAccel, bool visibleRays) {
+		return Arrive.GetSteering(target, npc, npc.exteriorRadius, maxAccel) + Align.GetSteering(orientation, npc, npc.interiorAngle, npc.exteriorAngle, 0.1f, visibleRays);
     }
 
   /*  void GoalReached()

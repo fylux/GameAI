@@ -87,6 +87,19 @@ public class AgentNPC : Agent {
         }   
     }
 
+	public void SetFormation(Vector3 position, float orientation) {
+		GoForm go = gameObject.GetComponent<GoForm>();
+		if (go == null) {
+			go = gameObject.AddComponent<GoForm>();
+			go.Init(position, orientation);
+			steers.Add(go);
+		} else {
+			go.target = position;
+			go.orientation = orientation;
+			go.active = true;
+		}
+	}
+
     public Task GetTask() {
         return task;
     }

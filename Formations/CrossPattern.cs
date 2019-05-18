@@ -43,6 +43,7 @@ public class CrossPattern : FormationPattern {
 
     public override Location GetSlotLocation(int slotIndex)
     {
+		Debug.Log ("Starting cross GetSlotLocation");
         float xval = 1;
         float zval = 1;
         if (slotIndex < 2)
@@ -52,8 +53,10 @@ public class CrossPattern : FormationPattern {
 
         Location location = new Location();
 
-        location.position.x = 2 * characterRadius * xval;
-        location.position.z = 2 * characterRadius * zval;
+		location.position.x = 2 * characterRadius * xval;
+		location.position.z = 2 * characterRadius * zval;
+
+		Debug.Log ("La posicion del lider es " + leader.position + " y la de la location es " + location.position);
 
         location.orientation = leader.orientation;
 

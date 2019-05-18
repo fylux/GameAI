@@ -36,9 +36,16 @@ public abstract class AgentUnit : AgentNPC {
         base.Start();
         //path_target = null;
 
-		if (faction == Faction.A) stratManager = GameObject.Find ("downBase").GetComponent<StrategyManager> ();
-		else stratManager = GameObject.Find ("upBase").GetComponent<StrategyManager> ();
-
+		if (faction == Faction.A) { // Permitir que facciones no tengan strategyManager, para escenarios de Demo
+			GameObject bas = GameObject.Find ("downBase");
+			if (bas != null)
+				stratManager = bas.GetComponent<StrategyManager> ();
+		}
+		else{
+			GameObject bas = GameObject.Find ("upBase");
+			if (bas != null)
+				stratManager = bas.GetComponent<StrategyManager> ();
+		}
         militar.SetAgent(this);
 
 
@@ -82,18 +89,7 @@ public abstract class AgentUnit : AgentNPC {
         return Seek.GetSteering(path_target.position, this, 5, visibleRays);   
     }*/
 
-    public void SetFormation(Vector3 position, float orientation) {
-		GoForm go = gameObject.GetComponent<GoForm>();
-        if (go == null) {
-			go = gameObject.AddComponent<GoForm>();
-            go.Init(position, orientation);
-            steers.Add(go);
-        } else {
-            go.target = position;
-            go.orientation = orientation;
-            go.active = true;
-        }
-    }
+
 
     public void SetTarget(Vector3 targetPosition) {
         ResetTask();

@@ -76,7 +76,8 @@ public class MilitarComponent : UnitComponent {
     public IEnumerator DestroyUnit() {
         agent.ResetTask();
         Map.unitList.Remove(agent);
-		agent.stratManager.RemoveUnitFromSchedulers(agent);
+		if (agent.stratManager != null) // Para escenarios de prueba sin strategyManager
+			agent.stratManager.RemoveUnitFromSchedulers(agent);
         
         yield return new WaitForSeconds(0.5f);
         GameObject.DestroyImmediate(agent.gameObject);

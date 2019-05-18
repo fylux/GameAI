@@ -43,7 +43,7 @@ public class Attack : Task {
     protected override bool IsFinished() {
         return targetEnemy == null || targetEnemy.militar.IsDead();
     }
-
+    
     override
     public void Terminate() {
         if (follow != null) follow.Terminate();
@@ -51,7 +51,20 @@ public class Attack : Task {
 
     override
     public string ToString() {
-        return "Attack ->" + targetEnemy.name;
+        if (targetEnemy == null)
+            return "Killed enemy";
+        else if (follow.jamon()){
+            return "Attack->" + targetEnemy.name + " Follow finished";
+
+
+        } else if (follow.goTo.finished) {
+            return "Attack->" + targetEnemy.name + " GoTo finished";
+
+        } else {
+            return "Attack->" + targetEnemy.name + " inrang " + follow.IsInRange() + " processing "+follow.goTo.processing;
+
+        }
+
     }
 
 	public AgentUnit GetTargetEnemy(){

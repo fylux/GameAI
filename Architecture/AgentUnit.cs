@@ -11,20 +11,9 @@ public abstract class AgentUnit : AgentNPC {
     public StrategyT strategy;
     public Faction faction = Faction.A;
     public GameObject selectCircle;
-    public float attackRange = 5f;
-
     public GameObject hat;
 
     public MilitarComponent militar = new MilitarComponent();
-
-
-    protected Dictionary<NodeT, float> cost = new Dictionary<NodeT, float>() { //Coste por defecto, para casos de prueba
-            { NodeT.ROAD, 1 },
-            { NodeT.GRASS, 1.5f },
-            { NodeT.FOREST, 2 },
-            { NodeT.WATER, Mathf.Infinity},
-            { NodeT.MOUNTAIN, Mathf.Infinity}
-        };
 
     public static float[,] atkTable = new float[4, 4] {
             //Melee Ranged  Scout   Artill
@@ -47,14 +36,15 @@ public abstract class AgentUnit : AgentNPC {
         base.Start();
         //path_target = null;
 
-		if (faction == Faction.A)
-			stratManager = GameObject.Find ("downBase").GetComponent<StrategyManager> ();
-		else
-			stratManager = GameObject.Find ("upBase").GetComponent<StrategyManager> ();
+		if (faction == Faction.A) stratManager = GameObject.Find ("downBase").GetComponent<StrategyManager> ();
+		else stratManager = GameObject.Find ("upBase").GetComponent<StrategyManager> ();
 
         militar.SetAgent(this);
 
 
+        MaxAccel = 500;
+        MaxRotation = 360;
+        MaxAngular = 15000;
 
 
         //TODO Hasta que se corrija que todo dios tiene select circle
@@ -72,7 +62,7 @@ public abstract class AgentUnit : AgentNPC {
             tCost = 1;
 
         Steering steering = ApplySteering();
-		steering.angular += Face.GetSteering(position + velocity, this, interiorAngle, exteriorAngle, 0.1f, true).angular;
+		steering.angular += Face.GetSteering(position + velocity, this, interiorAngle, exteriorAngle, 0.1f, false).angular;
 
         velocity += steering.linear * Time.deltaTime / tCost;
 		rotation +=  steering.angular * Time.deltaTime / tCost;
@@ -81,7 +71,7 @@ public abstract class AgentUnit : AgentNPC {
         velocity = Vector3.ClampMagnitude(velocity, (float)MaxVelocity / tCost);
         rotation = Mathf.Clamp(rotation, -MaxRotation, MaxRotation);
 
-        Debug.DrawRay(position, velocity.normalized * 2, Color.green);
+        //Debug.DrawRay(position, velocity.normalized * 2, Color.green);
     }
 
     /*override
@@ -139,10 +129,6 @@ public abstract class AgentUnit : AgentNPC {
         }));*/
     }
 
-
-    public Dictionary<NodeT, float> Cost {
-        get { return cost; }
-    }
 
     public float GetDropOff(float locationDistance) {
         //100f is 100% influence

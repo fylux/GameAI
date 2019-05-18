@@ -15,6 +15,17 @@ public class AgentNPC : Agent {
 
     Vector3 virtualTarget;
 
+    protected Dictionary<NodeT, float> cost = new Dictionary<NodeT, float>() { //Coste por defecto, para casos de prueba
+            { NodeT.ROAD, 1 },
+            { NodeT.GRASS, 1.5f },
+            { NodeT.FOREST, 2 },
+            { NodeT.WATER, Mathf.Infinity},
+            { NodeT.MOUNTAIN, Mathf.Infinity}
+        };
+
+    public Dictionary<NodeT, float> Cost {
+        get { return cost; }
+    }
 
     //Start might be called twice
     new
@@ -33,7 +44,13 @@ public class AgentNPC : Agent {
             totalSteering += Steering.ApplyPriority(steer.GetSteering(), steer.blendPriority);
         }
         //totalSteering += PathSteering();
-        if (task != null) totalSteering += task.Apply();
+        if (task != null) {
+            taskName = task.ToString();
+            totalSteering += task.Apply();
+        }
+        else {
+            taskName = "Idle";
+        }
         totalSteering.linear.y = 0;
 
         totalSteering.linear = Vector3.ClampMagnitude(totalSteering.linear, MaxAccel);

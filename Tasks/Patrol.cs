@@ -59,8 +59,8 @@ public class Patrol : HostileTask {
 		Steering st = new Steering();
 
 		//Comprobar si se ha matado a la unidad
-		if (attack == null || Util.HorizontalDist(targetEnemy.position, center) > rangeRadius + agent.attackRange + followRangeExtra) {
-			AgentUnit closerEnemy = Info.GetUnitsFactionArea(center, rangeRadius + agent.attackRange, Util.OppositeFaction(agent.faction))
+		if (attack == null || Util.HorizontalDist(targetEnemy.position, center) > rangeRadius + agent.militar.attackRange + followRangeExtra) {
+			AgentUnit closerEnemy = Info.GetUnitsFactionArea(center, rangeRadius + agent.militar.attackRange, Util.OppositeFaction(agent.faction))
 				.OrderBy(enemy => Util.HorizontalDist(agent.position, enemy.position))
 				.FirstOrDefault();
 			AttackEnemy(closerEnemy);

@@ -70,7 +70,7 @@ public class MilitaryResourcesAllocator {
             unitsAssignedToStrategy[StrategyT.DEF_BASE] = new HashSet<AgentUnit>(availableUnits);
 
             foreach (AgentUnit unit in unitsAssignedToStrategy[StrategyT.DEF_BASE]) {
-                unit.hat.GetComponent<Renderer>().material.color = strategyColor[StrategyT.DEF_BASE];
+                //unit.hat.GetComponent<Renderer>().material.color = strategyColor[StrategyT.DEF_BASE];
                 if (unit.strategy != StrategyT.DEF_BASE) {
                     unit.ResetTask();
                 }
@@ -93,6 +93,8 @@ public class MilitaryResourcesAllocator {
 
 
         //Asign remaining units to the strategies with biggest rounding error
+        /*Debug.Log(Time.frameCount +" count "+nUnitsAllocToStrategy.Count);
+        Debug.Log(Time.frameCount + " sum " + nUnitsAllocToStrategy.Sum(w => w.Value));*/
         int nRemainingUnits = nTotalAvailableUnits - nUnitsAllocToStrategy.Sum(w => w.Value);
         var strategiesByAllocResidual = priority.OrderByDescending(s => (s.Value * nTotalAvailableUnits) - Mathf.FloorToInt(s.Value * nTotalAvailableUnits))
                                         .Select(s => s.Key)
@@ -165,7 +167,7 @@ public class MilitaryResourcesAllocator {
             Console.Log("Strategy: " + strategy.ToString() + " = " + unitsAssignedToStrategy[strategy].Count + " units");
 
             foreach (AgentUnit unit in unitsAssignedToStrategy[strategy]) {
-                unit.hat.GetComponent<Renderer>().material.color = strategyColor[strategy];
+                //unit.hat.GetComponent<Renderer>().material.color = strategyColor[strategy];
                 if (unit.strategy != strategy) {
                     unit.ResetTask();
                 }

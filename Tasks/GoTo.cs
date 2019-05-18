@@ -11,18 +11,24 @@ public class GoTo : Task {
     bool defensive;
     float reconsiderSeconds;
 
-    bool finished = false;
+    public bool finished = false;
+    public bool processing = false;
+
+    static int n = 0;
 
     public GoTo(AgentUnit agent, Vector3 target, float reconsiderSeconds, float offset, bool defensive, Action<bool> callback) : base(agent,callback) {
         this.offset = offset;
         this.defensive = defensive;
-        this.reconsiderSeconds = reconsiderSeconds;
+        this.reconsiderSeconds = Mathf.Infinity;//reconsiderSeconds;
 
         followPath = new FollowPath(agent, null, (_) => {
             finished = true;
         });
 
         SetNewTarget(target);
+        n++;
+
+        //Debug.Log("numero gotos " + n);
     }
 
 	public GoTo(AgentUnit agent, Vector3 target, Action<bool> callback) : this(agent, target, Mathf.Infinity, 0f, false, callback) { }
@@ -32,8 +38,9 @@ public class GoTo : Task {
             followPath.SetPath(newPath);
         }
         else {
-            Debug.Log("Pathfinding was not successful");
+            Debug.Log(Time.frameCount +" Pathfinding was not successful");
         }
+        processing = false;
     }
 
     public void FinishPath() {
@@ -54,15 +61,18 @@ public class GoTo : Task {
                 i++;
             } while (!Map.NodeFromPosition(target).isWalkable() && i < 20);
             if (!Map.NodeFromPosition(target).isWalkable()) {
-                Debug.LogError("GoTo target not walkable "+new_target);
+                Debug.Log("GoTo target not walkable "+new_target); //error
+                finished = true;
+                return;
             }
             
         }
 
+        processing = true;
         if (defensive)
-            PathfindingManager.RequestPath(agent.position, target, agent.Cost, agent.faction, ProcessPath);
+            PathfindingManager.RequestPath(agent, target, agent.faction, ProcessPath);
         else
-            PathfindingManager.RequestPath(agent.position, target, agent.Cost, Faction.C, ProcessPath);
+            PathfindingManager.RequestPath(agent, target, Faction.C, ProcessPath);
 
         finished = false;
     }
@@ -73,6 +83,10 @@ public class GoTo : Task {
         if (IsFinished()) {
             callback(true);
             return st;
+        }
+
+        if (processing) {
+            agent.hat.GetComponent<Renderer>().material.color = Color.white;
         }
 
 		if (followPath.HasPath()) {
@@ -104,7 +118,7 @@ public class GoTo : Task {
 
     override
     public String ToString() {
-        return "GoTo -> "+target;
+        return "GoTo -> "+ target + " current point "+followPath.pathF.currentPoint+", processing "+processing;
     }
 }
 

@@ -9,6 +9,12 @@ public class Ranged : AgentUnit {
         base.Start();
         // Los atributos de los Ranged son con los que hemos estado trabajando, los default
         MaxVelocity = 1.8f;
+        militar.attack = 2;
+        militar.attackRange = 4;
+        militar.attackSpeed = 1f;
+        militar.defense = 0;
+        militar.health = 8;
+        militar.maxHealth = 8;
 
         cost = new Dictionary<NodeT, float>() {
             { NodeT.ROAD, 1 },

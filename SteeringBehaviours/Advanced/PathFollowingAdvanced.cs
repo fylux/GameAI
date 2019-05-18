@@ -34,7 +34,7 @@ public class PathFollowingAdvanced : PathFollowing {
                // return Arrive.GetSteering(path[currentPoint], npc, 1f, maxAccel /*50*/);
         }
 
-		return Seek.GetSteering(path[currentPoint], npc, maxAccel /*50*/, visibleRays);
+		return Seek.GetSteering(path[currentPoint], npc, maxAccel /*50*/, false);
     }
 
     void UpdateExtraRadius() {

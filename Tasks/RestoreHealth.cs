@@ -12,7 +12,7 @@ public class RestoreHealth : Task {
     Vector3 healingPoint;
 
 	public RestoreHealth(AgentUnit agent, Action<bool> callback) : base(agent,callback) {
-        healingPoint = Info.GetClosestHealingPoint(agent.position, 100f).position;
+        healingPoint = Info.GetClosestHealingPoint(agent.position, 150f).position;
 
 		this.goTo = new GoTo(agent, healingPoint, Mathf.Infinity, 0, true, (bool success) => {
             goTo.Terminate();
@@ -58,7 +58,7 @@ public class RestoreHealth : Task {
     }
 
     override
-    public String ToString() {
+    public string ToString() {
         return "RestoreHealth ->" + healingPoint;
     }
 }

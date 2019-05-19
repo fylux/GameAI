@@ -74,6 +74,12 @@ public class FollowPath : Task {
 		}
 
         st += GetAvoidCollisions();
+        var z = WallAvoidance.GetSteering(agent, 10000f, Map.terrainMask, 0.7f, 0.7f, 0.5f, true);
+        if (z.linear.magnitude > 0.2f) {
+            st += z;
+            agent.SetColor(Color.green);
+        }
+        
 
         return st;
     }
@@ -105,7 +111,7 @@ public class FollowPath : Task {
                 } else {
                     direction = Quaternion.Euler(0, -45, 0) * direction.normalized;
                 }
-                steering.linear += 10000f * direction;
+                steering.linear += 1000f * direction;
             }
 
 
@@ -126,7 +132,7 @@ public class FollowPath : Task {
     }
 
     override
-    public String ToString() {
+    public string ToString() {
         return "FollowPath -> "+pathF.path;
     }
 }

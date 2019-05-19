@@ -67,7 +67,7 @@ public class PathfindingManager : MonoBehaviour {
             if (request.unit == null || instance.repetitions[request.unit] > 1) {
                 request.callback(null, false);
                 searchingPath = false;
-                Debug.Log("Too late pathfinding");
+                //Debug.Log("Too late pathfinding");
             }
             else {
                 instance.init = Time.time;
@@ -75,7 +75,6 @@ public class PathfindingManager : MonoBehaviour {
                 currentUnitName = request.unit.name;
                 request.unit.transform.localScale = new Vector3(3f, 3f, 3f);
 
-                Debug.Log(Time.frameCount + " " + request.unit.name);
                 StartCoroutine(pathfinding.FindPath(request.start, request.end, request.cost, request.faction, FinishedProcessingPath));
             }
             if (request.unit != null) repetitions[request.unit]--;

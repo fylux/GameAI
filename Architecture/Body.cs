@@ -25,12 +25,14 @@ public class Body : MonoBehaviour {
     }
 
     protected void Update() {
-        position += velocity * Time.deltaTime;
-        orientation += rotation * Time.deltaTime;
+        
 
         ApplyActuator();
 
         CheckStopMoving();
+
+		position += velocity * Time.deltaTime; // Antes estas dos lineas estaban al principio del update
+		orientation += rotation * Time.deltaTime;
 
         transform.position = position;
         transform.eulerAngles = new Vector3(0, orientation, 0);

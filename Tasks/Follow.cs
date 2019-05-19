@@ -7,29 +7,28 @@ using UnityEngine;
 public class Follow : Task {
 
     AgentUnit target;
-    Vector3 lastTargetPosition;
+    //Vector3 lastTargetPosition;
     public GoTo goTo;
     bool inRange;
 
 	public Follow(AgentUnit agent, AgentUnit target, Action<bool> callback) : base(agent,callback) {
         this.target = target;
-        this.lastTargetPosition = target.position;
+        //this.lastTargetPosition = target.position;
         Debug.Assert(Map.NodeFromPosition(target.position).isWalkable());
-        this.goTo = new GoTo(agent, target.position/*GetFutureTargetPosition()*/, (_) => {});
+        this.goTo = new GoTo(agent, target.position/*GetFutureTargetPosition()*/, (_) => {
+            if (IsNearEnough()) SetInRange();
+            else ReconsiderPath();
+        });
         inRange = IsNearEnough();
     }
 
-    bool ReconsiderPath() {
-        //if (Util.HorizontalDist(lastTargetPosition, target.position) > 0.4) {
-        	//goTo.SetNewTarget(GetFutureTargetPosition());
-            goTo.SetNewTarget(target.position);
-            lastTargetPosition = target.position;
-            return true;
-        /*}
-        return false;*/
+    void ReconsiderPath() {
+        Debug.Log("LA UNIDAD " + agent.name + " RECONSIDERA EL FOLLOW");
+        goTo.SetNewTarget(target.position);
+       // lastTargetPosition = target.position;
     }
 
-    Vector3 GetFutureTargetPosition() {
+    /*Vector3 GetFutureTargetPosition() {
         float lookAhead = Mathf.Clamp(Util.HorizontalDist(agent.position, target.position) / 2f, 0, 3);
         Vector3 futurePosition = Map.Clamp(target.position + target.velocity * lookAhead);
         //Only predict if it is not too close and the prediction is a walkable place
@@ -37,7 +36,7 @@ public class Follow : Task {
             return futurePosition;
         else
             return target.position;
-    }
+    }*/
 
     public override Steering Apply() {
         Steering st = new Steering();
@@ -47,21 +46,18 @@ public class Follow : Task {
         }
 
         // If has reached range or fixed time reconsider path
-        if ( (!inRange && (IsNearEnoughLastPosition() || IsNearEnough())) /*|| Time.fixedTime - timeStamp > 2*/) {
-            timeStamp = Time.fixedTime;
-            if (!IsNearEnough() && IsNearEnoughLastPosition()) {
-                bool changed_path = ReconsiderPath();
-            }
-           
-            //If the path has not changed and we are on range
+        if (!inRange) {
             if (IsNearEnough()) {
-                inRange = true;
-                goTo.FinishPath();
-                agent.RequestStopMoving();
+               SetInRange();
+            }
+            else if (Time.fixedTime - timeStamp > 2) {
+                timeStamp = Time.fixedTime;
+                ReconsiderPath();
             }
         }
         //If the enemy it goes out of range
         else if (inRange && IsFarEnough()) {
+            Debug.Log("LA UNIDAD " + agent.name + " SE HA ALEJADO");
             inRange = false;
             ReconsiderPath();
         }
@@ -79,6 +75,13 @@ public class Follow : Task {
         return inRange;
     }
 
+    void SetInRange() {
+        Debug.Log("LA UNIDAD " + agent.name + " ESTA NEAR ENOUGH");
+        inRange = true;
+        goTo.FinishPath();
+        agent.RequestStopMoving();
+    }
+
     private bool IsNearEnough() {
         float distanceToTarget = Util.HorizontalDist(agent.position, target.position);
         return distanceToTarget < agent.militar.attackRange * 0.9;
@@ -89,10 +92,10 @@ public class Follow : Task {
         return realDistance > agent.militar.attackRange * 1.1;
     }
 
-    private bool IsNearEnoughLastPosition() {
+   /* private bool IsNearEnoughLastPosition() {
         float distanceToTarget = Util.HorizontalDist(agent.position, lastTargetPosition);
         return distanceToTarget < agent.militar.attackRange * 0.9;
-    }
+    }*/
 
     //Should I consider then the unit that we are following died?
     protected override bool IsFinished() {

@@ -67,7 +67,7 @@ public class GoToAggresive : HostileTask {
     }
 
     override
-    public String ToString() {
+    public string ToString() {
         return "GoToAggresive -> " + target;
     }
 }

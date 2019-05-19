@@ -53,11 +53,7 @@ public class Attack : Task {
     public string ToString() {
         if (targetEnemy == null)
             return "Killed enemy";
-        else if (follow.jamon()){
-            return "Attack->" + targetEnemy.name + " Follow finished";
-
-
-        } else if (follow.goTo.finished) {
+         else if (follow.goTo.finished) {
             return "Attack->" + targetEnemy.name + " GoTo finished";
 
         } else {

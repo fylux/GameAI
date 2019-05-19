@@ -95,7 +95,15 @@ public class MilitaryResourcesAllocator {
         //Asign remaining units to the strategies with biggest rounding error
         /*Debug.Log(Time.frameCount +" count "+nUnitsAllocToStrategy.Count);
         Debug.Log(Time.frameCount + " sum " + nUnitsAllocToStrategy.Sum(w => w.Value));*/
-        int nRemainingUnits = nTotalAvailableUnits - nUnitsAllocToStrategy.Sum(w => w.Value);
+		
+       // int nRemainingUnits = nTotalAvailableUnits - nUnitsAllocToStrategy.Sum(w => w.Value); <-- Da problemas
+		// Por cada value en nUnitsAllocToStrategy, se suman esos values y se resta nTotalAvailableUnits a eso
+		int nAllocdUnits = 0;
+
+		foreach (StrategyT strat in nUnitsAllocToStrategy.Keys)
+			nAllocdUnits += nUnitsAllocToStrategy [strat];
+		int nRemainingUnits = nTotalAvailableUnits - nAllocdUnits;
+
         var strategiesByAllocResidual = priority.OrderByDescending(s => (s.Value * nTotalAvailableUnits) - Mathf.FloorToInt(s.Value * nTotalAvailableUnits))
                                         .Select(s => s.Key)
                                         .Take(nRemainingUnits);
@@ -124,7 +132,12 @@ public class MilitaryResourcesAllocator {
         //Assign units to strategies based on affinity
         while (priority.Keys.Any(s => nUnitsAllocToStrategy[s] > 0)) {
             var remainingStrategies = new HashSet<StrategyT>(priority.Keys.Where(s => nUnitsAllocToStrategy[s] > 0));
-            var mostAffineUnit = strategyAffinity.OrderBy(unit => unit.Value.Where(s => remainingStrategies.Contains(s.Key)).Min(s => s.Value)).First().Key;
+
+            var mostAffineUnit = strategyAffinity.OrderBy(unit => unit.Value.Where(s => remainingStrategies.Contains(s.Key)).Min(s => s.Value)).FirstOrDefault().Key;
+
+			if (mostAffineUnit == null)
+				break;
+
             var strategy = strategyAffinity[mostAffineUnit].Where(s => remainingStrategies.Contains(s.Key)).OrderBy(s => s.Value).First().Key;
 
             //    Debug.Log("Most affine unit for " + strategy + " is " + mostAffineUnit.name + ", affinity: " + strategyAffinity[mostAffineUnit][strategy]);

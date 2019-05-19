@@ -60,19 +60,16 @@ public class GoTo : Task {
                 target = Map.Clamp(new Vector3(new_target.x + offsetXY[0], 1f, new_target.z + offsetXY[1]));
                 i++;
             } while (!Map.NodeFromPosition(target).isWalkable() && i < 20);
-            if (!Map.NodeFromPosition(target).isWalkable()) {
-                Debug.Log("GoTo target not walkable "+new_target); //error
-                finished = true;
-                return;
-            }
-            
+			if (!Map.NodeFromPosition (target).isWalkable ()) {
+				Debug.LogError("GoTo target not walkable " + new_target); //error
+				finished = true;
+				return;
+			}
         }
 
         processing = true;
-        if (defensive)
-			PathfindingManager.RequestPath(agent, target, agent.faction, ProcessPath);
-        else
-			PathfindingManager.RequestPath(agent, target, Faction.C, ProcessPath);
+        if (defensive) PathfindingManager.RequestPath(agent, target, agent.faction, ProcessPath);
+        else PathfindingManager.RequestPath(agent, target, Faction.C, ProcessPath);
 
         finished = false;
     }
@@ -80,7 +77,7 @@ public class GoTo : Task {
     override
     public Steering Apply() {
         Steering st = new Steering();
-        if (IsFinished()) {
+        if (finished) {
             callback(true);
             return st;
         }
@@ -94,12 +91,10 @@ public class GoTo : Task {
 				timeStamp = Time.fixedTime;
                 SetNewTarget(target, false);
 			}
-//            Debug.Log(Time.frameCount + " " + agent.name + " has path");
-            st = followPath.Apply();
 		} else {
-//            Debug.Log(Time.frameCount + " " + agent.name + " NO has path");
-            //st= Seek.GetSteering(target, agent, 500f); //If path has not been solved yet just do Seek.
+              st += Seek.GetSteering(target, agent, 500f); //If path has not been solved yet just do Seek.
         }
+        st += followPath.Apply(); //If there is no path just avoid collisions
 
         return st;
     }
@@ -117,7 +112,7 @@ public class GoTo : Task {
 
 
     override
-    public String ToString() {
+    public string ToString() {
         return "GoTo -> "+ target + " current point "+followPath.pathF.currentPoint+", processing "+processing;
     }
 }

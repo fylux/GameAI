@@ -30,10 +30,13 @@ public class AStar {
 			Heap<Node> openSet = new Heap<Node>(Map.GetMaxSize());
 			HashSet<Node> closedSet = new HashSet<Node>();
 			openSet.Add(startNode);
+
+            HashSet<Node> toReset = new HashSet<Node>();
 			
 			while (openSet.Count > 0) {
 				Node currentNode = openSet.Pop();
                 closedSet.Add(currentNode);
+                toReset.Add(currentNode);
 				
 				if (currentNode == targetNode) {
 					pathSuccess = true;
@@ -46,7 +49,7 @@ public class AStar {
 					}
 
                     float r = 0;
-                    if (faction != Faction.C) {
+                    /*if (faction != Faction.C) {
                         float z = neighbour.GetRawInfluence(Util.OppositeFaction(faction), Map.clusterInfluence);
 
                         if (z > 200/3f) {
@@ -55,7 +58,7 @@ public class AStar {
                         if (z > 200 / 6f) {
                             r = 1;
                         }
-                    }
+                    }*/
                     
 
 
@@ -65,9 +68,14 @@ public class AStar {
                                                         +r ;
 
 
-
+                    if (newMovementCostToNeighbour > 150) {
+                        Debug.LogError("cost " + newMovementCostToNeighbour);
+                    }
                     if (newMovementCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour)) {
-						neighbour.gCost = newMovementCostToNeighbour;
+                        toReset.Add(neighbour);
+
+
+                        neighbour.gCost = newMovementCostToNeighbour;
 						neighbour.hCost = PathUtil.hDist(neighbour, targetNode);
                         prev[neighbour] = currentNode;
 
@@ -78,9 +86,16 @@ public class AStar {
                     }
 				}
             }
-		}
-		yield return null;
+            foreach (var node in toReset) {
+                node.gCost = 0;
+                node.hCost = 0;
+            }
+//            Debug.Log("Max " + toReset.Count);
 
+        }
+        yield return null;
+
+        
         List<Vector3> waypoints = new List<Vector3>();
         List<Node> nodesPath = new List<Node>();
         if (pathSuccess) {
@@ -95,7 +110,6 @@ public class AStar {
 
             waypoints.Add(targetPos);
         }
-
         FinishedProcessing(waypoints.ToArray(), pathSuccess);
     }
     

@@ -50,18 +50,21 @@ public class StrategyManager : MonoBehaviour {
             }
         }
 
-        //Layer 3
-        foreach (StrategyT strategy in strategySchedulers.Keys) {
-            /*  Debug.Log("Miembros recibiendo ordenes de la estrategia " + strategy);
-              foreach (AgentUnit unit in strategySchedulers[strategy].usableUnits)
-                  Debug.Log("------> " + unit);
-              */
-            strategySchedulers[strategy].ApplyStrategy();
+        if (Time.frameCount % 30 == 0) {
+            //Layer 3
+            foreach (StrategyT strategy in strategySchedulers.Keys) {
+                /*  Debug.Log("Miembros recibiendo ordenes de la estrategia " + strategy);
+                  foreach (AgentUnit unit in strategySchedulers[strategy].usableUnits)
+                      Debug.Log("------> " + unit);
+                  */
+                strategySchedulers[strategy].ApplyStrategy();
 
-            //Layer 4
-            //Each unit will just apply its assigned task
+                //Layer 4
+                //Each unit will just apply its assigned task
 
+            }
         }
+
     }
 
     //Layer1
@@ -70,7 +73,7 @@ public class StrategyManager : MonoBehaviour {
 
         if (onlyOne) block = true;
         forceStrats = false; // Esta no deberia eliminarse porque la necesitamos para crear unidades 
-        Debug.Log("HAN CAMBIADO LOS VALORES DE ESTRATEGIA, REASIGNANDO TROPAS");
+     //   Debug.Log("HAN CAMBIADO LOS VALORES DE ESTRATEGIA, REASIGNANDO TROPAS");
         DrawStrategyValues();
 
         //Layer 2
@@ -82,7 +85,7 @@ public class StrategyManager : MonoBehaviour {
         }
 
         foreach (var strategy in unitsToStrategy.Keys) {
-            Debug.Log(strategy +" "+unitsToStrategy[strategy].Count);
+//            Debug.Log(strategy +" "+unitsToStrategy[strategy].Count);
             strategySchedulers[strategy].usableUnits = unitsToStrategy[strategy];
         }
     }

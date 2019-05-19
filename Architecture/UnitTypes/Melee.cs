@@ -7,11 +7,14 @@ public class Melee : AgentUnit
 
     protected new void Start() {
         base.Start();
+
 		MaxVelocity = 1.8f;
-        MaxAccel = 20;
-        MaxRotation = 60;
-        MaxAngular = 60;
-        attackRange = 1.5f;
+        militar.attack = 3;
+        militar.attackRange = 2;
+        militar.attackSpeed = 1.5f;
+        militar.defense = 1;
+        militar.health = 15;
+        militar.maxHealth = 15;
 
         cost = new Dictionary<NodeT, float>() {
             { NodeT.ROAD, 1 },

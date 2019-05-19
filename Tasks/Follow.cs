@@ -8,7 +8,7 @@ public class Follow : Task {
 
     AgentUnit target;
     Vector3 lastTargetPosition;
-    GoTo goTo;
+    public GoTo goTo;
     bool inRange;
 
 	public Follow(AgentUnit agent, AgentUnit target, Action<bool> callback) : base(agent,callback) {
@@ -47,9 +47,12 @@ public class Follow : Task {
         }
 
         // If has reached range or fixed time reconsider path
-        if ( (!inRange && (IsNearEnoughLastPosition() || IsNearEnough())) || Time.fixedTime - timeStamp > 2) {
+        if ( (!inRange && (IsNearEnoughLastPosition() || IsNearEnough())) /*|| Time.fixedTime - timeStamp > 2*/) {
             timeStamp = Time.fixedTime;
-            bool changed_path = ReconsiderPath();
+            if (!IsNearEnough() && IsNearEnoughLastPosition()) {
+                bool changed_path = ReconsiderPath();
+            }
+           
             //If the path has not changed and we are on range
             if (IsNearEnough()) {
                 inRange = true;
@@ -78,22 +81,26 @@ public class Follow : Task {
 
     private bool IsNearEnough() {
         float distanceToTarget = Util.HorizontalDist(agent.position, target.position);
-        return distanceToTarget < agent.attackRange * 0.9;
+        return distanceToTarget < agent.militar.attackRange * 0.9;
     }
 
     private bool IsFarEnough() {
         float realDistance = Util.HorizontalDist(agent.position, target.position);
-        return realDistance > agent.attackRange * 1.1;
+        return realDistance > agent.militar.attackRange * 1.1;
     }
 
     private bool IsNearEnoughLastPosition() {
         float distanceToTarget = Util.HorizontalDist(agent.position, lastTargetPosition);
-        return distanceToTarget < agent.attackRange * 0.9;
+        return distanceToTarget < agent.militar.attackRange * 0.9;
     }
 
     //Should I consider then the unit that we are following died?
     protected override bool IsFinished() {
         return target == null;
+    }
+
+    public bool jamon() {
+        return IsFinished();
     }
 
     override

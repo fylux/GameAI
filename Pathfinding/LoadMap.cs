@@ -18,7 +18,7 @@ public class LoadMap : MonoBehaviour {
     int mapX, mapY;
 
     [SerializeField]
-    GameObject Road, Grass, Forest, Water, Mountain, influenceTile, influenceGrid;
+    GameObject Road, Grass, Forest, Water, Mountain, influenceTile, influenceGrid, projectile;
 
     NodeT[,] tiles;
     float nodeSizeX, nodeSizeY;
@@ -52,12 +52,11 @@ public class LoadMap : MonoBehaviour {
         if (tiles == null || tiles.GetLength(0) != mapX && tiles.GetLength(1) != mapY) {
             Debug.LogError("Size of the map does not match: " + tiles.GetLength(0) + "x" + tiles.GetLength(1));
         }
-        if (generateMap)
-            {
-                GenerateMap();
-            }
+        if (generateMap){
+            GenerateMap();
+         }
 
-		Map.Init(BuildMap(), gridSize, Mathf.Min(maxUnits,20));
+		Map.Init(BuildMap(), gridSize, Mathf.Min(maxUnits,20), projectile);
 
         if (!disableInfoManager)
             Info.Init();

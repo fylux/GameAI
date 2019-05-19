@@ -2,17 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
+//[System.Serializable]
 public class MilitarComponent : UnitComponent {
 
-    public int maxHealth = 10;
-    public int health = 10;
-    public int attack = 6;
-    public int defense = 3;
-    public float attackSpeed = 1;
-
-    [SerializeField]
-    GameObject projectile;
+    public int maxHealth;
+    public int health;
+    public int attack;
+    public float attackRange;
+    public int defense;
+    public float attackSpeed;
 
     public MilitarComponent() {
         health = maxHealth;
@@ -26,8 +24,8 @@ public class MilitarComponent : UnitComponent {
             damage = attack * Random.Range(0.8f, 1.2f) * AgentUnit.atkTable[(int)agent.GetUnitType(), (int)unit.GetUnitType()];
         }
 
-        if (projectile != null) {
-            var newProjectile = GameObject.Instantiate(projectile);
+        if (Map.projectile != null) {
+            var newProjectile = GameObject.Instantiate(Map.projectile);
             newProjectile.transform.position = agent.position;
             newProjectile.GetComponent<Projectile>().SetTarget(unit);
         }

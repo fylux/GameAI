@@ -38,6 +38,10 @@ public class FollowPath : Task {
     public void SetPath(Vector3[] path) {
 
         if (path != null) {
+            if (path.Length == 0) {
+                Debug.LogError("0 length path, unit "+agent);
+            }
+
             Vector3 closestPoint = path.OrderBy(p => Util.HorizontalDist(p, agent.position)).First();
             for (int i = 0; i < path.Length; ++i) {
                 if (closestPoint == path[i]) {
@@ -107,10 +111,10 @@ public class FollowPath : Task {
 
         }
         if (steering.linear.magnitude > 0) {
-            Debug.DrawRay(agent.position, steering.linear.normalized, Color.blue);
-            agent.hat.GetComponent<Renderer>().material.color = Color.yellow;
+            //Debug.DrawRay(agent.position, steering.linear.normalized, Color.blue);
+            //agent.hat.GetComponent<Renderer>().material.color = Color.black;
         } else {
-            agent.hat.GetComponent<Renderer>().material.color = MilitaryResourcesAllocator.strategyColor[agent.strategy];
+            //agent.hat.GetComponent<Renderer>().material.color = MilitaryResourcesAllocator.strategyColor[agent.strategy];
         }
 
         return steering;

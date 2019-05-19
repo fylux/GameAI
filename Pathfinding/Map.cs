@@ -19,14 +19,17 @@ public class Map {
 
 	public static int maxUnits;
 
+    public static GameObject projectile;
+
     //This is called from load map
-	public static void Init(Node[,] _grid, Vector2 _gridSize, int maxNumberUnits) {
+	public static void Init(Node[,] _grid, Vector2 _gridSize, int maxNumberUnits, GameObject _projectile) {
         
         grid = _grid;
         gridSize = _gridSize;
         mapX = grid.GetLength(0);
         mapY = grid.GetLength(1);
         unitList = new HashSet<AgentUnit>();
+        projectile = _projectile;
 
         generalInfluence = new Vector2[mapX, mapY];
         clusterInfluence = new Vector2[mapX, mapY];

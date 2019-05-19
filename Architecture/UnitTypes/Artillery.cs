@@ -9,9 +9,12 @@ public class Artillery : AgentUnit
     {
         base.Start();
 		MaxVelocity = 1.5f;
-        MaxAccel = 10;
-        MaxRotation = 30;
-        MaxAngular = 30;
+        militar.attack = 4;
+        militar.attackRange = 6;
+        militar.attackSpeed = 0.5f;
+        militar.defense = 1;
+        militar.health = 10;
+        militar.maxHealth = 10;
 
         cost = new Dictionary<NodeT, float>() {
             { NodeT.ROAD, 1 },

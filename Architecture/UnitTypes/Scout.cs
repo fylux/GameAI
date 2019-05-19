@@ -7,9 +7,12 @@ public class Scout : AgentUnit {
     protected new void Start() {
         base.Start();
 		MaxVelocity = 2.3f;
-        MaxAccel = 30;
-        MaxRotation = 70;
-        MaxAngular = 70;
+        militar.attack = 3;
+        militar.attackRange = 1.5f;
+        militar.attackSpeed = 1.25f;
+        militar.defense = 0;
+        militar.health = 12;
+        militar.maxHealth = 12;
 
         cost = new Dictionary<NodeT, float>() {
             { NodeT.ROAD, 1 },

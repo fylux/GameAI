@@ -90,7 +90,7 @@ public class AStar {
                 node.gCost = 0;
                 node.hCost = 0;
             }
-            Debug.Log("Max " + toReset.Count);
+//            Debug.Log("Max " + toReset.Count);
 
         }
         yield return null;
@@ -110,7 +110,6 @@ public class AStar {
 
             waypoints.Add(targetPos);
         }
-
         FinishedProcessing(waypoints.ToArray(), pathSuccess);
     }
     

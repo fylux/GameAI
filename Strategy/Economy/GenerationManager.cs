@@ -24,7 +24,7 @@ public class GenerationManager {
 	public UnitT GetMostImportantUnit()
     {
         UpdateRealDist();
-        Debug.Log("La distribucion a la que deberiamos llegar es " + realDist[UnitT.MELEE] + "M, " + realDist[UnitT.RANGED] + "R, " + realDist[UnitT.SCOUT] + "S, " + realDist[UnitT.ARTIL] + "A");
+   //     Debug.Log("La distribucion a la que deberiamos llegar es " + realDist[UnitT.MELEE] + "M, " + realDist[UnitT.RANGED] + "R, " + realDist[UnitT.SCOUT] + "S, " + realDist[UnitT.ARTIL] + "A");
 
         HashSet<AgentUnit> allies = Map.GetAllies(strategyManager.faction);
 
@@ -41,7 +41,7 @@ public class GenerationManager {
             alliesControled[unit.GetUnitType()]++;
         }
 
-        Debug.Log("La distribucion que tenemos actualmente es " + alliesControled[UnitT.MELEE] + "M, " + alliesControled[UnitT.RANGED] + "R, " + alliesControled[UnitT.SCOUT] + "S, " + alliesControled[UnitT.ARTIL] + "A");
+   //     Debug.Log("La distribucion que tenemos actualmente es " + alliesControled[UnitT.MELEE] + "M, " + alliesControled[UnitT.RANGED] + "R, " + alliesControled[UnitT.SCOUT] + "S, " + alliesControled[UnitT.ARTIL] + "A");
 
         Dictionary<UnitT, float> actualDistribution = new Dictionary<UnitT, float>()
         {
@@ -51,7 +51,7 @@ public class GenerationManager {
             { UnitT.ARTIL, Divide(alliesControled[UnitT.ARTIL],realDist[UnitT.ARTIL]) }
         };
 
-        Debug.Log("Los porcentajes son " + actualDistribution[UnitT.MELEE] + "M, " + actualDistribution[UnitT.RANGED] + "R, " + actualDistribution[UnitT.SCOUT] + "S, " + actualDistribution[UnitT.ARTIL] + "A");
+   //     Debug.Log("Los porcentajes son " + actualDistribution[UnitT.MELEE] + "M, " + actualDistribution[UnitT.RANGED] + "R, " + actualDistribution[UnitT.SCOUT] + "S, " + actualDistribution[UnitT.ARTIL] + "A");
 
         UnitT mostValuable = UnitT.MELEE; // Hay que inicializarlo a la fuerza
         float smallestPercent = 1;
@@ -65,7 +65,7 @@ public class GenerationManager {
             }
         }
 
-        Debug.Log("La unidad elegida para crearse es " + mostValuable);
+     //   Debug.Log("La unidad elegida para crearse es " + mostValuable);
 
         return mostValuable;
 
@@ -98,7 +98,7 @@ public class GenerationManager {
         {
             modifications[UnitT.ARTIL] -= 2;
             modifications[UnitT.RANGED] += 2;
-            Debug.Log("Como no estamos atacando ni defendiendo base principalmente, -2A, +2R");
+         //   Debug.Log("Como no estamos atacando ni defendiendo base principalmente, -2A, +2R");
         }
 
         int numberScouts = 0;
@@ -116,14 +116,14 @@ public class GenerationManager {
         {
             modifications[UnitT.ARTIL] += 2;
             modifications[UnitT.RANGED] -= 2;
-            Debug.Log("Como hay muchos scouts enemigos, -2R, +2A");
+         //   Debug.Log("Como hay muchos scouts enemigos, -2R, +2A");
         }
 
         numberRangeds -= 5;
         numberRangeds = Mathf.Clamp(numberRangeds, -4, 8);
         modifications[UnitT.SCOUT] += numberRangeds;
         modifications[UnitT.MELEE] -= numberRangeds;
-        Debug.Log("Debido al numero de Rangeds rivales, " + numberRangeds + "S, " + (-numberRangeds) + "M");
+//        Debug.Log("Debido al numero de Rangeds rivales, " + numberRangeds + "S, " + (-numberRangeds) + "M");
 
         foreach (UnitT unit in modifications.Keys)
         {

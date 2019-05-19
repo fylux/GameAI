@@ -59,7 +59,7 @@ public class MilitaryResourcesAllocator {
         //All strategies must have a set, even if it is empty
         Dictionary<StrategyT, HashSet<AgentUnit>> unitsAssignedToStrategy = priority.Keys.ToDictionary(strategy => strategy, _ => new HashSet<AgentUnit>());
 
-        Debug.Log("Total units " + availableUnits.Count);
+   //     Debug.Log("Total units " + availableUnits.Count);
 
         WeigthStrategies();
         NormalizeStrategies();

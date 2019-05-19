@@ -81,16 +81,6 @@ public abstract class AgentUnit : AgentNPC {
         //Debug.DrawRay(position, velocity.normalized * 2, Color.green);
     }
 
-    /*override
-    public Steering PathSteering() {
-        if (path_target == null)
-            return new Steering();
-
-        return Seek.GetSteering(path_target.position, this, 5, visibleRays);   
-    }*/
-
-
-
     public void SetTarget(Vector3 targetPosition) {
         ResetTask();
 

@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System;
 
-struct PathRequest {
+public struct PathRequest {
     public Vector3 start;
     public Vector3 end;
     public Dictionary<NodeT, float> cost;
@@ -26,7 +25,7 @@ public class PathfindingManager : MonoBehaviour {
     static PathfindingManager instance;
     AStar pathfinding;
 
-    Queue<PathRequest> requestQueue = new Queue<PathRequest>();
+    public Queue<PathRequest> requestQueue = new Queue<PathRequest>();
     PathRequest request;
 
     Dictionary<AgentNPC, int> repetitions = new Dictionary<AgentNPC, int>();
@@ -35,13 +34,13 @@ public class PathfindingManager : MonoBehaviour {
 
     bool searchingPath;
 
+    public string currentUnitName;
+
     void Awake() {
         instance = this;
         pathfinding = new AStar();
     }
 
-    private void Update() {
-    }
 
     public static void RequestPath(AgentNPC agent, Vector3 pathEnd, Faction faction, Action<Vector3[], bool> callback) {
         PathRequest newRequest = new PathRequest(agent, pathEnd,  faction, callback);
@@ -61,8 +60,7 @@ public class PathfindingManager : MonoBehaviour {
     }
 
     void ProcessNext() {
-        if (!searchingPath && requestQueue.Count > 0) {
-            if (instance.requestQueue.Count > 5 && Time.time - instance.init2 > 1.2) { Debug.LogError("too long "+ (Time.time - instance.init2)); }
+        while (!searchingPath && requestQueue.Count > 0) {
             searchingPath = true;
             request = requestQueue.Dequeue();
 
@@ -74,6 +72,9 @@ public class PathfindingManager : MonoBehaviour {
             else {
                 instance.init = Time.time;
                 request.unit.SetColor(Color.black);
+                currentUnitName = request.unit.name;
+                request.unit.transform.localScale = new Vector3(3f, 3f, 3f);
+
                 Debug.Log(Time.frameCount + " " + request.unit.name);
                 StartCoroutine(pathfinding.FindPath(request.start, request.end, request.cost, request.faction, FinishedProcessingPath));
             }
@@ -84,20 +85,13 @@ public class PathfindingManager : MonoBehaviour {
     }
 
     public void FinishedProcessingPath(Vector3[] path, bool success) {
+        request.unit.transform.localScale = new Vector3(1f, 1f, 1f);
         request.unit.SetColor(Color.red);
-        //if (Time.fixedTime - instance.init > 0.1f) {
-       // Debug.Log(Time.frameCount+": --->Time taken " + (Time.time - instance.init));
-        //}
-        
-
+        currentUnitName = "";
 
         request.callback(path, success);
         searchingPath = false;
         ProcessNext();
-
-        /*Debug.Log(Time.frameCount + " queue length " + instance.requestQueue.Count);
-        if (instance.requestQueue.Count > 0 && instance.request.unit != null)
-            Debug.Log(Time.frameCount + " queue contains " + instance.request.unit.name);*/
     }
 
 

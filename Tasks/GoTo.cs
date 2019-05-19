@@ -70,9 +70,9 @@ public class GoTo : Task {
 
         processing = true;
         if (defensive)
-            PathfindingManager.RequestPath(agent, target, agent.faction, ProcessPath);
+			PathfindingManager.RequestPath(agent, target, agent.faction, ProcessPath);
         else
-            PathfindingManager.RequestPath(agent, target, Faction.C, ProcessPath);
+			PathfindingManager.RequestPath(agent, target, Faction.C, ProcessPath);
 
         finished = false;
     }

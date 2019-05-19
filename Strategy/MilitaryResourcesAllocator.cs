@@ -84,6 +84,9 @@ public class MilitaryResourcesAllocator {
 
         //Map to number of units
         //If there are remaining units due to rounding errors are assigned to the most important strategy
+        foreach (var z in priority.Keys) {
+            Debug.Log(Time.frameCount + " z: " + priority[z]);
+        }
         Dictionary<StrategyT, int> nUnitsAllocToStrategy = priority.ToDictionary(w => w.Key, w => Mathf.FloorToInt(w.Value * nTotalAvailableUnits));
 
         //Asign remaining units to the most important strategy
@@ -93,16 +96,10 @@ public class MilitaryResourcesAllocator {
 
 
         //Asign remaining units to the strategies with biggest rounding error
-        /*Debug.Log(Time.frameCount +" count "+nUnitsAllocToStrategy.Count);
-        Debug.Log(Time.frameCount + " sum " + nUnitsAllocToStrategy.Sum(w => w.Value));*/
+        Debug.Log(Time.frameCount +" count "+nUnitsAllocToStrategy.Count);
+        Debug.Log(Time.frameCount + " sum " + nUnitsAllocToStrategy.Sum(w => w.Value));
 		
-       // int nRemainingUnits = nTotalAvailableUnits - nUnitsAllocToStrategy.Sum(w => w.Value); <-- Da problemas
-		// Por cada value en nUnitsAllocToStrategy, se suman esos values y se resta nTotalAvailableUnits a eso
-		int nAllocdUnits = 0;
-
-		foreach (StrategyT strat in nUnitsAllocToStrategy.Keys)
-			nAllocdUnits += nUnitsAllocToStrategy [strat];
-		int nRemainingUnits = nTotalAvailableUnits - nAllocdUnits;
+        int nRemainingUnits = nTotalAvailableUnits - nUnitsAllocToStrategy.Sum(w => w.Value);
 
         var strategiesByAllocResidual = priority.OrderByDescending(s => (s.Value * nTotalAvailableUnits) - Mathf.FloorToInt(s.Value * nTotalAvailableUnits))
                                         .Select(s => s.Key)
@@ -127,16 +124,17 @@ public class MilitaryResourcesAllocator {
             }
         }
 
+        Debug.Log("Available units " + availableUnits.Count);
+        if (nUnitsAllocToStrategy.Sum(w => w.Value) != availableUnits.Count) {
+            Debug.Log(nUnitsAllocToStrategy.Sum(w => w.Value) +" "+ availableUnits.Count);
+        }
         Debug.Assert(nUnitsAllocToStrategy.Sum(w => w.Value) == availableUnits.Count);
 
         //Assign units to strategies based on affinity
         while (priority.Keys.Any(s => nUnitsAllocToStrategy[s] > 0)) {
             var remainingStrategies = new HashSet<StrategyT>(priority.Keys.Where(s => nUnitsAllocToStrategy[s] > 0));
 
-            var mostAffineUnit = strategyAffinity.OrderBy(unit => unit.Value.Where(s => remainingStrategies.Contains(s.Key)).Min(s => s.Value)).FirstOrDefault().Key;
-
-			if (mostAffineUnit == null)
-				break;
+            var mostAffineUnit = strategyAffinity.OrderBy(unit => unit.Value.Where(s => remainingStrategies.Contains(s.Key)).Min(s => s.Value)).First().Key;
 
             var strategy = strategyAffinity[mostAffineUnit].Where(s => remainingStrategies.Contains(s.Key)).OrderBy(s => s.Value).First().Key;
 
@@ -180,7 +178,7 @@ public class MilitaryResourcesAllocator {
             Console.Log("Strategy: " + strategy.ToString() + " = " + unitsAssignedToStrategy[strategy].Count + " units");
 
             foreach (AgentUnit unit in unitsAssignedToStrategy[strategy]) {
-                //unit.hat.GetComponent<Renderer>().material.color = strategyColor[strategy];
+                unit.hat.GetComponent<Renderer>().material.color = strategyColor[strategy];
                 if (unit.strategy != strategy) {
                     unit.ResetTask();
                 }
@@ -194,7 +192,8 @@ public class MilitaryResourcesAllocator {
 
     public void WeigthStrategies() {
         foreach (StrategyT strategy in priority.Keys.ToList()) {
-            priority[strategy] *= importanceWeigth[strategy] + offensiveWeight[strategy] * offensiveFactor;
+            priority[strategy] *= importanceWeigth[strategy];
+            priority[strategy] += offensiveWeight[strategy] * offensiveFactor;
         }
     }
 
@@ -202,6 +201,7 @@ public class MilitaryResourcesAllocator {
         float sum = priority.Sum(w => w.Value);
         //Debug.Assert(sum > 0f);
         if (!(sum > 0)) sum = 1f;
+        Debug.Log("normalize sum " + sum);
         foreach (StrategyT strategy in priority.Keys.ToList()) {
             priority[strategy] /= sum;
         }

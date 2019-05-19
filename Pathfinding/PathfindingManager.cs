@@ -71,9 +71,9 @@ public class PathfindingManager : MonoBehaviour {
             }
             else {
                 instance.init = Time.time;
-                request.unit.SetColor(Color.black);
+                /*request.unit.SetColor(Color.black);
                 currentUnitName = request.unit.name;
-                request.unit.transform.localScale = new Vector3(3f, 3f, 3f);
+                request.unit.transform.localScale = new Vector3(3f, 3f, 3f);*/
 
                 StartCoroutine(pathfinding.FindPath(request.start, request.end, request.cost, request.faction, FinishedProcessingPath));
             }
@@ -84,8 +84,11 @@ public class PathfindingManager : MonoBehaviour {
     }
 
     public void FinishedProcessingPath(Vector3[] path, bool success) {
-        request.unit.transform.localScale = new Vector3(1f, 1f, 1f);
-        request.unit.SetColor(Color.red);
+        /*if (request.unit != null) {
+            request.unit.transform.localScale = new Vector3(1f, 1f, 1f);
+            request.unit.SetColor(Color.red);
+        }*/
+
         currentUnitName = "";
 
         request.callback(path, success);

@@ -23,7 +23,6 @@ public class Follow : Task {
     }
 
     void ReconsiderPath() {
-        Debug.Log("LA UNIDAD " + agent.name + " RECONSIDERA EL FOLLOW");
         goTo.SetNewTarget(target.position);
        // lastTargetPosition = target.position;
     }
@@ -57,7 +56,6 @@ public class Follow : Task {
         }
         //If the enemy it goes out of range
         else if (inRange && IsFarEnough()) {
-            Debug.Log("LA UNIDAD " + agent.name + " SE HA ALEJADO");
             inRange = false;
             ReconsiderPath();
         }
@@ -76,7 +74,6 @@ public class Follow : Task {
     }
 
     void SetInRange() {
-        Debug.Log("LA UNIDAD " + agent.name + " ESTA NEAR ENOUGH");
         inRange = true;
         goTo.FinishPath();
         agent.RequestStopMoving();

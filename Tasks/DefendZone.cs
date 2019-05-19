@@ -108,6 +108,6 @@ public class DefendZone : HostileTask {
 
     override
     public string ToString() {
-        return "DefendZone -> " + center +" "+attack == null ? ",attacking" : "";
+        return "DefendZone -> " + center +" "+(attack == null ? ",attacking" : "");
     }
 }

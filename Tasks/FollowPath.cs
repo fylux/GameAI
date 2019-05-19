@@ -74,11 +74,7 @@ public class FollowPath : Task {
 		}
 
         st += GetAvoidCollisions();
-        var z = WallAvoidance.GetSteering(agent, 10000f, Map.terrainMask, 0.7f, 0.7f, 0.5f, true);
-        if (z.linear.magnitude > 0.2f) {
-            st += z;
-            agent.SetColor(Color.green);
-        }
+        st += WallAvoidance.GetSteering(agent, 10000f, Map.terrainMask, 0.7f, 0.7f, 0.5f, false);
         
 
         return st;
@@ -86,7 +82,7 @@ public class FollowPath : Task {
 
     override
     protected bool IsFinished() {
-        return (pathF.path.Length-1 == pathF.currentPoint) && pathF.type == FollowT.STAY;
+        return pathF.path != null && (pathF.path.Length-1 == pathF.currentPoint) && pathF.type == FollowT.STAY;
     }
 
     override

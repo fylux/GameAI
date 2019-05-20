@@ -6,7 +6,7 @@ public class InfluenceMap : MonoBehaviour {
 
     const int NNodesInfluenceMap = 1000;
     const int RadiusInfluenceMap = 15;
-    const int SecondsPerInfluenceUpdate = 3;
+    const int SecondsPerInfluenceUpdate = 1;
 
     private void Start() {
        
@@ -51,7 +51,7 @@ public class InfluenceMap : MonoBehaviour {
                 if (visited.Contains(p))
                     continue;
                 visited.Add(p);
-                p.SetInfluence(unit.faction, unit.GetDropOff(i), influenceMap, InfluenceT.MAXIMUM);
+                p.SetInfluence(unit.faction, unit.GetDropOff(Util.HorizontalDist(p.worldPosition, unit.position)), influenceMap, InfluenceT.MAXIMUM);
                 frontier.UnionWith(Map.GetDirectNeighbours(p));
             }
             pending = new HashSet<Node>(frontier);

@@ -49,16 +49,11 @@ public class AStar {
 					}
 
                     float r = 0;
-                    /*if (faction != Faction.C) {
+                    if (faction != Faction.C) {
                         float z = neighbour.GetRawInfluence(Util.OppositeFaction(faction), Map.clusterInfluence);
-
-                        if (z > 200/3f) {
-                            r = 4;
-                        }
-                        if (z > 200 / 6f) {
-                            r = 1;
-                        }
-                    }*/
+                        if (z > 2/4f) r = 4;
+                        else if (z > 2/ 8f) r = 1;
+                    }
                     
 
 
@@ -68,9 +63,6 @@ public class AStar {
                                                         +r ;
 
 
-                    if (newMovementCostToNeighbour > 150) {
-                        Debug.LogError("cost " + newMovementCostToNeighbour);
-                    }
                     if (newMovementCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour)) {
                         toReset.Add(neighbour);
 
@@ -90,7 +82,6 @@ public class AStar {
                 node.gCost = 0;
                 node.hCost = 0;
             }
-//            Debug.Log("Max " + toReset.Count);
 
         }
         yield return null;

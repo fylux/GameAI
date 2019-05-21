@@ -69,7 +69,7 @@ public class StrategyManager : MonoBehaviour {
 
     //Layer1
     public void CycleLayer12() {
-        strategyLayer.Apply();
+        strategyLayer.Apply(); //TODO Por qué?
 
         if (onlyOne) block = true;
         forceStrats = false; // Esta no deberia eliminarse porque la necesitamos para crear unidades 

@@ -25,7 +25,7 @@ public class Patrol : HostileTask {
 	override
 	public void ReceiveAttack(AgentUnit enemy) {
 		//It would be uncommon that targetEnemy is null unless that the range of the enemy is greater than the range of defend zone
-		bool inRange = Util.HorizontalDist(targetEnemy.position, center) /* + Attack range*/ > rangeRadius;
+		bool inRange = Util.HorizontalDist(targetEnemy.position, center) /* + Attack range*/ > rangeRadius; //TODO Aqui hay un NullReference
 		bool targetNear = Util.HorizontalDist(targetEnemy.position, agent.position) < 3f /*+ AttackRange*/;
 		if (targetEnemy == null || (inRange && !targetNear)) {
 			AttackEnemy(enemy);

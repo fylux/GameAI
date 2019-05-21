@@ -7,7 +7,7 @@ public enum StrategyT {
 
 public class StrategyLayer {
 
-	bool dbg = false;
+	bool dbg = true;
 
 	public Dictionary<StrategyT, float> priority = new Dictionary<StrategyT, float>() { { StrategyT.DEF_BASE, 0 },
 		{ StrategyT.DEF_HALF, 0 },
@@ -62,8 +62,12 @@ public class StrategyLayer {
 		if (!(terr >= 0.001)) {
 			atkhalf += 0.2f;
 			Debug.Log ("BONUS por dominación de territorio!");
-		} else
+			atkhalf = Mathf.Min (1, atkhalf);
+		} else {
 			defhalf += 0.2f;
+			defhalf = Mathf.Min (1, defhalf);
+		}
+			
 //		Debug.Log("La influencia enemiga en el territorio aliado es de " + terr);
 		// ***********************************************************
 

@@ -24,7 +24,9 @@ public class Attack : Task {
 
         if (follow.IsInRange()) {
             follow.Apply(); //Keep detecting if enemy moves
-            agent.RequestStopMoving();
+            //agent.RequestStopMoving();
+            st += Face.GetSteering(targetEnemy.position, agent, agent.interiorAngle, agent.exteriorAngle, 0.1f, false);
+
 
             if ((Time.fixedTime - timeStamp) * agent.militar.attackSpeed > 1) {
                 agent.militar.Attack(targetEnemy);

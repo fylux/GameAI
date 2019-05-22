@@ -73,7 +73,11 @@ public abstract class AgentUnit : AgentNPC {
             tCost = 1;
 
         Steering steering = ApplySteering();
-		steering.angular += Face.GetSteering(position + velocity, this, interiorAngle, exteriorAngle, 0.1f, false).angular; // Mover a ApplySteering
+        if (velocity.magnitude > 0.1f) {
+            steering += Face.GetSteering(position + velocity, this, interiorAngle, exteriorAngle, 0.1f, false); // Mover a ApplySteering
+            steering += WallAvoidance.GetSteering(this, 10000f, Map.terrainMask, 0.7f, 0.7f, 0.5f, false);
+            steering += AvoidUnits.GetSteering(this, 1000f, false);
+        }
 
         velocity += steering.linear * Time.deltaTime / tCost;
 		rotation +=  steering.angular * Time.deltaTime / tCost;

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public enum UnitT {
@@ -63,14 +64,25 @@ public abstract class AgentUnit : AgentNPC {
     }
 
 
+    float GetTerrainCost(Vector3 position) {
+        float offset = 0.3f;
+        Vector3 p1 = position + new Vector3(offset, 0, -offset);
+        Vector3 p2 = position + new Vector3(offset, 0, offset);
+        Vector3 p3 = position - new Vector3(-offset, 0, offset);
+        Vector3 p4 = position + new Vector3(-offset, 0, -offset);
+        float tCost = new Vector3[] { position, p1, p2, p3, p4 }.Min(p => cost[Map.NodeFromPosition(p).type]);
+
+        if (tCost == Mathf.Infinity) //Ignore not walkable terrains
+            tCost = 1;
+
+        return tCost;
+    }
+
     override
     protected void ApplyActuator()
     {// Aqui el Actuator suma los steerings, los aplica a las velocidades, y las limita, teniendo en cuenta los costes
         NodeT node = Map.NodeFromPosition(position).type;
-        float tCost = cost[node];
-
-        if (tCost == Mathf.Infinity) //Ignore not walkable terrains
-            tCost = 1;
+        float tCost = GetTerrainCost(position);
 
         Steering steering = ApplySteering();
         if (velocity.magnitude > 0.1f) {
@@ -85,8 +97,6 @@ public abstract class AgentUnit : AgentNPC {
 
         velocity = Vector3.ClampMagnitude(velocity, (float)MaxVelocity / tCost);
         rotation = Mathf.Clamp(rotation, -MaxRotation, MaxRotation);
-
-        //Debug.DrawRay(position, velocity.normalized * 2, Color.green);
     }
 
     public void SetTarget(Vector3 targetPosition) {

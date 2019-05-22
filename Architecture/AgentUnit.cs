@@ -50,8 +50,12 @@ public abstract class AgentUnit : AgentNPC {
 
 
         MaxAccel = 500;
-        MaxRotation = 360;
+        MaxRotation = 630;
         MaxAngular = 15000;
+        interiorAngle = 1;
+        exteriorAngle = 50;
+        interiorRadius = 1;
+        exteriorRadius = 5;
 
 
         //TODO Hasta que se corrija que todo dios tiene select circle
@@ -120,6 +124,17 @@ public abstract class AgentUnit : AgentNPC {
         //100f is 100% influence
         // return 775f / (locationDistance*locationDistance);
         return 200 / locationDistance;
+    }
+
+    private void LateUpdate() {
+        if (militar.IsDead()) {
+            ResetTask();
+            Map.unitList.Remove(this);
+            if (stratManager != null) // Para escenarios de prueba sin strategyManager
+                stratManager.RemoveUnitFromSchedulers(this);
+
+            GameObject.DestroyImmediate(gameObject);
+        }
     }
 
 }

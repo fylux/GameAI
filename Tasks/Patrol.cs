@@ -39,7 +39,6 @@ public class Patrol : HostileTask {
 		}
 
 		if (newEnemy != null) {
-			Debug.Log("Found enemy " + newEnemy.name + " distance " + Util.HorizontalDist(newEnemy.position, agent.position) +" by "+agent.name);
 			targetEnemy = newEnemy;
 			attack = new Attack(agent, targetEnemy, (_) => {
 				attack.Terminate();

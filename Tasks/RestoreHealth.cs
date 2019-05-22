@@ -17,7 +17,7 @@ public class RestoreHealth : Task {
 		this.goTo = new GoTo(agent, healingPoint, Mathf.Infinity, 0, true, (bool success) => {
             goTo.Terminate();
             goTo = null;
-            defendZone = new DefendZone(agent, agent.position, 3f, (_) => {
+            defendZone = new DefendZone(agent, agent.position, 2f, (_) => {
 
             });
         });

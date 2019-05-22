@@ -29,6 +29,8 @@ public class Wander : SteeringBehaviour {
 
     Steering wanderForce;
 
+	public static Vector3 puntoElegido = new Vector3(0,0,0);
+
     new void Start() {
         base.Start();
         wanderOrientation = Random.Range(-1.0f, 1.0f) * wanderRate;
@@ -66,6 +68,7 @@ public class Wander : SteeringBehaviour {
         Vector3 centroCirculo = npc.position + offset * Util.OrientationToVector(npc.orientation);
         Vector3 target = centroCirculo + radius * Util.OrientationToVector(targetOrientation);
 
+		puntoElegido = target;
 
         steering = Face.GetSteering(target, npc, npc.interiorAngle, npc.exteriorAngle, timeToTarget, false);
 
@@ -74,7 +77,12 @@ public class Wander : SteeringBehaviour {
         return steering;
     }
 
-
+	void OnDrawGizmos()
+	{
+		// Draw a yellow sphere at the transform's position
+		Gizmos.color = Color.yellow;
+		Gizmos.DrawSphere(puntoElegido, 1);
+	}
 
 
 

@@ -40,15 +40,14 @@ public class MilitarComponent : UnitComponent {
     public float ReceiveAttack(AgentUnit enemy, int amount) {
         int damage = Mathf.Max(0, amount - defense);
         Console.Log("Unit caused " + damage + " damage");
-        health -= damage;
-        agent.StartCoroutine(BlinkMesh());
+        health = Mathf.Max(0, health - damage);
+
         if (IsDead()) {
             Console.Log("Unit died");
-            //Update list of units removing this one
-            agent.StartCoroutine(DestroyUnit());
-           
+            agent.gameObject.layer = 0;
         }
         else if (agent.HasTask<HostileTask>()) { //To change the target if needed
+            agent.StartCoroutine(BlinkMesh());
             ((HostileTask)agent.GetTask()).ReceiveAttack(enemy);
         }
         //Request to update selection text
@@ -71,15 +70,5 @@ public class MilitarComponent : UnitComponent {
 
         yield return new WaitForSeconds(0.15f);
         agent.SetRenderer(true);
-    }
-
-    public IEnumerator DestroyUnit() {
-        agent.ResetTask();
-        Map.unitList.Remove(agent);
-		if (agent.stratManager != null) // Para escenarios de prueba sin strategyManager
-			agent.stratManager.RemoveUnitFromSchedulers(agent);
-        
-        yield return new WaitForSeconds(0.5f);
-        GameObject.DestroyImmediate(agent.gameObject);
     }
 }

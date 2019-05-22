@@ -73,10 +73,6 @@ public class FollowPath : Task {
 			st = pathF.GetSteering();
 		}
 
-        st += GetAvoidCollisions();
-        st += WallAvoidance.GetSteering(agent, 10000f, Map.terrainMask, 0.7f, 0.7f, 0.5f, false);
-        
-
         return st;
     }
 
@@ -95,37 +91,6 @@ public class FollowPath : Task {
         pathF.visibleRays = visiblePath;
     }
 
-    public Steering GetAvoidCollisions() {
-        Steering steering = new Steering();
-        var units = Info.GetUnitsArea(agent.position, 0.4f);
-        foreach (var unit in units) {
-            Vector3 direction = agent.position - unit.position;
-            float distance = direction.magnitude;
-            if (agent != unit) {
-                if (AngleDir(new Vector2(agent.velocity.x, agent.velocity.z), new Vector2(-direction.x, -direction.z)) > 0f) {
-                    direction = Quaternion.Euler(0, 45, 0) * direction.normalized;
-                } else {
-                    direction = Quaternion.Euler(0, -45, 0) * direction.normalized;
-                }
-                steering.linear += 1000f * direction;
-            }
-
-
-        }
-        if (steering.linear.magnitude > 0) {
-            //Debug.DrawRay(agent.position, steering.linear.normalized, Color.blue);
-            //agent.hat.GetComponent<Renderer>().material.color = Color.black;
-        } else {
-            //agent.hat.GetComponent<Renderer>().material.color = MilitaryResourcesAllocator.strategyColor[agent.strategy];
-        }
-
-        return steering;
-    }
-
-    //Positive means (left?) and negative means (right?)
-    public float AngleDir(Vector2 A, Vector2 B) {
-        return -A.x * B.y + A.y * B.x;
-    }
 
     override
     public string ToString() {

@@ -25,8 +25,6 @@ public class Body : MonoBehaviour {
     }
 
     protected void Update() {
-        
-
         ApplyActuator();
 
         CheckStopMoving();

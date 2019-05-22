@@ -23,8 +23,6 @@ public class HealingPoint : Body {
 
             units.IntersectWith(Map.unitList); //Remove units that may died
             foreach (AgentUnit unit in units) {
-                //if (unit == null) continue; 
-
                 if (unit.militar.health < unit.militar.maxHealth) {
                     unit.militar.health += 1;
                     Console.Log("Unit " + unit.name + " restored health");

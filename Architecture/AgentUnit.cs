@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public enum UnitT {
@@ -50,8 +51,12 @@ public abstract class AgentUnit : AgentNPC {
 
 
         MaxAccel = 500;
-        MaxRotation = 360;
+        MaxRotation = 630;
         MaxAngular = 15000;
+        interiorAngle = 1;
+        exteriorAngle = 50;
+        interiorRadius = 1;
+        exteriorRadius = 5;
 
 
         //TODO Hasta que se corrija que todo dios tiene select circle
@@ -59,17 +64,32 @@ public abstract class AgentUnit : AgentNPC {
     }
 
 
-    override
-    protected void ApplyActuator()
-    {// Aqui el Actuator suma los steerings, los aplica a las velocidades, y las limita, teniendo en cuenta los costes
-        NodeT node = Map.NodeFromPosition(position).type;
-        float tCost = cost[node];
+    float GetTerrainCost(Vector3 position) {
+        float offset = 0.3f;
+        Vector3 p1 = position + new Vector3(offset, 0, -offset);
+        Vector3 p2 = position + new Vector3(offset, 0, offset);
+        Vector3 p3 = position - new Vector3(-offset, 0, offset);
+        Vector3 p4 = position + new Vector3(-offset, 0, -offset);
+        float tCost = new Vector3[] { position, p1, p2, p3, p4 }.Min(p => cost[Map.NodeFromPosition(p).type]);
 
         if (tCost == Mathf.Infinity) //Ignore not walkable terrains
             tCost = 1;
 
+        return tCost;
+    }
+
+    override
+    protected void ApplyActuator()
+    {// Aqui el Actuator suma los steerings, los aplica a las velocidades, y las limita, teniendo en cuenta los costes
+        NodeT node = Map.NodeFromPosition(position).type;
+        float tCost = GetTerrainCost(position);
+
         Steering steering = ApplySteering();
-		steering.angular += Face.GetSteering(position + velocity, this, interiorAngle, exteriorAngle, 0.1f, false).angular; // Mover a ApplySteering
+        if (velocity.magnitude > 0.1f) {
+            steering += Face.GetSteering(position + velocity, this, interiorAngle, exteriorAngle, 0.1f, false); // Mover a ApplySteering
+            steering += WallAvoidance.GetSteering(this, 10000f, Map.terrainMask, 0.7f, 0.7f, 0.5f, false);
+            steering += AvoidUnits.GetSteering(this, 1000f, false);
+        }
 
         velocity += steering.linear * Time.deltaTime / tCost;
 		rotation +=  steering.angular * Time.deltaTime / tCost;
@@ -77,8 +97,6 @@ public abstract class AgentUnit : AgentNPC {
 
         velocity = Vector3.ClampMagnitude(velocity, (float)MaxVelocity / tCost);
         rotation = Mathf.Clamp(rotation, -MaxRotation, MaxRotation);
-
-        //Debug.DrawRay(position, velocity.normalized * 2, Color.green);
     }
 
     public void SetTarget(Vector3 targetPosition) {
@@ -120,6 +138,17 @@ public abstract class AgentUnit : AgentNPC {
         //100f is 100% influence
         // return 775f / (locationDistance*locationDistance);
         return 200 / locationDistance;
+    }
+
+    private void LateUpdate() {
+        if (militar.IsDead()) {
+            ResetTask();
+            Map.unitList.Remove(this);
+            if (stratManager != null) // Para escenarios de prueba sin strategyManager
+                stratManager.RemoveUnitFromSchedulers(this);
+
+            GameObject.DestroyImmediate(gameObject);
+        }
     }
 
 }

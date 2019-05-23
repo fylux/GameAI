@@ -121,13 +121,13 @@ public static class Info {
         Vector2 adv = new Vector2(GetAvgAdvantage(unitGroups, 1), GetAvgAdvantage(unitGroups, 0));
 
 
-        /*if (dbg)*/ Debug.Log("Numero de unidades de A: " + number[0] + ", y de B: " + number[1]);
+        if (dbg) Debug.Log("Numero de unidades de A: " + number[0] + ", y de B: " + number[1]);
         /* Debug.Log("HP de A: " + HP[0] + ", y de B: " + HP[1]);
          Debug.Log("ATK de A: " + ATK[0] + ", y de B: " + ATK[1]);
          Debug.Log("Melees de A: " + melee[0] + ", rangeds: " + ranged[0] + ", scouts: " + scouts[0] + ", y artilleria: " + artill[0]);
          Debug.Log("Melees de B: " + melee[1] + ", rangeds: " + ranged[1] + ", scouts: " + scouts[1] + ", y artilleria: " + artill[1]);*/
 
-       /* if (dbg)*/ Debug.Log("La ventaja gracias a las tablas de A es de " + adv[0] + ", y la de B es " + adv[1]);
+        if (dbg) Debug.Log("La ventaja gracias a las tablas de A es de " + adv[0] + ", y la de B es " + adv[1]);
 
 
 		float result;
@@ -137,13 +137,13 @@ public static class Info {
 	//	if (power == false) {
 		if (number [j] == 0)
 			return 50000;
-		Debug.Log ("Valores: HP[i]: " + HP [i] + ", HP[j]: " + HP [j] + ", ATK[i]: " + ATK [i] + ". ATK[j]: " + ATK [j] + ", adv[i]: " + adv [i] + ", adv[j]: " + adv [j]);
+        if (dbg) Debug.Log ("Valores: HP[i]: " + HP [i] + ", HP[j]: " + HP [j] + ", ATK[i]: " + ATK [i] + ". ATK[j]: " + ATK [j] + ", adv[i]: " + adv [i] + ", adv[j]: " + adv [j]);
 		result = Mathf.Sqrt ( (HP [i] / HP [j]) * (ATK [i] + adv [i]) / (ATK [j] + adv [j]));
 	//	} else {
 		//	result = Mathf.Sqrt ((HP [i] * (ATK [i] + adv [i])) -  (HP [j] * (ATK [j] + adv [j])));
 	//	}
 
-       /* if (dbg) */Debug.Log("La ventaja total de "+fact.ToString()+" es de :" + result);
+        if (dbg) Debug.Log("La ventaja total de "+fact.ToString()+" es de :" + result);
 
         return result;
     }
@@ -168,7 +168,7 @@ public static class Info {
         var nAllies = unitGroups.Sum(z => z.Value[1 - factionIndex]);
 
 		if (nAllies == 0 || nEnemies == 0) {
-			Debug.Log ("Hay un 0 por ahi asi que devolvemos en GetAvgAdvantage 1 ");
+			//Debug.Log ("Hay un 0 por ahi asi que devolvemos en GetAvgAdvantage 1 ");
 			return 1;
 		}
 
@@ -179,7 +179,7 @@ public static class Info {
             }
             totalAdv += (advOfType / nEnemies) * z.Value[1 - factionIndex];
         }
-		Debug.Log ("GetAvgAdvantage devuelve " + totalAdv / nAllies);
+		//Debug.Log ("GetAvgAdvantage devuelve " + totalAdv / nAllies);
         return totalAdv / nAllies;
     }
 	

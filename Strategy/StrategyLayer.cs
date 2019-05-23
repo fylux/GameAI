@@ -7,7 +7,7 @@ public enum StrategyT {
 
 public class StrategyLayer {
 
-	bool dbg = true;
+	bool dbg = false;
 
 	public Dictionary<StrategyT, float> priority = new Dictionary<StrategyT, float>() { { StrategyT.DEF_BASE, 0 },
 		{ StrategyT.DEF_HALF, 0 },
@@ -31,7 +31,7 @@ public class StrategyLayer {
 	}
 
 	public bool Apply() {
-		/*if (dbg)*/ Debug.Log("Starting apply");
+		if (dbg) Debug.Log("Starting apply");
 		bool changed = false;
 
 		Dictionary<StrategyT, float> newPriority = ComputePriority();

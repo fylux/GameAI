@@ -15,18 +15,18 @@ public class MilitaryResourcesAllocator {
     Dictionary<StrategyT, float> importanceWeigth;
     public Dictionary<StrategyT, float> priority; //TESTGGG cambiar la visibilidad a privado
     Dictionary<StrategyT, float> offensiveWeight = new Dictionary<StrategyT, float>() {
-            { StrategyT.ATK_BASE, 0.2f},
-            { StrategyT.ATK_HALF, 0.5f},
-            { StrategyT.DEF_BASE, -0.5f},
-            { StrategyT.DEF_HALF, -0.2f}
+            { StrategyT.ATK_BASE, 0.3f},
+            { StrategyT.ATK_HALF, 0.4f},
+            { StrategyT.DEF_BASE, -0.4f},
+            { StrategyT.DEF_HALF, -0.3f}
         };
     float offensiveFactor;
 
     public static Dictionary<StrategyT, Color> strategyColor = new Dictionary<StrategyT, Color>() {
-            { StrategyT.ATK_BASE, Color.magenta},
-            { StrategyT.ATK_HALF, Color.red},
-            { StrategyT.DEF_BASE, Color.green},
-            { StrategyT.DEF_HALF,Color.cyan}
+            { StrategyT.ATK_BASE, Color.black},
+            { StrategyT.ATK_HALF, Color.magenta},
+            { StrategyT.DEF_HALF, Color.yellow},
+            { StrategyT.DEF_BASE, Color.green}
         };
 
     public Faction faction;
@@ -84,9 +84,6 @@ public class MilitaryResourcesAllocator {
 
         //Map to number of units
         //If there are remaining units due to rounding errors are assigned to the most important strategy
-        foreach (var z in priority.Keys) {
-            Debug.Log(Time.frameCount + " z: " + priority[z]);
-        }
         Dictionary<StrategyT, int> nUnitsAllocToStrategy = priority.ToDictionary(w => w.Key, w => Mathf.FloorToInt(w.Value * nTotalAvailableUnits));
 
         //Asign remaining units to the most important strategy
@@ -96,8 +93,8 @@ public class MilitaryResourcesAllocator {
 
 
         //Asign remaining units to the strategies with biggest rounding error
-        Debug.Log(Time.frameCount +" count "+nUnitsAllocToStrategy.Count);
-        Debug.Log(Time.frameCount + " sum " + nUnitsAllocToStrategy.Sum(w => w.Value));
+        /*Debug.Log(Time.frameCount +" count "+nUnitsAllocToStrategy.Count);
+        Debug.Log(Time.frameCount + " sum " + nUnitsAllocToStrategy.Sum(w => w.Value));*/
 		
         int nRemainingUnits = nTotalAvailableUnits - nUnitsAllocToStrategy.Sum(w => w.Value);
 
@@ -124,10 +121,10 @@ public class MilitaryResourcesAllocator {
             }
         }
 
-        Debug.Log("Available units " + availableUnits.Count);
+        /*Debug.Log("Available units " + availableUnits.Count);
         if (nUnitsAllocToStrategy.Sum(w => w.Value) != availableUnits.Count) {
             Debug.Log(nUnitsAllocToStrategy.Sum(w => w.Value) +" "+ availableUnits.Count);
-        }
+        }*/
         Debug.Assert(nUnitsAllocToStrategy.Sum(w => w.Value) == availableUnits.Count);
 
         //Assign units to strategies based on affinity
@@ -201,7 +198,7 @@ public class MilitaryResourcesAllocator {
         float sum = priority.Sum(w => w.Value);
         //Debug.Assert(sum > 0f);
         if (!(sum > 0)) sum = 1f;
-        Debug.Log("normalize sum " + sum);
+        //Debug.Log("normalize sum " + sum);
         foreach (StrategyT strategy in priority.Keys.ToList()) {
             priority[strategy] /= sum;
         }

@@ -123,7 +123,6 @@ public class Map {
 
 
     public static void DrawInfluence() {
-        Debug.Log("draw");
         var influenceMap = Map.drawnMap;
         for (int x = 0; x < mapX; x++) {
             for (int y = 0; y < mapY; y++) {

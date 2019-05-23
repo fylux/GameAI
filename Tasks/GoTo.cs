@@ -82,10 +82,6 @@ public class GoTo : Task {
             return st;
         }
 
-        if (processing) {
-            agent.hat.GetComponent<Renderer>().material.color = Color.white;
-        }
-
 		if (followPath.HasPath()) {
 			if (Time.fixedTime - timeStamp > reconsiderSeconds) {
 				timeStamp = Time.fixedTime;

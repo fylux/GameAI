@@ -70,7 +70,7 @@ public class EconomyManager : MonoBehaviour {
         newUnit.Start();
 
         Map.unitList.Add(newUnit);
-		Debug.Log ("Generada una unidad de " + type);
+		//Debug.Log ("Generada una unidad de " + type);
 
 		stratManager.CycleLayer12 ();
 	}

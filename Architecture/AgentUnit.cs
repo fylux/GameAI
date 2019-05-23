@@ -141,7 +141,7 @@ public abstract class AgentUnit : AgentNPC {
     }
 
     private void LateUpdate() {
-        if (militar.IsDead()) {
+        if (militar.IsDead() && gameObject != null) {
             ResetTask();
             Map.unitList.Remove(this);
             if (stratManager != null) // Para escenarios de prueba sin strategyManager

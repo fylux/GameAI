@@ -63,7 +63,7 @@ public class Select : MonoBehaviour {
 			Destroy(selectBox);
 		}
 
-		if (Input.GetButtonUp("Fire2") && selectedUnits.Count > 0) {
+		if ((Input.GetButtonUp("Fire2") || Input.GetKeyDown(KeyCode.A)) && selectedUnits.Count > 0) {
 
 			if (cube != null)
 				Destroy (cube);
@@ -95,13 +95,22 @@ public class Select : MonoBehaviour {
 							Debug.Log("Dandole a " + unit + " la orden de DEFENDER LA ZONA");
 							unit.SetTask(new DefendZone(unit, hit.point, 8, (_) => { }));
 						}));*/
-					unit.SetTask(new GoToAggresive(unit, hit.point, 10, (bool success) =>
-						{
-							Destroy(cube);
-							cube = null;
-							Debug.Log("Dandole a " + unit + " la orden de DEFENDER LA ZONA");
-							unit.SetTask(new DefendZone(unit, hit.point, 8, (_) => { }));
-						}));
+					if (Input.GetKeyDown(KeyCode.A))
+						unit.SetTask(new GoToAggresive(unit, hit.point, 10, (bool success) =>
+							{
+								Destroy(cube);
+								cube = null;
+								Debug.Log("Dandole a " + unit + " la orden de DEFENDER LA ZONA");
+								unit.SetTask(new DefendZone(unit, hit.point, 8, (_) => { }));
+							}));
+					else
+						unit.SetTask(new GoTo(unit, hit.point, Mathf.Infinity, 0, defensivePathfinding, (bool success) =>
+							{
+								Destroy(cube);
+								cube = null;
+								Debug.Log("Dandole a " + unit + " la orden de DEFENDER LA ZONA");
+								unit.SetTask(new DefendZone(unit, hit.point, 8, (_) => { }));
+							}));
 
 				}
 			}

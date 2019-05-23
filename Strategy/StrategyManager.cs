@@ -21,7 +21,7 @@ public class StrategyManager : MonoBehaviour {
     [SerializeField]
     float offensiveFactor;
 
-    StrategyLayer strategyLayer;
+    public StrategyLayer strategyLayer;
     public MilitaryResourcesAllocator militaryResourceAllocator;
 
     Dictionary<StrategyT, SchedulerStrategy> strategySchedulers = new Dictionary<StrategyT, SchedulerStrategy>() {
@@ -45,7 +45,7 @@ public class StrategyManager : MonoBehaviour {
     // Update is called once per frame
     void Update() {
 		if (Time.frameCount % 120 == 0 || forceStrats == true) {
-            if ((strategyLayer.Apply() || forceStrats == true) && block == false) { //TESTGGG eliminar lo del block
+			if (( forceStrats == true || strategyLayer.Apply() ) && block == false) { //TESTGGG eliminar lo del block
                 CycleLayer12();
             }
         }
@@ -69,7 +69,7 @@ public class StrategyManager : MonoBehaviour {
 
     //Layer1
     public void CycleLayer12() {
-        strategyLayer.Apply(); //TODO Por qué?
+        //strategyLayer.Apply(); //TODO Por qué?
 
         if (onlyOne) block = true;
         forceStrats = false; // Esta no deberia eliminarse porque la necesitamos para crear unidades 
@@ -85,7 +85,7 @@ public class StrategyManager : MonoBehaviour {
         }
 
         foreach (var strategy in unitsToStrategy.Keys) {
-//            Debug.Log(strategy +" "+unitsToStrategy[strategy].Count);
+            Debug.Log(strategy +" "+unitsToStrategy[strategy].Count);
             strategySchedulers[strategy].usableUnits = unitsToStrategy[strategy];
         }
     }

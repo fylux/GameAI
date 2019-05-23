@@ -21,9 +21,11 @@ public class SchedulerAtkBase : SchedulerStrategy
     override
     public void ApplyStrategy()
     {
+		Debug.Log ("PAPPLY" + usableUnits.Count);
         if (usableUnits.Count > 0)
         {
-			HashSet<AgentUnit> alliesAtk = new HashSet<AgentUnit>(Info.GetUnitsFactionArea(Info.GetWaypoint("base", enemyFaction), 45, allyFaction).Where(unit => unit.strategy == StrategyT.ATK_BASE));
+			Debug.Log ("GOOFY");
+			HashSet<AgentUnit> alliesAtk = new HashSet<AgentUnit>(Info.GetUnitsFactionArea(Info.GetWaypoint("base", enemyFaction), 40, allyFaction).Where(unit => unit.strategy == StrategyT.ATK_BASE));
             HashSet<AgentUnit> enemiesDef = Info.GetUnitsFactionArea(enemyBase, 25, Util.OppositeFaction(allyFaction));
             alliesAtk.UnionWith(enemiesDef);
 
@@ -33,11 +35,13 @@ public class SchedulerAtkBase : SchedulerStrategy
 			regrAtk.UnionWith (enemiesDef);
 
             bool strong = Info.MilitaryAdvantage(alliesAtk, allyFaction) >= 0.85;
+			Debug.Log ("Strong vale --> " + strong);
 			bool reunitedStrong = Info.MilitaryAdvantage(regrAtk, allyFaction) >= 0.85;
+			Debug.Log ("ReunitedStrong vale --> " + reunitedStrong);
 
 			if ((strong && regrouped.Count >= usableUnits.Count * 0.8) || reunitedStrong)
             {
-               // Debug.Log("Somos mas FUERTES asi que vamos a atacar");
+                Debug.Log("Somos mas FUERTES y estamos CASI TODOS asi que vamos a atacar");
                 foreach (AgentUnit unit in usableUnits)
                 {
                     if (atking.Contains(unit) == false || (!unit.HasTask<GoTo>() && Util.HorizontalDist(unit.position, Info.GetWaypoint("base", enemyFaction)) >= 15)) 
@@ -55,7 +59,7 @@ public class SchedulerAtkBase : SchedulerStrategy
             }
             else
             {
-               // Debug.Log("Somos mas DEBILES asi que vamos a esperar");
+                Debug.Log("Somos mas DEBILES asi que vamos a esperar");
                 foreach (AgentUnit unit in usableUnits)
                 {
                     if (strong == false && unit.militar.health < unit.militar.maxHealth && (heal.Contains(unit) == false || !unit.HasTask<RestoreHealth>()))

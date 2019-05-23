@@ -61,7 +61,7 @@ public class StrategyLayer {
 		float terr = Info.GetTerritoryInfluence(allyFaction, enemyFaction);
 		if (!(terr >= 0.001)) {
 			atkhalf += 0.2f;
-			Debug.Log ("BONUS por dominación de territorio!");
+//			Debug.Log ("BONUS por dominación de territorio!");
 			atkhalf = Mathf.Min (1, atkhalf);
 		} else {
 			defhalf += 0.2f;

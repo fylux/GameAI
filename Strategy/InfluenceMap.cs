@@ -16,7 +16,7 @@ public class InfluenceMap : MonoBehaviour {
 		// De cada 1000ms, en el ms #500 se calcula la de uno, en el #750 la de otro, y en el 1000 se muestra
 
 		// Calcular la influencia de los A
-        if (Mathf.Floor(Time.fixedTime * 1000) % (250 * SecondsPerInfluenceUpdate) == 0) { //Time is managed in ms
+        /*if (Mathf.Floor(Time.fixedTime * 1000) % (250 * SecondsPerInfluenceUpdate) == 0) { //Time is managed in ms
             Map.ResetInfluence();
 			foreach (AgentUnit unit in Map.GetAllies(Faction.A)) {
                 ComputeInfluenceDijkstra(unit, Map.generalInfluence);
@@ -42,10 +42,16 @@ public class InfluenceMap : MonoBehaviour {
 			foreach (AgentUnit unit in Map.GetAllies(Faction.B)) {
 				ComputeInfluenceBFS(unit, Map.clusterInfluence);
 			}
-		}
+		}*/
 
 		// DrawInfluence
 		if (Mathf.Floor(Time.fixedTime * 1000) % (1000 * SecondsPerInfluenceUpdate) == 0) { //Time is managed in ms
+			Map.ResetInfluence();
+			foreach (AgentUnit unit in Map.unitList) {
+				ComputeInfluenceDijkstra(unit, Map.generalInfluence);
+				ComputeInfluenceBFS(unit, Map.clusterInfluence);
+				//Falta la de los arqueros
+			}
 			Map.DrawInfluence();
 		}
            

@@ -126,7 +126,7 @@ public class Map {
         var influenceMap = Map.drawnMap;
         for (int x = 0; x < mapX; x++) {
             for (int y = 0; y < mapY; y++) {
-                var mainFaction = grid[x, y].GetMostInfluentFaction(influenceMap);
+                var mainFaction = grid[x, y].GetMostInfluentFaction(influenceMap); 
                 float influ = grid[x, y].GetNetInfluence(mainFaction, influenceMap);
                 float otherColor =  Mathf.Max(0f,1f - influ * 4f);
 

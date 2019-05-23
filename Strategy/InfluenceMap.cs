@@ -13,15 +13,41 @@ public class InfluenceMap : MonoBehaviour {
     }
 
     public void Update() {
-        if (Mathf.Floor(Time.fixedTime * 1000) % (1000 * SecondsPerInfluenceUpdate) == 0) { //Time is managed in ms
+		// De cada 1000ms, en el ms #500 se calcula la de uno, en el #750 la de otro, y en el 1000 se muestra
+
+		// Calcular la influencia de los A
+        if (Mathf.Floor(Time.fixedTime * 1000) % (250 * SecondsPerInfluenceUpdate) == 0) { //Time is managed in ms
             Map.ResetInfluence();
-            foreach (AgentUnit unit in Map.unitList) {
+			foreach (AgentUnit unit in Map.GetAllies(Faction.A)) {
                 ComputeInfluenceDijkstra(unit, Map.generalInfluence);
-                //ComputeInfluenceDijkstraRanged(unit, Map.generalInfluence);
-                ComputeInfluenceBFS(unit, Map.clusterInfluence);
             }
-            Map.DrawInfluence();
         }
+
+		// Calcular la influencia de los A
+		if (Mathf.Floor(Time.fixedTime * 1000) % (450 * SecondsPerInfluenceUpdate) == 0) { //Time is managed in ms
+			foreach (AgentUnit unit in Map.GetAllies(Faction.A)) {
+				ComputeInfluenceBFS(unit, Map.clusterInfluence);
+			}
+		}
+
+		// Calcular la influencia de los B
+		if (Mathf.Floor(Time.fixedTime * 1000) % (600 * SecondsPerInfluenceUpdate) == 0) { //Time is managed in ms
+			foreach (AgentUnit unit in Map.GetAllies(Faction.B)) {
+				ComputeInfluenceDijkstra(unit, Map.generalInfluence);
+			}
+		}
+
+		// Calcular la influencia de los B
+		if (Mathf.Floor(Time.fixedTime * 1000) % (750 * SecondsPerInfluenceUpdate) == 0) { //Time is managed in ms
+			foreach (AgentUnit unit in Map.GetAllies(Faction.B)) {
+				ComputeInfluenceBFS(unit, Map.clusterInfluence);
+			}
+		}
+
+		// DrawInfluence
+		if (Mathf.Floor(Time.fixedTime * 1000) % (1000 * SecondsPerInfluenceUpdate) == 0) { //Time is managed in ms
+			Map.DrawInfluence();
+		}
            
     }
 

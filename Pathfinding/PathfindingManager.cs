@@ -34,8 +34,6 @@ public class PathfindingManager : MonoBehaviour {
 
     bool searchingPath;
 
-    public string currentUnitName;
-
     void Awake() {
         instance = this;
         pathfinding = new AStar();
@@ -71,11 +69,7 @@ public class PathfindingManager : MonoBehaviour {
             }
             else {
                 instance.init = Time.time;
-                /*request.unit.SetColor(Color.black);
-                currentUnitName = request.unit.name;
-                request.unit.transform.localScale = new Vector3(3f, 3f, 3f);*/
-
-                StartCoroutine(pathfinding.FindPath(request.start, request.end, request.cost, request.faction, FinishedProcessingPath));
+                StartCoroutine(pathfinding.FindPath(request));
             }
             if (request.unit != null) repetitions[request.unit]--;
 
@@ -84,13 +78,6 @@ public class PathfindingManager : MonoBehaviour {
     }
 
     public void FinishedProcessingPath(Vector3[] path, bool success) {
-        /*if (request.unit != null) {
-            request.unit.transform.localScale = new Vector3(1f, 1f, 1f);
-            request.unit.SetColor(Color.red);
-        }*/
-
-        currentUnitName = "";
-
         request.callback(path, success);
         searchingPath = false;
         ProcessNext();

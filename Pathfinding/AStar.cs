@@ -13,16 +13,16 @@ public class AStar {
     PathfindingManager requestManager;
 
 
-    public IEnumerator FindPath(Vector3 startPos, Vector3 targetPos, Dictionary<NodeT, float> cost, Faction faction, Action<Vector3[], bool> FinishedProcessing) {
+    public IEnumerator FindPath(PathRequest request) {
         prev = new Dictionary<Node, Node>();
         bool pathSuccess = false;
 
-        this.targetPos = targetPos;
-		startNode = Map.NodeFromPosition(startPos);
+        Faction faction = request.faction;
+        AgentNPC unit = request.unit;
+        targetPos = request.start;
+		startNode = Map.NodeFromPosition(request.end);
         startNode.gCost = 0;
 		targetNode = Map.NodeFromPosition(targetPos);
-
-        //Debug.Log(startNode.type + " -> " + targetNode.type);
 
         /*Acceleration can make a NPC move to a non accesible area so we should not take it into account when computing the path.*/
 
@@ -44,13 +44,16 @@ public class AStar {
 				}
 				
 				foreach (Node neighbour in Map.GetNeighbours(currentNode)) {
-					if (!neighbour.isWalkable() || closedSet.Contains(neighbour)) {
-						continue;
-					}
+					if (!neighbour.isWalkable() || closedSet.Contains(neighbour)) continue;
 
                     float r = 0;
                     if (faction != Faction.C) {
-                        float z = neighbour.GetRawInfluence(Util.OppositeFaction(faction), Map.clusterInfluence);
+                        float z;
+                        if (unit is AgentUnit && ((AgentUnit) unit).GetUnitType() != UnitT.RANGED)
+                            z = neighbour.GetRawInfluence(Util.OppositeFaction(faction), Map.clusterInfluence);
+                        else
+                            z = neighbour.GetRawInfluence(Util.OppositeFaction(faction), Map.generalRangedInfluence);
+
                         if (z > 2/4f) r = 4;
                         else if (z > 2/ 8f) r = 1;
                     }
@@ -58,23 +61,18 @@ public class AStar {
 
 
                     //This penaly for the terrain is based on the idea that if you move from road to forest is slower than from forest to road
-                    float newMovementCostToNeighbour = currentNode.gCost 
-                                                        + PathUtil.realDist(currentNode, neighbour) * cost[neighbour.type]
-                                                        +r ;
+                    float newMovementCostToNeighbour = currentNode.gCost + r  + PathUtil.realDist(currentNode, neighbour) * request.cost[neighbour.type];
 
 
                     if (newMovementCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour)) {
                         toReset.Add(neighbour);
 
-
                         neighbour.gCost = newMovementCostToNeighbour;
 						neighbour.hCost = PathUtil.hDist(neighbour, targetNode);
                         prev[neighbour] = currentNode;
 
-                        if (!openSet.Contains(neighbour))
-                            openSet.Add(neighbour);
-                        else
-                            openSet.UpdateItem(neighbour);
+                        if (!openSet.Contains(neighbour)) openSet.Add(neighbour);
+                        else openSet.UpdateItem(neighbour);
                     }
 				}
             }
@@ -101,7 +99,7 @@ public class AStar {
 
             waypoints.Add(targetPos);
         }
-        FinishedProcessing(waypoints.ToArray(), pathSuccess);
+        request.callback(waypoints.ToArray(), pathSuccess);
     }
     
    List<Node> RetracePath() {

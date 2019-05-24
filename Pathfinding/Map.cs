@@ -128,7 +128,7 @@ public class Map {
             for (int y = 0; y < mapY; y++) {
                 var mainFaction = grid[x, y].GetMostInfluentFaction(influenceMap); 
                 float influ = grid[x, y].GetNetInfluence(mainFaction, influenceMap);
-                float otherColor =  Mathf.Max(0f,1f - influ * 4f);
+                float otherColor =  Mathf.Max(0f,1f - influ * 3f);
 
                 //otherColor = Mathf.Round(otherColor * 5f) / 5f; //To discretize the range of colors
                 Dictionary<Faction, Color> colors = new Dictionary<Faction, Color>() {

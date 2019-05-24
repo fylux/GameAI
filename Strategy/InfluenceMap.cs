@@ -6,7 +6,7 @@ public class InfluenceMap : MonoBehaviour {
 
 
     const int NNodesInfluenceMap = 1000;
-    const int RadiusInfluenceMap = 15;
+    const int RadiusInfluenceMap = 14;
     const int SecondsPerInfluenceUpdate = 1;
 
     private float nextUpdateTime = 0.0f;
@@ -33,6 +33,7 @@ public class InfluenceMap : MonoBehaviour {
             if (unit == null) continue; 
             ComputeInfluenceDijkstra(unit, Map.generalInfluence);
             ComputeInfluenceBFS(unit, Map.clusterInfluence);
+            ComputeInfluenceBFS(unit, Map.generalRangedInfluence, UnitT.RANGED, true);
             //Falta la de los arqueros
             yield return null;
         }
@@ -41,7 +42,7 @@ public class InfluenceMap : MonoBehaviour {
         ManualCameraRender.singleton.Draw();
     }
 
-    public void ComputeInfluenceBFS(AgentUnit unit, Vector2[,] influenceMap) {
+    public void ComputeInfluenceBFS(AgentUnit unit, Vector2[,] influenceMap, UnitT targetType = UnitT.MELEE, bool considerUnit = false) {
         HashSet<Node> pending = new HashSet<Node>();
         HashSet<Node> visited = new HashSet<Node>();
 
@@ -55,7 +56,12 @@ public class InfluenceMap : MonoBehaviour {
                 if (visited.Contains(p))
                     continue;
                 visited.Add(p);
-                p.SetInfluence(unit.faction, unit.GetDropOff(Util.HorizontalDist(p.worldPosition, unit.position)), influenceMap, InfluenceT.MAXIMUM);
+                if (!considerUnit) {
+                    p.SetInfluence(unit.faction, unit.GetDropOff(1+Util.HorizontalDist(p.worldPosition, unit.position)), influenceMap, InfluenceT.MAXIMUM);
+                } else {
+                    float atkFactor = AgentUnit.atkTable[(int)unit.GetUnitType(), (int)targetType];
+                    p.SetInfluence(unit.faction, atkFactor * unit.GetDropOff(1+Util.HorizontalDist(p.worldPosition, unit.position)), influenceMap, InfluenceT.MAXIMUM);
+                }
                 frontier.UnionWith(Map.GetDirectNeighbours(p));
             }
             pending = new HashSet<Node>(frontier);

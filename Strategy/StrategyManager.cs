@@ -24,6 +24,11 @@ public class StrategyManager : MonoBehaviour {
     public StrategyLayer strategyLayer;
     public MilitaryResourcesAllocator militaryResourceAllocator;
 
+
+    float nextL12Time, nextL3Time = 0.0f;
+    float periodL12 = 1.5f;
+    float periodL3 = 0.5f;
+
     Dictionary<StrategyT, SchedulerStrategy> strategySchedulers = new Dictionary<StrategyT, SchedulerStrategy>() {
                                                                               { StrategyT.DEF_BASE, new SchedulerDefBase() },
                                                                               { StrategyT.DEF_HALF, new SchedulerDefHalf() },
@@ -44,13 +49,15 @@ public class StrategyManager : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-		if (Time.frameCount % 120 == 0 || forceStrats == true) {
-			if (( forceStrats == true || strategyLayer.Apply() ) && block == false) { //TESTGGG eliminar lo del block
+        if (Time.fixedTime > nextL12Time || forceStrats == true) {
+            nextL12Time += periodL12;
+            if (( forceStrats == true || strategyLayer.Apply() ) && block == false) { //TESTGGG eliminar lo del block
                 CycleLayer12();
             }
         }
 
-        if (Time.frameCount % 30 == 0) {
+        if (Time.fixedTime > nextL3Time) {
+            nextL3Time += periodL3;
             //Layer 3
             foreach (StrategyT strategy in strategySchedulers.Keys) {
                 /*  Debug.Log("Miembros recibiendo ordenes de la estrategia " + strategy);

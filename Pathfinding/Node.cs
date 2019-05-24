@@ -27,7 +27,7 @@ public class Node : IHeapItem<Node> {
 	public float hCost;
 
     protected Vector2 influence;
-    public GameObject influenceTile;
+    public Renderer influenceTile;
 
     int heapIndex;
 

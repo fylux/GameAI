@@ -70,7 +70,7 @@ public class LoadMap : MonoBehaviour {
                 Vector3 position = offset + (Vector3.right * x * nodeSizeX) + (Vector3.forward * y * nodeSizeY);
                 NodeT type = (NodeT)tiles[x, y];
                 grid[x, y] = new Node(x, y, position, type);
-                grid[x, y].influenceTile = influenceGrid.transform.GetChild(x * mapY + y).gameObject;
+                grid[x, y].influenceTile = influenceGrid.transform.GetChild(x * mapY + y).GetComponent<Renderer>();
             }
         }
         return grid;

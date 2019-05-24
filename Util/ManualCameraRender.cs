@@ -7,16 +7,22 @@ public class ManualCameraRender : MonoBehaviour {
     private float nextActionTime = 0.0f;
     public float period = 1f;
     Camera cam;
+    public static ManualCameraRender singleton;
 
     void Start() {
         cam = GetComponent<Camera>();
         cam.enabled = false;
+        singleton = this;
     }
 
-    void Update() {
-        if (Time.time > nextActionTime) {
+    public void Draw() {
+        cam.Render();
+    }
+
+    /*void Update() {
+        if (Time.fixedTime > nextActionTime) {
             cam.Render();
             nextActionTime += period;
         }
-    }
+    }*/
 }

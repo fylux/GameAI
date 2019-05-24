@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class InfluenceMap : MonoBehaviour {
@@ -8,66 +9,37 @@ public class InfluenceMap : MonoBehaviour {
     const int RadiusInfluenceMap = 15;
     const int SecondsPerInfluenceUpdate = 1;
 
+    private float nextUpdateTime = 0.0f;
+    public float period = 2.5f;
+
     private void Start() {
        
     }
 
     public void Update() {
-		// De cada 1000ms, en el ms #500 se calcula la de uno, en el #750 la de otro, y en el 1000 se muestra
-
-		// Calcular la influencia de los A
-        /*if (Mathf.Floor(Time.fixedTime * 1000) % (250 * SecondsPerInfluenceUpdate) == 0) { //Time is managed in ms
-            Map.ResetInfluence();
-			foreach (AgentUnit unit in Map.GetAllies(Faction.A)) {
-                ComputeInfluenceDijkstra(unit, Map.generalInfluence);
-            }
-        }
-
-		// Calcular la influencia de los A
-		if (Mathf.Floor(Time.fixedTime * 1000) % (450 * SecondsPerInfluenceUpdate) == 0) { //Time is managed in ms
-			foreach (AgentUnit unit in Map.GetAllies(Faction.A)) {
-				ComputeInfluenceBFS(unit, Map.clusterInfluence);
-			}
-		}
-
-		// Calcular la influencia de los B
-		if (Mathf.Floor(Time.fixedTime * 1000) % (600 * SecondsPerInfluenceUpdate) == 0) { //Time is managed in ms
-			foreach (AgentUnit unit in Map.GetAllies(Faction.B)) {
-				ComputeInfluenceDijkstra(unit, Map.generalInfluence);
-			}
-		}
-
-		// Calcular la influencia de los B
-		if (Mathf.Floor(Time.fixedTime * 1000) % (750 * SecondsPerInfluenceUpdate) == 0) { //Time is managed in ms
-			foreach (AgentUnit unit in Map.GetAllies(Faction.B)) {
-				ComputeInfluenceBFS(unit, Map.clusterInfluence);
-			}
-		}*/
-
-		// DrawInfluence
-		if (Mathf.Floor(Time.fixedTime * 1000) % (1000 * SecondsPerInfluenceUpdate) == 0) { //Time is managed in ms
-			Map.ResetInfluence();
-			foreach (AgentUnit unit in Map.unitList) {
-				ComputeInfluenceDijkstra(unit, Map.generalInfluence);
-				ComputeInfluenceBFS(unit, Map.clusterInfluence);
-				//Falta la de los arqueros
-			}
-			Map.DrawInfluence();
+        // DrawInfluence
+        if (Time.fixedTime > nextUpdateTime) { //Time is managed in ms
+            nextUpdateTime += period;
+            StartCoroutine(UpdateInfluence());
 		}
            
     }
 
-    /*public IEnumerator UpdateInfluence() {
-        map.ResetInfluence();
+    IEnumerator UpdateInfluence() {
+        Map.ResetInfluence();
         yield return null;
-
+        var unitList = new LinkedList<AgentUnit>(Map.unitList);
         foreach (AgentUnit unit in unitList) {
-            ComputeInfluenceDijkstra(unit);
+            if (unit == null) continue; 
+            ComputeInfluenceDijkstra(unit, Map.generalInfluence);
+            ComputeInfluenceBFS(unit, Map.clusterInfluence);
+            //Falta la de los arqueros
             yield return null;
         }
-        map.SetInfluence();
-        //Call update minimap camera
-    }*/
+        Map.DrawInfluence();
+        yield return new WaitForSeconds(0.2f);
+        ManualCameraRender.singleton.Draw();
+    }
 
     public void ComputeInfluenceBFS(AgentUnit unit, Vector2[,] influenceMap) {
         HashSet<Node> pending = new HashSet<Node>();

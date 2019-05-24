@@ -146,9 +146,9 @@ public class Map {
                     grid[x, y].influenceTile.GetComponent<Renderer>().material.color = Color.white;
                 }*/
 
-                grid[x, y].influenceTile.GetComponent<Renderer>().material.color = colors[mainFaction];
+                grid[x, y].influenceTile.material.color = colors[mainFaction];
 
-                grid[x, y].influenceTile.GetComponent<Renderer>().material.SetFloat("_Glossiness", 0f);
+                //grid[x, y].influenceTile.material.SetFloat("_Glossiness", 0f);
                 //grid[x, y].gameObject.transform.GetChild(0).GetComponent<Renderer>().material.color = colors[grid[x, y].getFaction()];
                 /*Gizmos.color = colors[grid[x, y].getFaction()];
                 Gizmos.DrawCube(grid[x, y].worldPosition, size);*/

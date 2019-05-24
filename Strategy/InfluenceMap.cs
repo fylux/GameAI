@@ -90,7 +90,7 @@ public class InfluenceMap : MonoBehaviour {
             }
 
             foreach (Node neighbour in Map.GetNeighbours(currentNode)) {
-                if (/*!neighbour.isWalkable() || */closedSet.Contains(neighbour)) {
+                if (!neighbour.isWalkable() || closedSet.Contains(neighbour)) {
                     continue;
                 }
 

@@ -69,9 +69,14 @@ public class InfluenceMap : MonoBehaviour {
         HashSet<Node> closedSet = new HashSet<Node>();
         openSet.Add(startNode);
 
+        HashSet<Node> toReset = new HashSet<Node>();
+
+
         while (openSet.Count > 0) {
             Node currentNode = openSet.Pop();
             closedSet.Add(currentNode);
+            toReset.Add(currentNode);
+
             currentNode.SetInfluence(unit.faction, unit.GetDropOff(currentNode.gCost), influenceMap, InfluenceT.ACCUMULATE);
 
             if (closedSet.Count > NNodesInfluenceMap) {
@@ -87,6 +92,7 @@ public class InfluenceMap : MonoBehaviour {
                 float newMovementCostToNeighbour = currentNode.gCost + PathUtil.realDist(currentNode, neighbour) * unit.Cost[neighbour.type];
 
                 if (newMovementCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour)) {
+                    toReset.Add(neighbour);
                     neighbour.gCost = newMovementCostToNeighbour;
                     neighbour.hCost = 0;
 
@@ -96,6 +102,11 @@ public class InfluenceMap : MonoBehaviour {
                         openSet.UpdateItem(neighbour);
                 }
             }
+        }
+
+        foreach (var node in toReset) {
+            node.gCost = 0;
+            node.hCost = 0;
         }
     }
 }

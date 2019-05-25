@@ -19,10 +19,10 @@ public class AStar {
 
         Faction faction = request.faction;
         AgentNPC unit = request.unit;
-        targetPos = request.start;
-		startNode = Map.NodeFromPosition(request.end);
+		startNode = Map.NodeFromPosition(request.start);
         startNode.gCost = 0;
-		targetNode = Map.NodeFromPosition(targetPos);
+        targetPos = request.end;
+        targetNode = Map.NodeFromPosition(targetPos);
 
         /*Acceleration can make a NPC move to a non accesible area so we should not take it into account when computing the path.*/
 

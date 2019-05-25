@@ -13,7 +13,7 @@ public class StrategyManager : MonoBehaviour {
 
     public bool forceStrats; //TESTGGG para permitir las pruebas con cambios de estrategia
 	public bool onlyOne;
-	bool block = false;
+	public bool block = false;
 
 	[SerializeField]
 	float atkbase, defbase, atkhalf, defhalf; //Valores iniciales

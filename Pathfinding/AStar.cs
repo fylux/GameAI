@@ -13,7 +13,7 @@ public class AStar {
     PathfindingManager requestManager;
 
 
-    public IEnumerator FindPath(PathRequest request) {
+    public IEnumerator FindPath(PathRequest request, Action<Vector3[], bool> finishedPath) {
         prev = new Dictionary<Node, Node>();
         bool pathSuccess = false;
 
@@ -99,7 +99,7 @@ public class AStar {
 
             waypoints.Add(targetPos);
         }
-        request.callback(waypoints.ToArray(), pathSuccess);
+        finishedPath(waypoints.ToArray(), pathSuccess);
     }
     
    List<Node> RetracePath() {

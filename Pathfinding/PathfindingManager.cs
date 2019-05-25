@@ -69,7 +69,7 @@ public class PathfindingManager : MonoBehaviour {
             }
             else {
                 instance.init = Time.time;
-                StartCoroutine(pathfinding.FindPath(request));
+                StartCoroutine(pathfinding.FindPath(request, FinishedProcessingPath));
             }
             if (request.unit != null) repetitions[request.unit]--;
 

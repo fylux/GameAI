@@ -114,7 +114,7 @@ public static class Info {
             int index = (int)unit.faction;
             number[index]++;
             HP[index] += unit.militar.health;
-            ATK[index] += unit.militar.attack;
+			ATK[index] += unit.militar.attack * unit.militar.attackSpeed;
 
             unitGroups[unit.GetUnitType()] += new Vector2(index, 1 - index);
         }

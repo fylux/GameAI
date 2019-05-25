@@ -81,43 +81,8 @@ public class StrategyLayer {
 	}
 
 	float PriorityDefbase() {
-		/*
-        // Desde el centro de la base, un radio de 50 cubre todo el territorio relevante
-		// 40 sería un "casi llegando a la base"
-		// 25 sería que están en la misma base
+
 		if (dbg) Debug.Log("START DEFBASE");
-		HashSet<AgentUnit> near = Info.UnitsNearBase(allyFaction, enemyFaction, 25);
-		HashSet<AgentUnit> mid = Info.UnitsNearBase(allyFaction, enemyFaction, 35);
-		HashSet<AgentUnit> far = Info.UnitsNearBase(allyFaction, enemyFaction, 50);
-
-		far.ExceptWith(mid);
-		far.ExceptWith(near);
-
-		mid.ExceptWith(near);
-
-		float result = 0;
-
-		foreach (AgentUnit unit in near) {
-			result += ((float)1 / 8); // ¿Deberiamos considerar el "peor caso" antes, o no tiene sentido?
-			//	Debug.Log("UNIDAD CERCANA");
-		}
-		foreach (AgentUnit unit in mid) {
-			result += ((float)1 / 8) * 0.65f;
-			//	Debug.Log("UNIDAD MEDIANA");
-		}
-		foreach (AgentUnit unit in far) {
-			result += ((float)1 / 8) * 0.3f;
-			//	Debug.Log("UNIDAD LEJANA");
-		}
-
-		HashSet<AgentUnit> units = Map.unitList;
-		result += Mathf.Clamp(Info.MilitaryAdvantage(units, allyFaction) - 1, -0.2f, 0.2f);
-		if (dbg) Debug.Log("Teniendo en cuenta todas las unidades vivas, ese peso es ahora " + result);
-
-		if (dbg) Debug.Log("La proximidad de unidades enemigas a la base contribuye a DEFBASE en " + result);
-
-		return result;*/
-		if (dbg) Debug.Log("START DEFASE");
 		HashSet<AgentUnit> baseAllies = Info.UnitsNearBase(allyFaction, allyFaction, 25); //Cogemos los aliados cercanos a la base aliada
 		baseAllies.UnionWith(Info.GetUnitsFactionArea(Info.GetWaypoint("base", allyFaction), 45, enemyFaction)); // Añadimos los enemigos en territorio aliado
 
@@ -134,56 +99,12 @@ public class StrategyLayer {
 		float enemAdv = Info.MilitaryAdvantageArea(Info.GetWaypoint("base", allyFaction), 40, enemyFaction);
 
 		result -= Mathf.Clamp(allyAdv - enemAdv, -0.4f, 0.4f);
-		if (dbg) Debug.Log("Finalmente, comparandola ventaja atacante aliada con la enemiga, el peso de DEFBASE es de " + result);
+		if (dbg) Debug.Log("Finalmente, comparando la ventaja atacante aliada con la enemiga, el peso de DEFBASE es de " + result);
 
 		return result;
 	}
 
-	float PriorityDefhalf() {/*
-        if (dbg) Debug.Log("START DEFHALF");
-        float[] result = new float[3]; //0 = mid, 1 = top, 2 = bottom
-        // Separamos los tres waypoints para asegurarnos de tratar el caso de cada waypoint por separado y no mezclar resultados
-
-        // Comprobamos el numero de unidades enemigas cerca de cada waypoint. A más, más interesante será tomar esta estrategia
-        // El waypoint central cuenta más, ya que es el más importante
-        result[0] = PriorityUnitsNearWaypoint("mid", 0.4f, 0.3f);
-        result[1] = PriorityUnitsNearWaypoint("top", 0.3f, 0.2f);
-        result[2] = PriorityUnitsNearWaypoint("bottom", 0.3f, 0.2f);
-
-        // Ahora comprobamos la influencia aliada cerca del waypoint (pero no exactamente en el waypoint). Si el enemigo tiene mucha más influencia,
-        // habría quizá que reconsiderar que el camino es peligroso
-        result[0] -= PriorityAllyInfluenceWaypoint("mid");
-        result[1] -= PriorityAllyInfluenceWaypoint("top");
-        result[2] -= PriorityAllyInfluenceWaypoint("bottom");
-
-        float area = 20;
-        // En el mejor caso para nosotros, tendremos un +0.5 en mid, que significa que al menos doblamos en fuerza al enemigo. En el peor, -0.35,
-        // ya que es probable que el enemigo se vea limitado por el terreno
-        float inflM = Mathf.Clamp(Info.MilitaryAdvantageArea(Info.waypoints["mid"], area, allyFaction) - 1, -0.3f, 0.4f);
-        // Para los otros dos waypoints, el resultado será menos relevante
-        float inflT = Mathf.Clamp(Info.MilitaryAdvantageArea(Info.waypoints["top"], area, allyFaction) - 1, -0.2f, 0.3f);
-        float inflB = Mathf.Clamp(Info.MilitaryAdvantageArea(Info.waypoints["bottom"], area, allyFaction) - 1, -0.2f, 0.3f);
-
-
-        result[0] += inflM;
-        if (dbg) Debug.Log("En mid, la ventaja militar de los aliados es de " + inflM);
-        result[1] += inflT;
-        if (dbg) Debug.Log("En top, la ventaja militar de los aliados es de " + inflT);
-        result[2] += inflB;
-        if (dbg) Debug.Log("En bottom, la ventaja militar de los aliados es de " + inflB);
-		/*
-        float maxWeight = Mathf.Max(result[0], Mathf.Max(result[1], result[2]));
-
-        if (result[0] >= result[1] && result[0] >= result[2]) chosenWaypoint = "mid";
-        else if (result[1] >= result[2]) chosenWaypoint = "top";
-        else chosenWaypoint = "bottom";
-
-        HashSet<AgentUnit> units = Map.unitList;
-        maxWeight += Mathf.Clamp(Info.MilitaryAdvantage(units, allyFaction) - 1, -0.2f, 0.2f);
-
-        if (dbg) Debug.Log("El peso dado a DEFHALF es de " + maxWeight);
-
-        return maxWeight;*/
+	float PriorityDefhalf() {
 		if (dbg) Debug.Log("START DEFHALF");
 		HashSet<AgentUnit> near = Info.UnitsNearBase(allyFaction, enemyFaction, 25);
 		HashSet<AgentUnit> mid = Info.UnitsNearBase(allyFaction, enemyFaction, 35);
@@ -207,10 +128,6 @@ public class StrategyLayer {
 		}
 
 		if (dbg) Debug.Log("La proximidad de unidades enemigas en territorio aliado contribuye a DEFHALF en " + result);
-
-		/*float inflM = Mathf.Clamp(Info.MilitaryAdvantageArea(Info.GetWaypoint("base", enemyFaction), 45, allyFaction) - 1, -0.5f, 0.5f);
-		result += inflM;*/
-
 
 		if (dbg) Debug.Log("El peso dado a DEFHALF es de " + result);
 

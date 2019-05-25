@@ -18,8 +18,8 @@ public class Artillery : AgentUnit
 
         cost = new Dictionary<NodeT, float>() {
             { NodeT.ROAD, 1 },
-            { NodeT.GRASS, 6 },
-            { NodeT.FOREST, 10 },
+            { NodeT.GRASS, 2.5f },
+            { NodeT.FOREST, 6 },
             { NodeT.WATER, Mathf.Infinity},
             { NodeT.MOUNTAIN, Mathf.Infinity}
         };

@@ -18,9 +18,9 @@ public abstract class AgentUnit : AgentNPC {
 
     public static float[,] atkTable = new float[4, 4] {
             //Melee Ranged  Scout   Artill
-            {1,     1.5f,   2 ,     1   }, //Melee
+            {1,     1.25f,   1.5f ,     1   }, //Melee
             {1,     0.8f,   1.5f,   0.5f}, //Ranged
-            {0.75f, 1.25f,  1,      0.5f}, //Scout
+            {0.75f, 2.5f,  1,      0.5f}, //Scout
             { 0.8f, 1.25f,  1.5f,   1   }  //Artill
         };
 

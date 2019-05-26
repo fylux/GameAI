@@ -99,10 +99,6 @@ public class Follow : Task {
         return target == null;
     }
 
-    public bool jamon() {
-        return IsFinished();
-    }
-
     override
     public void Terminate() {
         if (goTo != null) goTo.Terminate();

@@ -69,9 +69,9 @@ public class PathFollowingAdvanced : PathFollowing {
             Gizmos.DrawSphere(path[i] + Vector3.up, 0.23f);
         }
 
-        float arrivalRadius2 = arrivalRadius + extraRadius;
+        /*float arrivalRadius2 = arrivalRadius + extraRadius;
         Gizmos.color = Color.cyan;
-        Gizmos.DrawSphere(path[currentPoint] + Vector3.up, arrivalRadius2);
+        Gizmos.DrawSphere(path[currentPoint] + Vector3.up, arrivalRadius2);*/
     }
 
 }

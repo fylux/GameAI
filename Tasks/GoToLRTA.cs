@@ -47,7 +47,7 @@ public class GoToLRTA : Task {
 
     override
     protected bool IsFinished() {
-        return Util.HorizontalDist(agent.position, target) < 0.3f;
+        return pathF.path != null && (pathF.path.Length - 1 == pathF.currentPoint) && pathF.type == FollowT.STAY;
     }
 
     override

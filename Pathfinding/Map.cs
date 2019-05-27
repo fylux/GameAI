@@ -132,26 +132,15 @@ public class Map {
 
                 //otherColor = Mathf.Round(otherColor * 5f) / 5f; //To discretize the range of colors
                 Dictionary<Faction, Color> colors = new Dictionary<Faction, Color>() {
-                    {Faction.A, new Color(1f, otherColor, otherColor, 1f) },
-                    {Faction.B, new Color(otherColor, otherColor, 1f ,1f) },
+                    {Faction.B, new Color(1f, otherColor, otherColor, 1f) },
+                    {Faction.A, new Color(otherColor, otherColor, 1f ,1f) },
                     {Faction.C, Color.gray }
                 };
 
                 float ally = grid[x, y].GetRawInfluence(Faction.A, influenceMap);
                 float enemy = grid[x, y].GetRawInfluence(Faction.B, influenceMap);
-                /*if (ally > 0.3) {
-                    grid[x, y].influenceTile.GetComponent<Renderer>().material.color = Color.red;
-                }
-                else {
-                    grid[x, y].influenceTile.GetComponent<Renderer>().material.color = Color.white;
-                }*/
 
                 grid[x, y].influenceTile.material.color = colors[mainFaction];
-
-                //grid[x, y].influenceTile.material.SetFloat("_Glossiness", 0f);
-                //grid[x, y].gameObject.transform.GetChild(0).GetComponent<Renderer>().material.color = colors[grid[x, y].getFaction()];
-                /*Gizmos.color = colors[grid[x, y].getFaction()];
-                Gizmos.DrawCube(grid[x, y].worldPosition, size);*/
             }
         }
     }

@@ -225,7 +225,9 @@ public static class Info {
         Dictionary<Faction, int> infl = new Dictionary<Faction, int>() { { Faction.A, 0 }, { Faction.B, 0 }, { Faction.C, 0 } };
 
         foreach (Node nodo in nodes) {
-            infl[nodo.GetMostInfluentFaction(Map.generalInfluence)]++;
+            var mostInfluentialFacton = nodo.GetMostInfluentFaction(Map.generalInfluence);
+            if (nodo.GetNetInfluence(mostInfluentialFacton, Map.generalInfluence) > 0.05f)
+                infl[mostInfluentialFacton]++;
         }
 
         return ((float)infl[fac] / (infl[Faction.A] + infl[Faction.B] + infl[Faction.C]));
@@ -235,7 +237,9 @@ public static class Info {
         Dictionary<Faction, int> infl = new Dictionary<Faction, int>() { { Faction.A, 0 }, { Faction.B, 0 }, { Faction.C, 0 } };
 
         foreach (Node nodo in path) {
-            infl[nodo.GetMostInfluentFaction(Map.generalInfluence)]++;
+            var mostInfluentialFacton = nodo.GetMostInfluentFaction(Map.generalInfluence);
+            if (nodo.GetNetInfluence(mostInfluentialFacton, Map.generalInfluence) > 0.05f)
+                infl[mostInfluentialFacton]++;
         }
 
         return ((float)infl[fac] / (infl[Faction.A] + infl[Faction.B] + infl[Faction.C]));

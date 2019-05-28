@@ -15,10 +15,10 @@ public class MilitaryResourcesAllocator {
     Dictionary<StrategyT, float> importanceWeigth;
     public Dictionary<StrategyT, float> priority; //TESTGGG cambiar la visibilidad a privado
     Dictionary<StrategyT, float> offensiveWeight = new Dictionary<StrategyT, float>() {
-            { StrategyT.ATK_BASE, 0.4f},
-            { StrategyT.ATK_HALF, 0.3f},
-            { StrategyT.DEF_BASE, -0.3f},
-            { StrategyT.DEF_HALF, -0.4f}
+            { StrategyT.ATK_BASE, 0.7f},
+            { StrategyT.ATK_HALF, 0.5f},
+            { StrategyT.DEF_BASE, -0.5f},
+            { StrategyT.DEF_HALF, -0.7f}
         };
     float offensiveFactor;
 
@@ -191,6 +191,7 @@ public class MilitaryResourcesAllocator {
         foreach (StrategyT strategy in priority.Keys.ToList()) {
             priority[strategy] *= importanceWeigth[strategy];
             priority[strategy] += offensiveWeight[strategy] * offensiveFactor;
+            if (priority[strategy] < 0) priority[strategy] = 0;
         }
     }
 

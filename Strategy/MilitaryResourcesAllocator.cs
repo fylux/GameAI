@@ -15,10 +15,10 @@ public class MilitaryResourcesAllocator {
     Dictionary<StrategyT, float> importanceWeigth;
     public Dictionary<StrategyT, float> priority; //TESTGGG cambiar la visibilidad a privado
     Dictionary<StrategyT, float> offensiveWeight = new Dictionary<StrategyT, float>() {
-            { StrategyT.ATK_BASE, 0.3f},
-            { StrategyT.ATK_HALF, 0.4f},
-            { StrategyT.DEF_BASE, -0.4f},
-            { StrategyT.DEF_HALF, -0.3f}
+            { StrategyT.ATK_BASE, 0.4f},
+            { StrategyT.ATK_HALF, 0.3f},
+            { StrategyT.DEF_BASE, -0.3f},
+            { StrategyT.DEF_HALF, -0.4f}
         };
     float offensiveFactor;
 

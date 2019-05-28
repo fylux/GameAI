@@ -110,8 +110,21 @@ public class StrategyManager : MonoBehaviour {
 		}
 	}
 
-    public StrategyLayer GetStrategyLayer()
-    {
+    public StrategyLayer GetStrategyLayer() {
         return strategyLayer;
+    }
+
+    public void UpdateOffensiveFactor() {
+        string name = "OffensiveFactor" + (faction == Faction.A ? "A" : "B");
+        if (GameObject.Find(name) == null) {
+            Debug.LogError("cannot find slider " + name);
+        }
+        Slider slider = GameObject.Find(name).GetComponent<Slider>();
+        
+        offensiveFactor = slider.value;
+        militaryResourceAllocator.SetOffensiveFactor(slider.value);
+
+        CycleLayer12();
+        Debug.Log(Time.frameCount + " change offensive factor");
     }
 }

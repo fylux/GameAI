@@ -53,8 +53,8 @@ public class PathFollowingAdvanced : PathFollowing {
     void OnDrawGizmos() {
         var models = new HashSet<GameObject>(npc.transform.GetComponentsInChildren<Transform>().Select(t => t.gameObject));
         models.Add(npc.gameObject);
-        if (!(models.Any(model => UnityEditor.Selection.Contains(model)) || (npc is AgentUnit && ((AgentUnit)npc).selectCircle != null)))
-            return;
+        /*if (!(models.Any(model => UnityEditor.Selection.Contains(model)) || (npc is AgentUnit && ((AgentUnit)npc).selectCircle != null)))
+            return;*/
         if (!visibleRays || path == null || currentPoint >= path.Length)
             return;
 

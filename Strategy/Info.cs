@@ -138,7 +138,7 @@ public static class Info {
 		if (number [j] == 0)
 			return 50000;
         if (dbg) Debug.Log ("Valores: HP[i]: " + HP [i] + ", HP[j]: " + HP [j] + ", ATK[i]: " + ATK [i] + ". ATK[j]: " + ATK [j] + ", adv[i]: " + adv [i] + ", adv[j]: " + adv [j]);
-		result = Mathf.Sqrt ( (HP [i] / HP [j]) * (ATK [i] + adv [i]) / (ATK [j] + adv [j]));
+		result = Mathf.Sqrt ( (HP [i] / HP [j]) * (ATK [i] * adv [i]) / (ATK [j] * adv [j]));
 	//	} else {
 		//	result = Mathf.Sqrt ((HP [i] * (ATK [i] + adv [i])) -  (HP [j] * (ATK [j] + adv [j])));
 	//	}

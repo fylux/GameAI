@@ -19,10 +19,11 @@ public class PlayerEconomy : MonoBehaviour {
 	[SerializeField]
 	bool goldGeneration;
 
-	[SerializeField]
-	int gold;
+    [SerializeField]
+    int gold, goldPerSecond;
 
-	int modeGen = 0;
+
+    int modeGen = 0;
 
 	public UnitT unitToGenerate = UnitT.MELEE;
 
@@ -38,18 +39,19 @@ public class PlayerEconomy : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (Time.frameCount % 30 == 0 && goldGeneration) {
-			gold+=5;
-
-
+			gold+= goldPerSecond;
 		}
 		goldDisplay.text = "Gold: [" + gold + "]";
 	}
 
 	public void GenerateUnit(){
-		GameObject created = GameObject.Instantiate(units[unitToGenerate], (Info.GetWaypoint("recruit", faction) + new Vector3(0,0.75f,0)), Quaternion.identity) as GameObject;
-		AgentUnit newUnit = created.GetComponent<AgentUnit>();
-		Map.unitList.Add (newUnit);
-		Debug.Log ("Generada una unidad de " + unitToGenerate);
+		if (Map.GetAllies(faction).Count < Map.maxUnits && gold >= 50){
+			gold -= 50;
+			GameObject created = GameObject.Instantiate(units[unitToGenerate], (Info.GetWaypoint("recruit", faction) + new Vector3(0,0.75f,0)), Quaternion.identity) as GameObject;
+			AgentUnit newUnit = created.GetComponent<AgentUnit>();
+			Map.unitList.Add (newUnit);
+			Debug.Log ("Generada una unidad de " + unitToGenerate);
+		}
 	}
 
 

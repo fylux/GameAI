@@ -23,10 +23,7 @@ public class EconomyManager : MonoBehaviour {
 	bool goldGeneration;
 
     [SerializeField]
-	int gold;
-
-	[SerializeField]
-	int goldPerSecond;
+	int gold, goldPerSecond;
 
 	GenerationManager generationManager;
 
@@ -51,7 +48,7 @@ public class EconomyManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (Time.frameCount % 30 == 0 && goldGeneration) {
-			gold+=goldPerSecond;
+			gold += goldPerSecond;
 
 			if (Map.GetAllies(faction).Count < Map.maxUnits && gold >= 50) {
 				gold -= 50;
@@ -72,6 +69,6 @@ public class EconomyManager : MonoBehaviour {
         Map.unitList.Add(newUnit);
 		//Debug.Log ("Generada una unidad de " + type);
 
-		stratManager.CycleLayer12 ();
+		stratManager.CycleLayer12();
 	}
 }

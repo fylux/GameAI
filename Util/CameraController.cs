@@ -5,7 +5,7 @@ public class CameraController : MonoBehaviour {
 
     private const int LevelArea = 30;
 
-    private const int ScrollArea = 30;
+    private const int ScrollArea = 5;
     private const int ScrollSpeed = 19;
 
     private const int ZoomSpeed = 40;
